@@ -1,11 +1,11 @@
-import colors from 'vuetify/es5/util/colors'
+// import colors from 'vuetify/es5/util/colors'
 
 export default {
   ssr: false,
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - monotasking',
-    title: 'monotasking',
+    titleTemplate: 'Monotasking - %s',
+    title: 'Home',
     htmlAttrs: {
       lang: 'en'
     },
@@ -36,22 +36,35 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [],
+  modules: [
+    // https://go.nuxtjs.dev/axios
+    '@nuxtjs/axios'
+  ],
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: false,
+      dark: true,
+      options: {
+        customProperties: true
+      },
       themes: {
         dark: {
-          primary: colors.blue.darken2,
-          accent: colors.grey.darken3,
-          secondary: colors.amber.darken3,
-          info: colors.teal.lighten1,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          primary: '#1f998c',
+          primaryDark: '#02391c',
+          secondary: '#f1fbf1',
+          _primary: '#1f998c',
+          _secondary: '#2f3C4e',
+          _accent: '#fca311',
+          _base: '#f5f5f5',
+          _white: '#ffffff',
+          _text: '#191a1a',
+          _success: '#43a047',
+          _warning: '#ff9800',
+          _error: '#d32f2f',
+          _clickable: '#0654ba',
+          _hightLight: '#fffde7'
         }
       }
     }
