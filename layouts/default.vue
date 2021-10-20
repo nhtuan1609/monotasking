@@ -1,59 +1,26 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" class="primary" fixed app>
-      <v-list-item style="height: 60px">
-        <v-list-item-content>
-          <v-list-item-title>
-            <div class="app-name">Monotasking</div>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-      <v-divider />
-      <v-list>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <navigation-drawer v-model="drawer" :menus="menus" @toggleDrawer="toggleDrawer"></navigation-drawer>
 
-    <v-app-bar class="primary" fixed app height="60">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-menu light bottom transition="slide-y-transition">
-        <template #activator="{ on, attrs }">
-          <v-btn color="primary" small fab v-bind="attrs" v-on="on"></v-btn>
-        </template>
+    <app-bar @toggleDrawer="toggleDrawer"></app-bar>
 
-        <v-list>
-          <v-list-item v-for="(themeItem, index) in THEME.COLORS" :key="index">
-            <v-list-item-title>
-              <v-btn small fab elevation="0" :color="themeItem.primary" @click="selectTheme(themeItem)"></v-btn
-            ></v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-
-    <v-main class="white" style="color: var(--v-_text-base)">
-      <Nuxt />
+    <v-main>
+      <nuxt />
     </v-main>
   </v-app>
 </template>
 
 <script>
 import { THEME } from '~/constants/theme.js'
+import NavigationDrawer from '~/components/layouts/NavigationDrawer.vue'
+import AppBar from '~/components/layouts/AppBar.vue'
 
 export default {
+  components: { NavigationDrawer, AppBar },
   data() {
     return {
       drawer: false,
-      items: [
+      menus: [
         {
           icon: 'mdi-apps',
           title: 'Welcome',
@@ -62,10 +29,25 @@ export default {
         {
           icon: 'mdi-chart-bubble',
           title: 'My Tasks',
-          to: '/mytasks'
+          subMenus: [
+            {
+              icon: 'mdi-order-bool-descending-variant',
+              title: 'List',
+              to: '/myTasks/list'
+            },
+            {
+              icon: 'mdi-view-dashboard',
+              title: 'Board',
+              to: '/myTasks/board'
+            },
+            {
+              icon: 'mdi-calendar-check',
+              title: 'Calendar',
+              to: '/myTasks/calendar'
+            }
+          ]
         }
-      ],
-      title: 'Frontend Developer'
+      ]
     }
   },
   computed: {
@@ -105,6 +87,9 @@ export default {
   methods: {
     selectTheme(theme) {
       this.$store.dispatch('preferences/updateTheme', { theme })
+    },
+    toggleDrawer() {
+      this.drawer = !this.drawer
     }
   }
 }
@@ -124,10 +109,7 @@ body {
   font-family: Roboto, Arial, sans-serif;
   font-style: normal;
   font-size: 16px;
-}
-.app-name {
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
+  background-color: var(--v-_base-base);
+  color: var(--v-_text-base);
 }
 </style>

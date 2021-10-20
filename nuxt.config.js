@@ -25,7 +25,7 @@ export default {
   plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
-  components: true,
+  components: false,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
@@ -51,10 +51,10 @@ export default {
       },
       themes: {
         dark: {
-          primary: '#1f998c',
-          primaryDark: '#02391c',
-          secondary: '#f1fbf1',
-          _primary: '#1f998c',
+          primary: '#60a3bc',
+          primaryDark: '#3c6382',
+          secondary: '#82ccdd',
+          _primary: '#60a3bc',
           _secondary: '#2f3C4e',
           _accent: '#fca311',
           _base: '#f5f5f5',
