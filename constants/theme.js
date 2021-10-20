@@ -39,7 +39,7 @@ const COLORS = [
     name: 'Navy',
     primary: '#0f536e',
     primaryDark: '#082a38',
-    secondary: '#d9f0fa',
+    secondary: '#2295c3',
     _primary: '#0f536e',
     _secondary: '#14213d',
     _accent: '#e63946',

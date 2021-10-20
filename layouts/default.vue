@@ -85,9 +85,6 @@ export default {
     }, 100)
   },
   methods: {
-    selectTheme(theme) {
-      this.$store.dispatch('preferences/updateTheme', { theme })
-    },
     toggleDrawer() {
       this.drawer = !this.drawer
     }

@@ -26,12 +26,17 @@ export default {
   name: 'NavigationDrawer',
   data() {
     return {
-      title: 'Frontend Developer'
+      title: 'Monotasking'
     }
   },
   computed: {
     THEME() {
       return THEME
+    }
+  },
+  methods: {
+    selectTheme(theme) {
+      this.$store.dispatch('preferences/updateTheme', { theme })
     }
   }
 }
