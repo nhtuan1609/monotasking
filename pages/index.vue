@@ -1,7 +1,5 @@
 <template>
   <v-layout fill-height>
-    <!-- <v-container>
-    </v-container> -->
     <v-row class="my-0">
       <v-col cols="12" md="6">
         <div class="left-title">
