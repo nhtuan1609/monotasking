@@ -54,34 +54,41 @@ export default {
     THEME() {
       return THEME
     },
-    theme() {
-      return this.$store.getters['preferences/getTheme']
+    color() {
+      return this.$store.getters['preferences/getColor']
+    },
+    background() {
+      return this.$store.getters['preferences/getBackground']
     }
   },
   watch: {
-    theme(newTheme) {
-      if (!newTheme) return
-
-      const theme = newTheme
-      if (theme.primary) this.$vuetify.theme.themes.dark.primary = theme.primary
-      if (theme.primaryDark) this.$vuetify.theme.themes.dark.primaryDark = theme.primaryDark
-      if (theme.secondary) this.$vuetify.theme.themes.dark.secondary = theme.secondary
-      if (theme._primary) this.$vuetify.theme.themes.dark._primary = theme._primary
-      if (theme._secondary) this.$vuetify.theme.themes.dark._secondary = theme._secondary
-      if (theme._accent) this.$vuetify.theme.themes.dark._accent = theme._accent
-      if (theme._base) this.$vuetify.theme.themes.dark._base = theme._base
-      if (theme._white) this.$vuetify.theme.themes.dark._white = theme._white
-      if (theme._text) this.$vuetify.theme.themes.dark._text = theme._text
-      if (theme._success) this.$vuetify.theme.themes.dark._success = theme._success
-      if (theme._warning) this.$vuetify.theme.themes.dark._warning = theme._warning
-      if (theme._error) this.$vuetify.theme.themes.dark._error = theme._error
-      if (theme._clickable) this.$vuetify.theme.themes.dark._clickable = theme._clickable
-      if (theme._hightLight) this.$vuetify.theme.themes.dark._hightLight = theme._hightLight
+    color(newColor) {
+      if (!newColor) return
+      if (newColor.primary) this.$vuetify.theme.themes.dark.primary = newColor.primary
+      if (newColor.primaryDark) this.$vuetify.theme.themes.dark.primaryDark = newColor.primaryDark
+      if (newColor.secondary) this.$vuetify.theme.themes.dark.secondary = newColor.secondary
+      if (newColor._primary) this.$vuetify.theme.themes.dark._primary = newColor._primary
+      if (newColor._secondary) this.$vuetify.theme.themes.dark._secondary = newColor._secondary
+      if (newColor._accent) this.$vuetify.theme.themes.dark._accent = newColor._accent
+      if (newColor._base) this.$vuetify.theme.themes.dark._base = newColor._base
+      if (newColor._white) this.$vuetify.theme.themes.dark._white = newColor._white
+      if (newColor._text) this.$vuetify.theme.themes.dark._text = newColor._text
+      if (newColor._success) this.$vuetify.theme.themes.dark._success = newColor._success
+      if (newColor._warning) this.$vuetify.theme.themes.dark._warning = newColor._warning
+      if (newColor._error) this.$vuetify.theme.themes.dark._error = newColor._error
+      if (newColor._clickable) this.$vuetify.theme.themes.dark._clickable = newColor._clickable
+      if (newColor._hightLight) this.$vuetify.theme.themes.dark._hightLight = newColor._hightLight
+    },
+    background(newBackground) {
+      if (newBackground) {
+        document.getElementsByTagName('BODY')[0].style.backgroundImage = `url(${newBackground.path})`
+      }
     }
   },
   created() {
     setTimeout(() => {
-      this.$store.dispatch('preferences/updateTheme', { theme: { ...this.THEME.COLORS_DEFAULT } })
+      this.$store.dispatch('preferences/updateColor', { color: { ...this.THEME.COLORS_DEFAULT } })
+      this.$store.dispatch('preferences/updateBackground', { background: { ...this.THEME.BACKGROUND_DEFAULT } })
     }, 100)
   },
   methods: {
@@ -97,7 +104,9 @@ html {
   overflow-y: auto;
 }
 body {
-  background-color: var(--v-_base-base);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 </style>
 
@@ -106,7 +115,7 @@ body {
   font-family: Roboto, Arial, sans-serif;
   font-style: normal;
   font-size: 16px;
-  background-color: var(--v-_base-base);
   color: var(--v-_text-base);
+  background: transparent;
 }
 </style>

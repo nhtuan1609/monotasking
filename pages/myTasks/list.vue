@@ -4,18 +4,16 @@
       <v-toolbar light elevation="0" class="tool-bar">
         <h2>List view</h2>
       </v-toolbar>
-      <div class="field-task-new">
+      <div class="new-task-container">
         <v-container>
           <v-row>
             <v-col cols="12" class="pt-0 pb-16">
               <v-text-field
                 v-model="newTaskContent"
                 :prepend-inner-icon="isAddingNewTask ? 'mdi-circle-outline' : 'mdi-plus'"
-                color="white"
                 background-color="primary"
                 label="Add a task"
                 hide-details
-                light
                 solo
                 @focus="isAddingNewTask = true"
                 @blur="isAddingNewTask = false"
@@ -34,7 +32,7 @@
           >
         </div>
       </v-container>
-      <v-container v-else style="margin-bottom: 140px">
+      <v-container v-else style="margin-top: 60px; margin-bottom: 120px">
         <v-row>
           <v-col>
             <v-text-field
@@ -110,13 +108,16 @@ export default {
   color: white;
 }
 
-.field-task-new {
+.container {
+  max-width: 800px;
+}
+
+.new-task-container {
   position: fixed;
   z-index: 1;
   left: 0;
   right: 0;
-  bottom: 0px;
-  backdrop-filter: blur(4px);
+  bottom: 0;
   & ::v-deep .v-icon {
     color: white !important;
   }
@@ -132,6 +133,9 @@ export default {
   & ::v-deep .v-input__slot {
     background-color: var(--v-primary-lighten5) !important;
     box-shadow: none !important;
+  }
+  & ::v-deep .v-input__slot:hover {
+    background-color: var(--v-primary-lighten2) !important;
   }
 }
 

@@ -1,21 +1,31 @@
 export const state = () => ({
-  theme: null
+  color: {},
+  background: {}
 })
 
 export const getters = {
-  getTheme(state) {
-    return state.theme
+  getColor(state) {
+    return state.color
+  },
+  getBackground(state) {
+    return state.background
   }
 }
 
 export const mutations = {
-  updateTheme(state, params) {
-    state.theme = { ...params.theme }
+  updateColor(state, params) {
+    state.color = { ...params.color }
+  },
+  updateBackground(state, params) {
+    state.background = { ...params.background }
   }
 }
 
 export const actions = {
-  updateTheme({ commit }, params) {
-    commit('updateTheme', params)
+  updateColor({ commit }, params) {
+    commit('updateColor', params)
+  },
+  updateBackground({ commit }, params) {
+    commit('updateBackground', params)
   }
 }

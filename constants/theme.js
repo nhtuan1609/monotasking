@@ -88,7 +88,23 @@ const COLORS = [
   }
 ]
 
+const BACKGROUND_DEFAULT = { path: '/images/backgrounds/andre-ouellet-cga32YQt0Kw-unsplash.jpg' }
+
+const BACKGROUNDS = [
+  { path: '/images/backgrounds/andre-ouellet-cga32YQt0Kw-unsplash.jpg' },
+  { path: '/images/backgrounds/chang-duong-qJXGIsF_wwo-unsplash.jpg' },
+  { path: '/images/backgrounds/kiril-dobrev-UB0QiVPsXgc-unsplash.jpg' },
+  { path: '/images/backgrounds/linh-pham-gm-ZwnNSpVg-unsplash.jpg' },
+  { path: '/images/backgrounds/seb-MOsRi5Ou_mU-unsplash.jpg' },
+  { path: '/images/backgrounds/thinh-nguyen-A6Fg9OvGkpI-unsplash.jpg' },
+  { path: '/images/backgrounds/tuan-anh-tran-tHfJ3mevHi0-unsplash.jpg' },
+  { path: '/images/backgrounds/tuan-thanh-cao-6lrnBIBUbgg-unsplash.jpg' },
+  { path: '/images/backgrounds/vu-khoi-pLWHT92RFg4-unsplash.jpg' }
+]
+
 export const THEME = Object.freeze({
   COLORS,
-  COLORS_DEFAULT
+  COLORS_DEFAULT,
+  BACKGROUNDS,
+  BACKGROUND_DEFAULT
 })

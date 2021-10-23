@@ -4,31 +4,32 @@
       <v-col cols="12" md="6">
         <div class="left-title">
           <div class="main-title">The easiest way to manage your tasks.</div>
-          <v-divider light></v-divider>
+          <div class="divider"></div>
           <div class="sub-title">
             Why use Monotasking? Because only Monotasking's Work Graph data model gives you everything you need to stay
             in sync, hit deadlines, and reach your goals.
           </div>
         </div>
         <div class="use-button">
-          <v-btn large min-width="300" @click="$router.push('/myTasks/list')">Use for free</v-btn>
+          <v-btn color="primary" large min-width="300" @click="$router.push('/myTasks/list')">Use for free</v-btn>
         </div>
       </v-col>
       <v-col cols="12" md="6" style="position: relative" class="d-flex flex-column justify-center">
-        <div class="background-color"></div>
-        <div class="warpper-chip">
-          <v-chip
-            v-for="(task, index) in tasks"
-            :key="index"
-            :class="`chip-task position-${index}`"
-            :color="task.color"
-            label
-          >
-            <v-checkbox on-icon="mdi-check-circle" off-icon="mdi-check-circle-outline" color="white"></v-checkbox>
-            <span>{{ task.content }}</span>
-          </v-chip>
+        <div class="background">
+          <div class="warpper-chip">
+            <v-chip
+              v-for="(task, index) in tasks"
+              :key="index"
+              :class="`chip-task position-${index}`"
+              :color="task.color"
+              label
+            >
+              <v-checkbox on-icon="mdi-check-circle" off-icon="mdi-check-circle-outline" color="white"></v-checkbox>
+              <span>{{ task.content }}</span>
+            </v-chip>
+          </div>
+          <h1 class="right-title">Work on big ideas, without the busywork.</h1>
         </div>
-        <v-card class="right-title">Work on big ideas, without the busywork.</v-card>
       </v-col>
     </v-row>
   </v-layout>
@@ -70,13 +71,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.background-color {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: var(--v-primary-lighten3);
+.background {
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
 }
 
 .left-title {
@@ -87,12 +84,19 @@ export default {
     margin-bottom: 40px;
     font-size: 60px;
     font-weight: bold;
-    color: var(--v-primary-base);
+    color: var(--v-_white-base);
+    text-shadow: 2px 2px #000000;
   }
   .sub-title {
     margin-top: 10px;
     font-size: 26px;
-    color: var(--v-primary-lighten1);
+    color: var(--v-_white-base);
+    text-shadow: 2px 2px #000000;
+  }
+  .divider {
+    width: 100%;
+    border-top: 2px solid white;
+    opacity: 0.6;
   }
 }
 
@@ -140,13 +144,11 @@ export default {
 }
 
 .right-title {
-  padding: 20px 0;
-  margin-left: 100px;
   margin-bottom: 40px;
-  font-size: 40px;
-  font-weight: bold;
-  background: var(--v-secondary-base);
-  color: var(--v-_white-base);
+  font-size: 30px;
+  background: transparent;
   text-align: center;
+  color: var(--v-_white-base);
+  text-shadow: 2px 2px #000000;
 }
 </style>
