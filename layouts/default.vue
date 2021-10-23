@@ -107,6 +107,20 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  background-attachment: fixed;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: var(--v-_base-base);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--v-_base-darken3);
+    border-radius: 4px;
+  }
 }
 </style>
 
