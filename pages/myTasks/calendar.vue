@@ -1,15 +1,16 @@
 <template>
   <v-layout fill-height>
     <v-flex>
-      <v-toolbar light elevation="0">
-        <span>Tasks in calendar view</span>
-      </v-toolbar>
+      <page-title title="Tasks in calendar view"></page-title>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import PageTitle from '~/components/common/PageTitle.vue'
+
 export default {
+  components: { PageTitle },
   head: {
     title: 'My Task - Calendar'
   }

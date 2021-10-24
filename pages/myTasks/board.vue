@@ -1,15 +1,16 @@
 <template>
   <v-layout fill-height>
     <v-flex>
-      <v-toolbar light elevation="0">
-        <span>Tasks in board view</span>
-      </v-toolbar>
+      <page-title title="Tasks in board view"></page-title>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import PageTitle from '~/components/common/PageTitle.vue'
+
 export default {
+  components: { PageTitle },
   head: {
     title: 'My Task - Board'
   }

@@ -14,6 +14,10 @@ export const mutations = {
   addNewTask(state, params) {
     state.tasks.unshift(params.task)
   },
+  completeTask(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    state.tasks[index].isCompleted = !state.tasks[index].isCompleted
+  },
   deleteTask(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
     state.tasks.splice(index, 1)
@@ -59,6 +63,9 @@ export const actions = {
 
       commit('addNewTask', { task })
     }
+  },
+  completeTask({ commit }, params) {
+    commit('completeTask', params)
   },
   deleteTask({ commit }, params) {
     commit('deleteTask', params)
