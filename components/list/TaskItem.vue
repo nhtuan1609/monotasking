@@ -1,5 +1,5 @@
 <template>
-  <v-text-field :value="task.content" class="task" hide-details readonly light solo dense>
+  <v-text-field class="task" :value="task.content" hide-details readonly light solo dense>
     <template #prepend-inner>
       <v-menu transition="slide-y-transition" bottom>
         <template #activator="{ on: menu, attrs }">
@@ -47,18 +47,27 @@
     <template #append>
       <v-tooltip v-if="task.project" bottom>
         <template #activator="{ on, attrs }">
-          <v-btn width="160" text outlined rounded small v-bind="attrs" v-on="on">
-            <v-icon left>mdi-gamepad-circle</v-icon>
-            <span class="text-truncate" style="max-width: 140px">{{ task.project }}</span>
+          <v-btn class="justify-start" width="140" text outlined rounded small v-bind="attrs" v-on="on">
+            <v-icon small left>mdi-gamepad-circle</v-icon>
+            <span class="text-truncate" style="max-width: 96px">{{ task.project }}</span>
           </v-btn>
         </template>
-        <span>Project: {{ task.project }}</span>
+        <span>View {{ task.project }} project</span>
+      </v-tooltip>
+
+      <v-tooltip v-if="task.project" bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn class="created-date" text small outlined :ripple="false" v-bind="attrs" v-on="on">
+            {{ $formatDate(new Date(task._created)) }}
+          </v-btn>
+        </template>
+        <span>Created {{ task._created }}</span>
       </v-tooltip>
 
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
           <v-btn icon small v-bind="attrs" v-on="on" @click="deleteTask(task)">
-            <v-icon>mdi-close</v-icon>
+            <v-icon small>mdi-close</v-icon>
           </v-btn>
         </template>
         <span>Delete task</span>
@@ -118,6 +127,19 @@ export default {
   }
   & ::v-deep .v-input__slot:hover {
     background-color: var(--v-primary-lighten2) !important;
+  }
+  & ::v-deep input {
+    text-overflow: ellipsis;
+  }
+}
+.v-btn {
+  text-transform: unset;
+}
+.created-date {
+  border: none;
+  margin-left: 8px;
+  &::before {
+    background-color: transparent !important;
   }
 }
 </style>
