@@ -46,7 +46,7 @@
           solo
           @focus="isAddingNewTask = true"
           @blur="isAddingNewTask = false"
-          @keyup="addNewTask"
+          @keydown.enter="addNewTask()"
         ></v-text-field>
       </v-container>
     </v-flex>
@@ -58,32 +58,39 @@ export default {
   data() {
     return {
       isAddingNewTask: false,
-      newTaskContent: '',
-      tasks: [],
-      autoNumber: 0
+      newTaskContent: ''
     }
   },
   head: {
     title: 'My Task - List'
   },
+  computed: {
+    tasks() {
+      return this.$store.getters['tasks/getTasks']
+    }
+  },
+  beforeMount() {
+    this.loadDataFromLocalStorage()
+    window.addEventListener('beforeunload', this.saveDataToLocalStorage)
+  },
+  beforeDestroy() {
+    this.saveDataToLocalStorage()
+  },
   methods: {
-    addNewTask(event) {
-      if (event.key === 'Enter' && this.newTaskContent.trim()) {
-        const date = new Date()
-        this.tasks.unshift({
-          _created: date.toLocaleString(),
-          _updated: date.toLocaleString(),
-          id: this.autoNumber,
-          content: this.newTaskContent,
-          isCompleted: false
-        })
-        this.autoNumber = this.autoNumber + 1
-        this.newTaskContent = ''
-      }
+    loadDataFromLocalStorage() {
+      this.$store.dispatch('tasks/loadDataFromLocalStorage')
+    },
+    saveDataToLocalStorage() {
+      this.$store.dispatch('tasks/saveDataToLocalStorage')
+    },
+    addNewTask() {
+      this.$store.dispatch('tasks/addNewTask', {
+        newTaskContent: this.newTaskContent
+      })
+      this.newTaskContent = ''
     },
     deleteTask(task) {
-      const index = this.tasks.findIndex((item) => item.id === task.id)
-      this.tasks.splice(index, 1)
+      this.$store.dispatch('tasks/deleteTask', { task })
     }
   }
 }
