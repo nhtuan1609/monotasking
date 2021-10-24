@@ -1,12 +1,12 @@
 <template>
-  <v-text-field :value="task.content" class="task" cols="12" hide-details readonly light solo>
+  <v-text-field :value="task.content" class="task" hide-details readonly light solo dense>
     <template #prepend-inner>
       <v-menu transition="slide-y-transition" bottom>
         <template #activator="{ on: menu, attrs }">
           <v-tooltip bottom>
             <template #activator="{ on: tooltip }">
-              <v-btn icon v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                <priority-icon :priority="task.priority"></priority-icon>
+              <v-btn icon small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
+                <priority-icon small :priority="task.priority"></priority-icon>
               </v-btn>
             </template>
             <span>Set priority</span>
@@ -14,8 +14,8 @@
         </template>
         <v-list light dense>
           <v-list-item v-for="(priority, index) in priorityList" :key="index" @click="changePriority(task, priority)">
-            <v-list-item-icon class="mr-4">
-              <priority-icon :priority="priority.code"></priority-icon>
+            <v-list-item-icon class="mr-2">
+              <priority-icon small :priority="priority.code"></priority-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ priority.name }}</v-list-item-title>
           </v-list-item>
@@ -26,8 +26,8 @@
         <template #activator="{ on: menu, attrs }">
           <v-tooltip bottom>
             <template #activator="{ on: tooltip }">
-              <v-btn icon v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                <status-icon :status="task.status"></status-icon>
+              <v-btn icon small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
+                <status-icon small :status="task.status"></status-icon>
               </v-btn>
             </template>
             <span>Set status</span>
@@ -35,8 +35,8 @@
         </template>
         <v-list light dense>
           <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(task, status)">
-            <v-list-item-icon class="mr-4">
-              <status-icon :status="status.code"></status-icon>
+            <v-list-item-icon class="mr-2">
+              <status-icon small :status="status.code"></status-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ status.name }}</v-list-item-title>
           </v-list-item>
@@ -45,9 +45,19 @@
     </template>
 
     <template #append>
+      <v-tooltip v-if="task.project" bottom>
+        <template #activator="{ on, attrs }">
+          <v-btn width="160" text outlined rounded small v-bind="attrs" v-on="on">
+            <v-icon left>mdi-gamepad-circle</v-icon>
+            <span class="text-truncate" style="max-width: 140px">{{ task.project }}</span>
+          </v-btn>
+        </template>
+        <span>Project: {{ task.project }}</span>
+      </v-tooltip>
+
       <v-tooltip bottom>
         <template #activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" @click="deleteTask(task)">
+          <v-btn icon small v-bind="attrs" v-on="on" @click="deleteTask(task)">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </template>

@@ -1,4 +1,5 @@
 import { v1 as uuidv1 } from 'uuid'
+import { TASK } from '~/constants/task'
 
 export const state = () => ({
   tasks: []
@@ -60,7 +61,10 @@ export const actions = {
         _created: date.toLocaleString(),
         _updated: date.toLocaleString(),
         id: uuidv1(),
-        content: newTaskValidated
+        priority: TASK.PRIORITY.NO_PRIORITY.code,
+        status: TASK.STATUS.BACKLOG.code,
+        content: newTaskValidated,
+        project: 'Monotasking' + (Math.floor(Math.random() * 4) + 1)
       }
 
       commit('addNewTask', { task })
