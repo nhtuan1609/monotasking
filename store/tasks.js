@@ -14,13 +14,17 @@ export const mutations = {
   addNewTask(state, params) {
     state.tasks.unshift(params.task)
   },
-  completeTask(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    state.tasks[index].isCompleted = !state.tasks[index].isCompleted
-  },
   deleteTask(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
     state.tasks.splice(index, 1)
+  },
+  changePriority(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    state.tasks[index].priority = params.priority.code
+  },
+  changeStatus(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    state.tasks[index].status = params.status.code
   },
   loadDataFromLocalStorage(state) {
     try {
@@ -56,19 +60,20 @@ export const actions = {
         _created: date.toLocaleString(),
         _updated: date.toLocaleString(),
         id: uuidv1(),
-        content: newTaskValidated,
-        isCompleted: false,
-        isPin: false
+        content: newTaskValidated
       }
 
       commit('addNewTask', { task })
     }
   },
-  completeTask({ commit }, params) {
-    commit('completeTask', params)
-  },
   deleteTask({ commit }, params) {
     commit('deleteTask', params)
+  },
+  changePriority({ commit }, params) {
+    commit('changePriority', params)
+  },
+  changeStatus({ commit }, params) {
+    commit('changeStatus', params)
   },
   loadDataFromLocalStorage({ commit }) {
     commit('loadDataFromLocalStorage')
