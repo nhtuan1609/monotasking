@@ -27,6 +27,10 @@ export const mutations = {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
     state.tasks[index].status = params.status.code
   },
+  changeDueDate(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    state.tasks[index].dueDate = params.dueDate
+  },
   loadDataFromLocalStorage(state) {
     try {
       const tasks = localStorage.getItem('tasks')
@@ -64,7 +68,8 @@ export const actions = {
         priority: TASK.PRIORITY.NO_PRIORITY.code,
         status: TASK.STATUS.BACKLOG.code,
         content: newTaskValidated,
-        project: 'Monotasking' + (Math.floor(Math.random() * 4) + 1)
+        project: 'Monotasking' + (Math.floor(Math.random() * 4) + 1),
+        dueDate: date.toISOString().split('T')[0]
       }
 
       commit('addNewTask', { task })
@@ -78,6 +83,9 @@ export const actions = {
   },
   changeStatus({ commit }, params) {
     commit('changeStatus', params)
+  },
+  changeDueDate({ commit }, params) {
+    commit('changeDueDate', params)
   },
   loadDataFromLocalStorage({ commit }) {
     commit('loadDataFromLocalStorage')
