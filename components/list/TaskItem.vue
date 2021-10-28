@@ -1,5 +1,5 @@
 <template>
-  <div class="task">
+  <div class="task" @click.right="(event) => $emit('right-click', event)">
     <!-- priority -->
     <v-menu transition="slide-y-transition" bottom>
       <template #activator="{ on: menu, attrs }">
@@ -100,16 +100,6 @@
       </template>
       <span>Created {{ task._created }}</span>
     </v-tooltip>
-
-    <!-- delete -->
-    <v-tooltip bottom>
-      <template #activator="{ on, attrs }">
-        <v-btn icon light small v-bind="attrs" v-on="on" @click="deleteTask(task)">
-          <v-icon small>mdi-close</v-icon>
-        </v-btn>
-      </template>
-      <span>Delete task</span>
-    </v-tooltip>
   </div>
 </template>
 
@@ -148,9 +138,6 @@ export default {
     }
   },
   methods: {
-    deleteTask(task) {
-      this.$store.dispatch('tasks/deleteTask', { task })
-    },
     changePriority(task, priority) {
       this.$store.dispatch('tasks/changePriority', { task, priority })
     },
@@ -186,6 +173,7 @@ export default {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 0 6px;
 }
 .task .v-btn {
   text-transform: unset;

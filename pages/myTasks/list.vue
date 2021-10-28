@@ -2,14 +2,7 @@
   <v-layout fill-height>
     <v-flex>
       <page-title title="Tasks in list view"></page-title>
-
-      <v-container>
-        <wondering-card v-if="tasks.length === 0" class="task-list"></wondering-card>
-        <div v-else class="task-list">
-          <task-item v-for="(task, index) in tasks" :key="index" :task="task"></task-item>
-        </div>
-      </v-container>
-
+      <task-list></task-list>
       <new-task class="new-task-container"></new-task>
     </v-flex>
   </v-layout>
@@ -17,19 +10,13 @@
 
 <script>
 import PageTitle from '~/components/common/PageTitle.vue'
-import WonderingCard from '~/components/list/WonderingCard.vue'
-import TaskItem from '~/components/list/TaskItem.vue'
+import TaskList from '~/components/list/TaskList.vue'
 import NewTask from '~/components/list/NewTask.vue'
 
 export default {
-  components: { PageTitle, WonderingCard, TaskItem, NewTask },
+  components: { PageTitle, TaskList, NewTask },
   head: {
     title: 'My Task - List'
-  },
-  computed: {
-    tasks() {
-      return this.$store.getters['tasks/getTasks']
-    }
   },
   beforeMount() {
     this.loadDataFromLocalStorage()
@@ -54,10 +41,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.2) !important;
   backdrop-filter: blur(4px);
   color: white;
-}
-
-.task-list {
-  margin: 60px auto 160px auto;
 }
 
 .new-task-container {
