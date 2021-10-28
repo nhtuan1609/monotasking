@@ -1,7 +1,7 @@
 <template>
-  <div class="task" @click.right="(event) => $emit('right-click', event)">
+  <div class="task" @contextmenu="(event) => $emit('contextmenu', event)">
     <!-- priority -->
-    <v-menu transition="slide-y-transition" bottom>
+    <v-menu transition="scale-transition" offset-y>
       <template #activator="{ on: menu, attrs }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
@@ -23,7 +23,7 @@
     </v-menu>
 
     <!-- status -->
-    <v-menu transition="slide-y-transition" bottom>
+    <v-menu transition="scale-transition" offset-y>
       <template #activator="{ on: menu, attrs }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
