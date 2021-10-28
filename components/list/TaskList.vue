@@ -6,6 +6,7 @@
         v-for="(task, index) in tasks"
         :key="index"
         :task="task"
+        :class="isShowContextMenu && selectedTask.id === task.id ? 'selecting' : ''"
         @contextmenu="(event) => showContextMenu(event, task)"
       ></task-item>
     </div>
@@ -32,16 +33,18 @@
             </v-list-item>
           </template>
           <v-list light dense>
-            <v-list-item
-              v-for="(priority, index) in priorityList"
-              :key="index"
-              @click="changePriority(selectedTask, priority)"
-            >
-              <v-list-item-icon class="mr-2">
-                <priority-icon small :priority="priority.code"></priority-icon>
-              </v-list-item-icon>
-              <v-list-item-title>{{ priority.name }}</v-list-item-title>
-            </v-list-item>
+            <v-list-item-group :value="priorityList.findIndex((item) => item.code === selectedTask.priority)">
+              <v-list-item
+                v-for="(priority, index) in priorityList"
+                :key="index"
+                @click="changePriority(selectedTask, priority)"
+              >
+                <v-list-item-icon class="mr-2">
+                  <priority-icon small :priority="priority.code"></priority-icon>
+                </v-list-item-icon>
+                <v-list-item-title>{{ priority.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
         </v-menu>
 
@@ -57,12 +60,18 @@
             </v-list-item>
           </template>
           <v-list light dense>
-            <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(selectedTask, status)">
-              <v-list-item-icon class="mr-2">
-                <status-icon small :status="status.code"></status-icon>
-              </v-list-item-icon>
-              <v-list-item-title>{{ status.name }}</v-list-item-title>
-            </v-list-item>
+            <v-list-item-group :value="statusList.findIndex((item) => item.code === selectedTask.status)">
+              <v-list-item
+                v-for="(status, index) in statusList"
+                :key="index"
+                @click="changeStatus(selectedTask, status)"
+              >
+                <v-list-item-icon class="mr-2">
+                  <status-icon small :status="status.code"></status-icon>
+                </v-list-item-icon>
+                <v-list-item-title>{{ status.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
         </v-menu>
 
@@ -167,5 +176,8 @@ export default {
 <style lang="scss" scoped>
 .task-list {
   margin: 60px auto 160px auto;
+  .selecting {
+    background-color: var(--v-primary-lighten2);
+  }
 }
 </style>

@@ -11,10 +11,8 @@
       </template>
 
       <v-list>
-        <v-list-item v-for="(colorItem, index) in THEME.COLORS" :key="index">
-          <v-list-item-title>
-            <v-btn small fab elevation="0" :color="colorItem.primary" @click="selectColor(colorItem)"></v-btn
-          ></v-list-item-title>
+        <v-list-item v-for="(colorItem, index) in THEME.COLORS" :key="index" @click="selectColor(colorItem)">
+          <v-list-item-title> <v-btn small fab elevation="0" :color="colorItem.primary"></v-btn></v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -29,9 +27,13 @@
       </template>
 
       <v-list>
-        <v-list-item v-for="(backgroundItem, index) in THEME.BACKGROUNDS" :key="index">
+        <v-list-item
+          v-for="(backgroundItem, index) in THEME.BACKGROUNDS"
+          :key="index"
+          @click="selectBackground(backgroundItem)"
+        >
           <v-list-item-title>
-            <v-btn color="primary" small fab elevation="0" @click="selectBackground(backgroundItem)">
+            <v-btn color="primary" small fab elevation="0">
               <v-avatar size="40">
                 <v-img :src="backgroundItem.path" alt="background"></v-img>
               </v-avatar>

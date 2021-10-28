@@ -13,12 +13,14 @@
         </v-tooltip>
       </template>
       <v-list light dense>
-        <v-list-item v-for="(priority, index) in priorityList" :key="index" @click="changePriority(task, priority)">
-          <v-list-item-icon class="mr-2">
-            <priority-icon small :priority="priority.code"></priority-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ priority.name }}</v-list-item-title>
-        </v-list-item>
+        <v-list-item-group :value="priorityList.findIndex((item) => item.code === task.priority)">
+          <v-list-item v-for="(priority, index) in priorityList" :key="index" @click="changePriority(task, priority)">
+            <v-list-item-icon class="mr-2">
+              <priority-icon small :priority="priority.code"></priority-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ priority.name }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-menu>
 
@@ -35,12 +37,14 @@
         </v-tooltip>
       </template>
       <v-list light dense>
-        <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(task, status)">
-          <v-list-item-icon class="mr-2">
-            <status-icon small :status="status.code"></status-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ status.name }}</v-list-item-title>
-        </v-list-item>
+        <v-list-item-group :value="statusList.findIndex((item) => item.code === task.status)">
+          <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(task, status)">
+            <v-list-item-icon class="mr-2">
+              <status-icon small :status="status.code"></status-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ status.name }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-menu>
 
