@@ -82,7 +82,7 @@
               <v-list-item-icon class="mr-2">
                 <v-icon small>mdi-calendar</v-icon>
               </v-list-item-icon>
-              <v-list-item-title>Due date</v-list-item-title>
+              <v-list-item-title>Change due date...</v-list-item-title>
             </v-list-item>
           </template>
           <v-date-picker

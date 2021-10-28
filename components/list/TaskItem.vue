@@ -63,8 +63,17 @@
       <template #activator="{ on: menu }">
         <v-tooltip bottom>
           <template #activator="{ on: tooltip }">
-            <v-btn class="mr-2" text outlined rounded small light v-on="{ ...tooltip, ...menu }">
-              <v-icon small left>mdi-calendar</v-icon>
+            <v-btn
+              class="justify-start mr-2"
+              width="130"
+              text
+              outlined
+              rounded
+              small
+              light
+              v-on="{ ...tooltip, ...menu }"
+            >
+              <due-date-icon :due-date="task.dueDate" small left></due-date-icon>
               <span>{{ $formatDate(new Date(task.dueDate)) }}</span>
             </v-btn>
           </template>
@@ -111,10 +120,11 @@
 import { TASK } from '~/constants/task.js'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
 import StatusIcon from '~/components/common/StatusIcon.vue'
+import DueDateIcon from '~/components/common/DueDateIcon.vue'
 
 export default {
   name: 'TaskItem',
-  components: { PriorityIcon, StatusIcon },
+  components: { PriorityIcon, StatusIcon, DueDateIcon },
   props: {
     task: {
       type: Object,
