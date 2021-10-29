@@ -21,11 +21,11 @@ export const mutations = {
   },
   changePriority(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], priority: params.priority.code })
+    Object.assign(state.tasks[index], { ...state.tasks[index], priority: params.priority })
   },
   changeStatus(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], status: params.status.code })
+    Object.assign(state.tasks[index], { ...state.tasks[index], status: params.status })
   },
   changeDueDate(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
@@ -69,9 +69,11 @@ export const actions = {
         _created: date.toLocaleString(),
         _updated: date.toLocaleString(),
         id: uuidv1(),
-        priority: TASK.PRIORITY.NO_PRIORITY.code,
-        status: TASK.STATUS.BACKLOG.code,
-        content: newTaskValidated
+        priority: { ...TASK.PRIORITY.NO_PRIORITY },
+        status: { ...TASK.STATUS.BACKLOG },
+        content: newTaskValidated,
+        dueDate: '',
+        project: {}
       }
 
       commit('addNewTask', { task })

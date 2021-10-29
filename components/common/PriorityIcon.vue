@@ -8,13 +8,13 @@ export default {
   name: 'PriorityIcon',
   props: {
     priority: {
-      type: String,
-      default: ''
+      type: Object,
+      default: undefined
     }
   },
   computed: {
     icon() {
-      switch (this.priority) {
+      switch (this.priority?.code) {
         case TASK.PRIORITY.NO_PRIORITY.code:
           return { type: 'mdi-dots-horizontal' }
         case TASK.PRIORITY.LOW.code:

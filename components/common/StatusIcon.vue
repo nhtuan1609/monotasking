@@ -8,13 +8,13 @@ export default {
   name: 'StatusIcon',
   props: {
     status: {
-      type: String,
-      default: ''
+      type: Object,
+      default: undefined
     }
   },
   computed: {
     icon() {
-      switch (this.status) {
+      switch (this.status?.code) {
         case TASK.STATUS.BACKLOG.code:
           return { type: 'mdi-selection-ellipse', color: '' }
         case TASK.STATUS.TODO.code:

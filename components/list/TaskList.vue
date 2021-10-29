@@ -21,33 +21,6 @@
       offset-y
     >
       <v-list light dense>
-        <!-- change priority -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
-          <template #activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" v-on="on">
-              <v-list-item-icon class="mr-2">
-                <v-icon small>mdi-signal-cellular-3</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Priority</v-list-item-title>
-              <v-icon small>mdi-menu-right</v-icon>
-            </v-list-item>
-          </template>
-          <v-list light dense>
-            <v-list-item-group :value="priorityList.findIndex((item) => item.code === selectedTask.priority)">
-              <v-list-item
-                v-for="(priority, index) in priorityList"
-                :key="index"
-                @click="changePriority(selectedTask, priority)"
-              >
-                <v-list-item-icon class="mr-2">
-                  <priority-icon small :priority="priority.code"></priority-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ priority.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-menu>
-
         <!-- change status -->
         <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
@@ -60,16 +33,49 @@
             </v-list-item>
           </template>
           <v-list light dense>
-            <v-list-item-group :value="statusList.findIndex((item) => item.code === selectedTask.status)">
+            <v-list-item-group
+              :value="statusList.findIndex((item) => selectedTask.status && item.code === selectedTask.status.code)"
+            >
               <v-list-item
                 v-for="(status, index) in statusList"
                 :key="index"
                 @click="changeStatus(selectedTask, status)"
               >
                 <v-list-item-icon class="mr-2">
-                  <status-icon small :status="status.code"></status-icon>
+                  <status-icon small :status="status"></status-icon>
                 </v-list-item-icon>
                 <v-list-item-title>{{ status.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+
+        <!-- change priority -->
+        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on">
+              <v-list-item-icon class="mr-2">
+                <v-icon small>mdi-signal-cellular-3</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Priority</v-list-item-title>
+              <v-icon small>mdi-menu-right</v-icon>
+            </v-list-item>
+          </template>
+          <v-list light dense>
+            <v-list-item-group
+              :value="
+                priorityList.findIndex((item) => selectedTask.priority && item.code === selectedTask.priority.code)
+              "
+            >
+              <v-list-item
+                v-for="(priority, index) in priorityList"
+                :key="index"
+                @click="changePriority(selectedTask, priority)"
+              >
+                <v-list-item-icon class="mr-2">
+                  <priority-icon small :priority="priority"></priority-icon>
+                </v-list-item-icon>
+                <v-list-item-title>{{ priority.name }}</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -92,7 +98,7 @@
             >
               <v-list-item @click="changeProject(task, undefined)">
                 <v-list-item-icon class="mr-2">
-                  <v-icon small left>mdi-view-grid-outline</v-icon>
+                  <v-icon small>mdi-view-grid-outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>No project</v-list-item-title>
               </v-list-item>
@@ -103,7 +109,7 @@
                 @click="changeProject(selectedTask, project)"
               >
                 <v-list-item-icon class="mr-2">
-                  <v-icon small left>mdi-view-grid-outline</v-icon>
+                  <v-icon small>mdi-view-grid-outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>{{ project.name }}</v-list-item-title>
               </v-list-item>

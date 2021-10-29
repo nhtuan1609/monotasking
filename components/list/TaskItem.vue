@@ -9,14 +9,14 @@
               <priority-icon small :priority="task.priority"></priority-icon>
             </v-btn>
           </template>
-          <span>Set priority</span>
+          <span>{{ task.priority.name }} priority</span>
         </v-tooltip>
       </template>
       <v-list light dense>
-        <v-list-item-group :value="priorityList.findIndex((item) => item.code === task.priority)">
+        <v-list-item-group :value="priorityList.findIndex((item) => item.code === task.priority.code)">
           <v-list-item v-for="(priority, index) in priorityList" :key="index" @click="changePriority(task, priority)">
             <v-list-item-icon class="mr-2">
-              <priority-icon small :priority="priority.code"></priority-icon>
+              <priority-icon small :priority="priority"></priority-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ priority.name }}</v-list-item-title>
           </v-list-item>
@@ -33,14 +33,14 @@
               <status-icon small :status="task.status"></status-icon>
             </v-btn>
           </template>
-          <span>Set status</span>
+          <span>{{ task.status.name }} status</span>
         </v-tooltip>
       </template>
       <v-list light dense>
-        <v-list-item-group :value="statusList.findIndex((item) => item.code === task.status)">
+        <v-list-item-group :value="statusList.findIndex((item) => item.code === task.status.code)">
           <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(task, status)">
             <v-list-item-icon class="mr-2">
-              <status-icon small :status="status.code"></status-icon>
+              <status-icon small :status="status"></status-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ status.name }}</v-list-item-title>
           </v-list-item>
@@ -115,21 +115,22 @@
               }}</span>
             </v-btn>
           </template>
-          <span>Set project</span>
+          <span v-if="task.project && task.project.id">{{ task.project.name }} project</span>
+          <span v-else>No project</span>
         </v-tooltip>
       </template>
       <v-list light dense>
         <v-list-item-group :value="projects.findIndex((item) => task.project && item.id === task.project.id)">
           <v-list-item @click="changeProject(task, undefined)">
             <v-list-item-icon class="mr-2">
-              <v-icon small left>mdi-view-grid-outline</v-icon>
+              <v-icon small>mdi-view-grid-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>No project</v-list-item-title>
           </v-list-item>
 
           <v-list-item v-for="(project, index) in projects" :key="index" @click="changeProject(task, project)">
             <v-list-item-icon class="mr-2">
-              <v-icon small left>mdi-view-grid-outline</v-icon>
+              <v-icon small>mdi-view-grid-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ project.name }}</v-list-item-title>
           </v-list-item>
@@ -140,7 +141,7 @@
     <!-- created date -->
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
-        <v-btn class="created-date" text small outlined :ripple="false" light v-bind="attrs" v-on="on">
+        <v-btn class="created-date" width="100" text small outlined :ripple="false" light v-bind="attrs" v-on="on">
           {{ $formatDate(new Date(task._created)) }}
         </v-btn>
       </template>
@@ -227,13 +228,15 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 6px;
+  font-weight: bold;
 }
 .task .v-btn {
   text-transform: unset;
 }
 .task .created-date {
+  justify-content: flex-end;
+  padding-right: 4px;
   border: none;
-  margin-left: 8px;
   &::before {
     background-color: transparent !important;
   }
