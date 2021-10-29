@@ -24,7 +24,7 @@
         <!-- change priority -->
         <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" v-on="on" @click="$emit('close')">
+            <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
                 <v-icon small>mdi-signal-cellular-3</v-icon>
               </v-list-item-icon>
@@ -51,7 +51,7 @@
         <!-- change status -->
         <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
-            <v-list-item v-bind="attrs" v-on="on" @click="$emit('close')">
+            <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
                 <v-icon small>mdi-circle-slice-4</v-icon>
               </v-list-item-icon>
@@ -70,6 +70,42 @@
                   <status-icon small :status="status.code"></status-icon>
                 </v-list-item-icon>
                 <v-list-item-title>{{ status.name }}</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-menu>
+
+        <!-- change project -->
+        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on">
+              <v-list-item-icon class="mr-2">
+                <v-icon small>mdi-view-grid-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Projects</v-list-item-title>
+              <v-icon small>mdi-menu-right</v-icon>
+            </v-list-item>
+          </template>
+          <v-list light dense>
+            <v-list-item-group
+              :value="projects.findIndex((item) => selectedTask.project && item.id === selectedTask.project.id)"
+            >
+              <v-list-item @click="changeProject(task, undefined)">
+                <v-list-item-icon class="mr-2">
+                  <v-icon small left>mdi-view-grid-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>No project</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item
+                v-for="(project, index) in projects"
+                :key="index"
+                @click="changeProject(selectedTask, project)"
+              >
+                <v-list-item-icon class="mr-2">
+                  <v-icon small left>mdi-view-grid-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>{{ project.name }}</v-list-item-title>
               </v-list-item>
             </v-list-item-group>
           </v-list>
@@ -138,6 +174,9 @@ export default {
     },
     statusList() {
       return Object.values(TASK.STATUS)
+    },
+    projects() {
+      return this.$store.getters['projects/getProjects']
     }
   },
   methods: {
@@ -167,6 +206,10 @@ export default {
     },
     deleteTask(task) {
       this.$store.dispatch('tasks/deleteTask', { task })
+      this.isShowContextMenu = false
+    },
+    changeProject(task, project) {
+      this.$store.dispatch('tasks/changeProject', { task, project })
       this.isShowContextMenu = false
     }
   }

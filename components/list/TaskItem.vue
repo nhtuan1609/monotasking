@@ -94,15 +94,48 @@
     </v-menu>
 
     <!-- project -->
-    <v-tooltip v-if="task.project" bottom>
-      <template #activator="{ on, attrs }">
-        <v-btn class="justify-start" width="140" text outlined rounded small light v-bind="attrs" v-on="on">
-          <v-icon small left>mdi-view-grid-outline</v-icon>
-          <span class="text-truncate" style="max-width: 96px">{{ task.project }}</span>
-        </v-btn>
+    <v-menu transition="scale-transition" offset-y>
+      <template #activator="{ on: menu, attrs }">
+        <v-tooltip bottom>
+          <template #activator="{ on: tooltip }">
+            <v-btn
+              class="justify-start"
+              width="130"
+              text
+              outlined
+              rounded
+              small
+              light
+              v-bind="attrs"
+              v-on="{ ...tooltip, ...menu }"
+            >
+              <v-icon small left>mdi-view-grid-outline</v-icon>
+              <span class="text-truncate" style="max-width: 96px">{{
+                task.project && task.project.id ? task.project.name : 'No project'
+              }}</span>
+            </v-btn>
+          </template>
+          <span>Set project</span>
+        </v-tooltip>
       </template>
-      <span>View {{ task.project }} project</span>
-    </v-tooltip>
+      <v-list light dense>
+        <v-list-item-group :value="projects.findIndex((item) => task.project && item.id === task.project.id)">
+          <v-list-item @click="changeProject(task, undefined)">
+            <v-list-item-icon class="mr-2">
+              <v-icon small left>mdi-view-grid-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>No project</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item v-for="(project, index) in projects" :key="index" @click="changeProject(task, project)">
+            <v-list-item-icon class="mr-2">
+              <v-icon small left>mdi-view-grid-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>{{ project.name }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-menu>
 
     <!-- created date -->
     <v-tooltip bottom>
@@ -149,6 +182,9 @@ export default {
     },
     STATUS() {
       return TASK.STATUS
+    },
+    projects() {
+      return this.$store.getters['projects/getProjects']
     }
   },
   methods: {
@@ -164,6 +200,9 @@ export default {
     clearDueDate(task) {
       this.$store.dispatch('tasks/changeDueDate', { task, dueDate: '' })
       this.datePickerDueDate = false
+    },
+    changeProject(task, project) {
+      this.$store.dispatch('tasks/changeProject', { task, project })
     }
   }
 }
