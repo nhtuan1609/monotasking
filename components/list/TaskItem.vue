@@ -12,16 +12,7 @@
           <span>{{ task.priority.name }} priority</span>
         </v-tooltip>
       </template>
-      <v-list light dense>
-        <v-list-item-group :value="priorityList.findIndex((item) => item.code === task.priority.code)">
-          <v-list-item v-for="(priority, index) in priorityList" :key="index" @click="changePriority(task, priority)">
-            <v-list-item-icon class="mr-2">
-              <priority-icon small :priority="priority"></priority-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ priority.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+      <priority-select-menu :priorities="priorities" :task="task"></priority-select-menu>
     </v-menu>
 
     <!-- status -->
@@ -36,16 +27,7 @@
           <span>{{ task.status.name }} status</span>
         </v-tooltip>
       </template>
-      <v-list light dense>
-        <v-list-item-group :value="statusList.findIndex((item) => item.code === task.status.code)">
-          <v-list-item v-for="(status, index) in statusList" :key="index" @click="changeStatus(task, status)">
-            <v-list-item-icon class="mr-2">
-              <status-icon small :status="status"></status-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ status.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+      <status-select-menu :statuses="statuses" :task="task"></status-select-menu>
     </v-menu>
 
     <!-- content -->
@@ -119,23 +101,7 @@
           <span v-else>No project</span>
         </v-tooltip>
       </template>
-      <v-list light dense>
-        <v-list-item-group :value="projects.findIndex((item) => task.project && item.id === task.project.id)">
-          <v-list-item @click="changeProject(task, undefined)">
-            <v-list-item-icon class="mr-2">
-              <v-icon small>mdi-view-grid-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>No project</v-list-item-title>
-          </v-list-item>
-
-          <v-list-item v-for="(project, index) in projects" :key="index" @click="changeProject(task, project)">
-            <v-list-item-icon class="mr-2">
-              <v-icon small>mdi-view-grid-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>{{ project.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+      <project-select-menu :projects="projects" :task="task"></project-select-menu>
     </v-menu>
 
     <!-- created date -->
@@ -155,10 +121,13 @@ import { TASK } from '~/constants/task.js'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
 import StatusIcon from '~/components/common/StatusIcon.vue'
 import DueDateIcon from '~/components/common/DueDateIcon.vue'
+import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
+import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
+import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
 
 export default {
   name: 'TaskItem',
-  components: { PriorityIcon, StatusIcon, DueDateIcon },
+  components: { PriorityIcon, StatusIcon, DueDateIcon, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu },
   props: {
     task: {
       type: Object,
@@ -172,38 +141,23 @@ export default {
     }
   },
   computed: {
-    priorityList() {
+    priorities() {
       return Object.values(TASK.PRIORITY)
     },
-    PRIORITY() {
-      return TASK.PRIORITY
-    },
-    statusList() {
+    statuses() {
       return Object.values(TASK.STATUS)
-    },
-    STATUS() {
-      return TASK.STATUS
     },
     projects() {
       return this.$store.getters['projects/getProjects']
     }
   },
   methods: {
-    changePriority(task, priority) {
-      this.$store.dispatch('tasks/changePriority', { task, priority })
-    },
-    changeStatus(task, status) {
-      this.$store.dispatch('tasks/changeStatus', { task, status })
-    },
     changeDueDate(task, dueDate) {
       this.$store.dispatch('tasks/changeDueDate', { task, dueDate })
     },
     clearDueDate(task) {
       this.$store.dispatch('tasks/changeDueDate', { task, dueDate: '' })
       this.datePickerDueDate = false
-    },
-    changeProject(task, project) {
-      this.$store.dispatch('tasks/changeProject', { task, project })
     }
   }
 }

@@ -1,21 +1,19 @@
-import { v1 as uuidv1 } from 'uuid'
-
 export const state = () => ({
   projects: [
     {
-      id: uuidv1(),
+      id: '0',
       name: 'Monotasking'
     },
     {
-      id: uuidv1(),
+      id: '1',
       name: 'Ditasking'
     },
     {
-      id: uuidv1(),
+      id: '2',
       name: 'Tritasking'
     },
     {
-      id: uuidv1(),
+      id: '3',
       name: 'Tetratasking'
     }
   ]

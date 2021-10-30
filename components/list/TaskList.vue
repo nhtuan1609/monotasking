@@ -32,22 +32,11 @@
               <v-icon small>mdi-menu-right</v-icon>
             </v-list-item>
           </template>
-          <v-list light dense>
-            <v-list-item-group
-              :value="statusList.findIndex((item) => selectedTask.status && item.code === selectedTask.status.code)"
-            >
-              <v-list-item
-                v-for="(status, index) in statusList"
-                :key="index"
-                @click="changeStatus(selectedTask, status)"
-              >
-                <v-list-item-icon class="mr-2">
-                  <status-icon small :status="status"></status-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ status.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+          <status-select-menu
+            :statuses="statuses"
+            :task="selectedTask"
+            @selected="isShowContextMenu = false"
+          ></status-select-menu>
         </v-menu>
 
         <!-- change priority -->
@@ -61,24 +50,11 @@
               <v-icon small>mdi-menu-right</v-icon>
             </v-list-item>
           </template>
-          <v-list light dense>
-            <v-list-item-group
-              :value="
-                priorityList.findIndex((item) => selectedTask.priority && item.code === selectedTask.priority.code)
-              "
-            >
-              <v-list-item
-                v-for="(priority, index) in priorityList"
-                :key="index"
-                @click="changePriority(selectedTask, priority)"
-              >
-                <v-list-item-icon class="mr-2">
-                  <priority-icon small :priority="priority"></priority-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ priority.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+          <priority-select-menu
+            :priorities="priorities"
+            :task="selectedTask"
+            @selected="isShowContextMenu = false"
+          ></priority-select-menu>
         </v-menu>
 
         <!-- change project -->
@@ -92,29 +68,11 @@
               <v-icon small>mdi-menu-right</v-icon>
             </v-list-item>
           </template>
-          <v-list light dense>
-            <v-list-item-group
-              :value="projects.findIndex((item) => selectedTask.project && item.id === selectedTask.project.id)"
-            >
-              <v-list-item @click="changeProject(task, undefined)">
-                <v-list-item-icon class="mr-2">
-                  <v-icon small>mdi-view-grid-outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>No project</v-list-item-title>
-              </v-list-item>
-
-              <v-list-item
-                v-for="(project, index) in projects"
-                :key="index"
-                @click="changeProject(selectedTask, project)"
-              >
-                <v-list-item-icon class="mr-2">
-                  <v-icon small>mdi-view-grid-outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>{{ project.name }}</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
+          <project-select-menu
+            :projects="projects"
+            :task="selectedTask"
+            @selected="isShowContextMenu = false"
+          ></project-select-menu>
         </v-menu>
 
         <!-- change due date -->
@@ -157,11 +115,12 @@
 import WonderingCard from '~/components/list/WonderingCard.vue'
 import TaskItem from '~/components/list/TaskItem.vue'
 import { TASK } from '~/constants/task.js'
-import PriorityIcon from '~/components/common/PriorityIcon.vue'
-import StatusIcon from '~/components/common/StatusIcon.vue'
+import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
+import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
+import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
 
 export default {
-  components: { WonderingCard, TaskItem, PriorityIcon, StatusIcon },
+  components: { WonderingCard, TaskItem, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu },
   data() {
     return {
       isShowContextMenu: false,
@@ -175,10 +134,10 @@ export default {
     tasks() {
       return this.$store.getters['tasks/getTasks']
     },
-    priorityList() {
+    priorities() {
       return Object.values(TASK.PRIORITY)
     },
-    statusList() {
+    statuses() {
       return Object.values(TASK.STATUS)
     },
     projects() {
@@ -193,14 +152,6 @@ export default {
       this.menuY = event.clientY
       this.isShowContextMenu = true
     },
-    changePriority(task, priority) {
-      this.$store.dispatch('tasks/changePriority', { task, priority })
-      this.isShowContextMenu = false
-    },
-    changeStatus(task, status) {
-      this.$store.dispatch('tasks/changeStatus', { task, status })
-      this.isShowContextMenu = false
-    },
     changeDueDate(task, dueDate) {
       this.$store.dispatch('tasks/changeDueDate', { task, dueDate })
       this.isShowContextMenu = false
@@ -212,10 +163,6 @@ export default {
     },
     deleteTask(task) {
       this.$store.dispatch('tasks/deleteTask', { task })
-      this.isShowContextMenu = false
-    },
-    changeProject(task, project) {
-      this.$store.dispatch('tasks/changeProject', { task, project })
       this.isShowContextMenu = false
     }
   }
