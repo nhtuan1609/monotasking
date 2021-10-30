@@ -6,7 +6,7 @@
         v-for="(task, index) in tasks"
         :key="index"
         :task="task"
-        :class="isShowContextMenu && selectedTask.id === task.id ? 'selecting' : ''"
+        :class="isShowContextMenu && selectedTask.id === task.id ? 'selecting' : isShowContextMenu && 'no-selecting'"
         @contextmenu="(event) => showContextMenu(event, task)"
       ></task-item>
     </div>
@@ -197,6 +197,9 @@ export default {
   margin: 60px auto 160px auto;
   .selecting {
     background-color: var(--v-primary-lighten2);
+  }
+  .no-selecting {
+    background-color: var(--v-primary-lighten5);
   }
 }
 </style>
