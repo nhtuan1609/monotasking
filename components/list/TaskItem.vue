@@ -113,6 +113,31 @@
       </template>
       <span>Created {{ task._created }}</span>
     </v-tooltip>
+
+    <!-- assignee -->
+    <v-menu transition="scale-transition" offset-y>
+      <template #activator="{ on: menu, attrs }">
+        <v-tooltip bottom>
+          <template #activator="{ on: tooltip }">
+            <v-btn icon light small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
+              <v-avatar
+                v-if="task.assignee && task.assignee.id"
+                size="20"
+                :color="task.assignee.color"
+                v-bind="attrs"
+                v-on="{ ...tooltip, ...menu }"
+              >
+                <span class="white--text" style="font-size: 10px">{{ task.assignee.shortName }}</span>
+              </v-avatar>
+              <v-icon v-else size="22" v-bind="attrs" v-on="{ ...tooltip, ...menu }">mdi-account-circle</v-icon>
+            </v-btn>
+          </template>
+          <span v-if="task.assignee && task.assignee.id">Assigned to {{ task.assignee.name }}</span>
+          <span v-else>Unassigned</span>
+        </v-tooltip>
+      </template>
+      <assignee-select-menu :members="members" :task="task"></assignee-select-menu>
+    </v-menu>
   </div>
 </template>
 
@@ -124,10 +149,19 @@ import DueDateIcon from '~/components/common/DueDateIcon.vue'
 import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
+import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
 
 export default {
   name: 'TaskItem',
-  components: { PriorityIcon, StatusIcon, DueDateIcon, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu },
+  components: {
+    PriorityIcon,
+    StatusIcon,
+    DueDateIcon,
+    StatusSelectMenu,
+    PrioritySelectMenu,
+    ProjectSelectMenu,
+    AssigneeSelectMenu
+  },
   props: {
     task: {
       type: Object,
@@ -149,6 +183,9 @@ export default {
     },
     projects() {
       return this.$store.getters['projects/getProjects']
+    },
+    members() {
+      return this.$store.getters['members/getMembers']
     }
   },
   methods: {

@@ -19,6 +19,7 @@
       absolute
       transition="scale-transition"
       offset-y
+      z-index="9"
     >
       <v-list light dense>
         <!-- change status -->
@@ -37,6 +38,24 @@
             :task="selectedTask"
             @selected="isShowContextMenu = false"
           ></status-select-menu>
+        </v-menu>
+
+        <!-- change assignee -->
+        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on">
+              <v-list-item-icon class="mr-2">
+                <v-icon small>mdi-account-arrow-right</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Assignee</v-list-item-title>
+              <v-icon small>mdi-menu-right</v-icon>
+            </v-list-item>
+          </template>
+          <assignee-select-menu
+            :members="members"
+            :task="selectedTask"
+            @selected="isShowContextMenu = false"
+          ></assignee-select-menu>
         </v-menu>
 
         <!-- change priority -->
@@ -118,9 +137,10 @@ import { TASK } from '~/constants/task.js'
 import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
+import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
 
 export default {
-  components: { WonderingCard, TaskItem, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu },
+  components: { WonderingCard, TaskItem, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu, AssigneeSelectMenu },
   data() {
     return {
       isShowContextMenu: false,
@@ -142,6 +162,9 @@ export default {
     },
     projects() {
       return this.$store.getters['projects/getProjects']
+    },
+    members() {
+      return this.$store.getters['members/getMembers']
     }
   },
   methods: {
