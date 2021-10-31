@@ -39,6 +39,10 @@ export const mutations = {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
     Object.assign(state.tasks[index], { ...state.tasks[index], assignee: params.assignee })
   },
+  changeName(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    Object.assign(state.tasks[index], { ...state.tasks[index], name: params.task.name })
+  },
   loadDataFromLocalStorage(state) {
     try {
       const tasks = localStorage.getItem('tasks')
@@ -66,23 +70,20 @@ export const actions = {
     commit('setCurrentTask', params)
   },
   addNewTask({ commit }, params) {
-    const newTaskValidated = params.newTaskContent.trim()
-    if (newTaskValidated) {
-      const date = new Date()
-      const task = {
-        _created: date.toLocaleString(),
-        _updated: date.toLocaleString(),
-        id: uuidv1(),
-        priority: { ...TASK.PRIORITY.NO_PRIORITY },
-        status: { ...TASK.STATUS.BACKLOG },
-        content: newTaskValidated,
-        dueDate: '',
-        project: {},
-        assignee: {}
-      }
-
-      commit('addNewTask', { task })
+    const date = new Date()
+    const task = {
+      _created: date.toLocaleString(),
+      _updated: date.toLocaleString(),
+      id: uuidv1(),
+      priority: { ...TASK.PRIORITY.NO_PRIORITY },
+      status: { ...TASK.STATUS.BACKLOG },
+      name: params.name,
+      dueDate: '',
+      project: {},
+      assignee: {}
     }
+
+    commit('addNewTask', { task })
   },
   deleteTask({ commit }, params) {
     commit('deleteTask', params)
@@ -101,6 +102,9 @@ export const actions = {
   },
   changeAssignee({ commit }, params) {
     commit('changeAssignee', params)
+  },
+  changeName({ commit }, params) {
+    commit('changeName', params)
   },
   loadDataFromLocalStorage({ commit }) {
     commit('loadDataFromLocalStorage')

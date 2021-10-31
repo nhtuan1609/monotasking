@@ -117,6 +117,29 @@
           </v-date-picker>
         </v-dialog>
 
+        <!-- rename -->
+        <v-dialog v-model="isShowRenameDialog" width="500">
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on">
+              <v-list-item-icon class="mr-2">
+                <v-icon small>mdi-pencil</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Rename...</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-card light>
+            <v-card-title>Task name</v-card-title>
+            <v-card-text>
+              <v-text-field v-model="selectedTask.name" outlined dense autofocus hide-details></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text plain @click="cancelRename">Cancel</v-btn>
+              <v-btn text plain color="primary" @click="changeName(selectedTask)">Confirm</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <!-- delete task -->
         <v-divider class="my-2"></v-divider>
         <v-list-item @click="deleteTask(selectedTask)">
@@ -147,7 +170,9 @@ export default {
       menuX: 0,
       menuY: 0,
       selectedTask: {},
-      datePickerDueDate: false
+      datePickerDueDate: false,
+      isShowRenameDialog: false,
+      newTaskContent: ''
     }
   },
   computed: {
@@ -165,6 +190,13 @@ export default {
     },
     members() {
       return this.$store.getters['members/getMembers']
+    }
+  },
+  watch: {
+    isShowRenameDialog(newValue) {
+      if (newValue) {
+        this.newTaskContent = this.selectedTask.content
+      }
     }
   },
   methods: {
@@ -187,6 +219,18 @@ export default {
     deleteTask(task) {
       this.$store.dispatch('tasks/deleteTask', { task })
       this.isShowContextMenu = false
+    },
+    cancelRename() {
+      this.isShowRenameDialog = false
+      this.isShowContextMenu = false
+    },
+    changeName(task) {
+      const validatedName = task.name.trim()
+      if (validatedName) {
+        this.$store.dispatch('tasks/changeName', { task })
+      }
+      this.isShowRenameDialog = false
+      this.isShowContextMenu = false
     }
   }
 }
@@ -200,6 +244,14 @@ export default {
   }
   .no-selecting {
     background-color: var(--v-primary-lighten5);
+  }
+}
+
+.task-content-chip {
+  text-transform: unset;
+  justify-content: flex-start;
+  &::before {
+    background-color: transparent !important;
   }
 }
 </style>

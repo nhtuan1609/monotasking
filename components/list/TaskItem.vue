@@ -31,7 +31,7 @@
     </v-menu>
 
     <!-- content -->
-    <span class="task-content">{{ task.content }}</span>
+    <span class="task-content">{{ task.name }}</span>
 
     <!-- due date -->
     <v-menu

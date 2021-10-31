@@ -2,7 +2,7 @@
   <div>
     <v-container class="pt-0">
       <v-text-field
-        v-model="newTaskContent"
+        v-model="taskName"
         class="new-task"
         background-color="primary"
         label="Add a task"
@@ -29,15 +29,18 @@ export default {
   data() {
     return {
       isAddingNewTask: false,
-      newTaskContent: ''
+      taskName: ''
     }
   },
   methods: {
     addNewTask() {
-      this.$store.dispatch('tasks/addNewTask', {
-        newTaskContent: this.newTaskContent
-      })
-      this.newTaskContent = ''
+      const validatedName = this.taskName.trim()
+      if (validatedName) {
+        this.$store.dispatch('tasks/addNewTask', {
+          name: this.taskName
+        })
+      }
+      this.taskName = ''
     }
   }
 }
