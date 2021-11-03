@@ -3,7 +3,7 @@
     <v-list-item-group :value="projectIndex">
       <v-list-item @click="changeProject(task)">
         <v-list-item-icon class="mr-2">
-          <v-icon small>mdi-view-grid-outline</v-icon>
+          <v-icon small>mdi-cancel</v-icon>
         </v-list-item-icon>
         <v-list-item-title>No project</v-list-item-title>
       </v-list-item>

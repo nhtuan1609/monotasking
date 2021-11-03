@@ -33,6 +33,31 @@
     <!-- content -->
     <span class="task-content">{{ task.name }}</span>
 
+    <!-- label -->
+    <v-menu v-if="task.label && task.label.id" transition="scale-transition" offset-y>
+      <template #activator="{ on: menu, attrs }">
+        <v-tooltip bottom>
+          <template #activator="{ on: tooltip }">
+            <v-btn
+              class="justify-start mr-2"
+              text
+              outlined
+              rounded
+              small
+              light
+              v-bind="attrs"
+              v-on="{ ...tooltip, ...menu }"
+            >
+              <v-avatar :color="task.label.color" size="10"></v-avatar>
+              <span class="text-truncate ml-1" style="max-width: 96px">{{ task.label.name }}</span>
+            </v-btn>
+          </template>
+          <span>{{ task.label.name }} Label</span>
+        </v-tooltip>
+      </template>
+      <label-select-menu :labels="labels" :task="task"></label-select-menu>
+    </v-menu>
+
     <!-- due date -->
     <v-menu
       v-if="task.dueDate"
@@ -150,6 +175,7 @@ import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
 import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
+import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
 
 export default {
   name: 'TaskItem',
@@ -160,7 +186,8 @@ export default {
     StatusSelectMenu,
     PrioritySelectMenu,
     ProjectSelectMenu,
-    AssigneeSelectMenu
+    AssigneeSelectMenu,
+    LabelSelectMenu
   },
   props: {
     task: {
@@ -186,6 +213,9 @@ export default {
     },
     members() {
       return this.$store.getters['members/getMembers']
+    },
+    labels() {
+      return this.$store.getters['labels/getLabels']
     }
   },
   methods: {
@@ -216,6 +246,7 @@ export default {
 }
 .task .task-content {
   flex: 1;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 0 6px;

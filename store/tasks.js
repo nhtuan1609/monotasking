@@ -43,6 +43,10 @@ export const mutations = {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
     Object.assign(state.tasks[index], { ...state.tasks[index], name: params.task.name })
   },
+  changeLabel(state, params) {
+    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
+    Object.assign(state.tasks[index], { ...state.tasks[index], label: params.label })
+  },
   loadDataFromLocalStorage(state) {
     try {
       const tasks = localStorage.getItem('tasks')
@@ -80,7 +84,8 @@ export const actions = {
       name: params.name,
       dueDate: '',
       project: {},
-      assignee: {}
+      assignee: {},
+      label: {}
     }
 
     commit('addNewTask', { task })
@@ -105,6 +110,9 @@ export const actions = {
   },
   changeName({ commit }, params) {
     commit('changeName', params)
+  },
+  changeLabel({ commit }, params) {
+    commit('changeLabel', params)
   },
   loadDataFromLocalStorage({ commit }) {
     commit('loadDataFromLocalStorage')

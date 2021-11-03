@@ -76,6 +76,24 @@
           ></priority-select-menu>
         </v-menu>
 
+        <!-- change label -->
+        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+          <template #activator="{ on, attrs }">
+            <v-list-item v-bind="attrs" v-on="on">
+              <v-list-item-icon class="mr-2">
+                <v-icon small>mdi-label</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>Labels</v-list-item-title>
+              <v-icon small>mdi-menu-right</v-icon>
+            </v-list-item>
+          </template>
+          <label-select-menu
+            :labels="labels"
+            :task="selectedTask"
+            @selected="isShowContextMenu = false"
+          ></label-select-menu>
+        </v-menu>
+
         <!-- change project -->
         <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
@@ -162,9 +180,18 @@ import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
 import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
+import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
 
 export default {
-  components: { WonderingCard, TaskItem, StatusSelectMenu, PrioritySelectMenu, ProjectSelectMenu, AssigneeSelectMenu },
+  components: {
+    WonderingCard,
+    TaskItem,
+    StatusSelectMenu,
+    PrioritySelectMenu,
+    ProjectSelectMenu,
+    AssigneeSelectMenu,
+    LabelSelectMenu
+  },
   data() {
     return {
       isShowContextMenu: false,
@@ -191,6 +218,9 @@ export default {
     },
     members() {
       return this.$store.getters['members/getMembers']
+    },
+    labels() {
+      return this.$store.getters['labels/getLabels']
     }
   },
   watch: {
