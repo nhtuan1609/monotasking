@@ -127,15 +127,16 @@
               <v-list-item-title>Rename...</v-list-item-title>
             </v-list-item>
           </template>
-          <v-card light>
-            <v-card-title>Task name</v-card-title>
-            <v-card-text>
+          <v-card light class="pa-0">
+            <v-card-title class="primary white--text py-2 px-4">Change task name</v-card-title>
+            <v-card-text class="pa-4">
+              <h4>New name</h4>
               <v-text-field v-model="selectedTask.name" outlined dense autofocus hide-details></v-text-field>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions class="pa-4">
               <v-spacer></v-spacer>
-              <v-btn text plain @click="cancelRename">Cancel</v-btn>
-              <v-btn text plain color="primary" @click="changeName(selectedTask)">Confirm</v-btn>
+              <v-btn text outlined plain @click="cancelRename">Cancel</v-btn>
+              <v-btn elevation="0" color="primary" @click="changeName(selectedTask)">Confirm</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
