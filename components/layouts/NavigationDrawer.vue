@@ -3,7 +3,7 @@
     <v-list-item style="height: 60px">
       <v-list-item-content>
         <v-list-item-title>
-          <div class="app-name">Monotasking</div>
+          <div class="app-name" @click="$router.push('/')">Monotasking</div>
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
@@ -69,5 +69,6 @@ export default {
   font-size: 30px;
   font-weight: bold;
   text-align: center;
+  cursor: pointer;
 }
 </style>

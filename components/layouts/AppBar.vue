@@ -1,7 +1,7 @@
 <template>
   <v-app-bar class="primary" fixed app height="60">
     <v-app-bar-nav-icon @click.stop="$emit('toggleDrawer')" />
-    <v-toolbar-title v-text="title" />
+    <v-toolbar-title style="cursor: pointer" @click="$router.push('/')" v-text="title" />
 
     <v-spacer />
 

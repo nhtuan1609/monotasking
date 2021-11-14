@@ -100,6 +100,10 @@ export default {
 </script>
 
 <style lang="scss">
+:root {
+  --height-application-header: 60px;
+  --height-page-title: 50px;
+}
 html {
   overflow-y: auto;
   &::-webkit-scrollbar {

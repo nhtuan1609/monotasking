@@ -1,6 +1,6 @@
 <template>
-  <v-toolbar class="tool-bar" height="60" elevation="0">
-    <h2>{{ title }}</h2>
+  <v-toolbar class="tool-bar" elevation="0" height="50">
+    <h3>{{ title }}</h3>
     <v-spacer></v-spacer>
     <slot name="rightArea"></slot>
   </v-toolbar>

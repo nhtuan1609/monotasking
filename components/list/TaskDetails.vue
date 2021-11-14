@@ -66,7 +66,7 @@ export default {
 
 <style lang="scss" scoped>
 .max-height {
-  max-height: calc(100vh - 144px);
+  max-height: calc(100vh - (var(--height-application-header) + var(--height-page-title) + 24px));
   overflow-y: auto;
 }
 </style>
