@@ -2,24 +2,16 @@ import { v1 as uuidv1 } from 'uuid'
 import { TASK } from '~/constants/task'
 
 export const state = () => ({
-  tasks: [],
-  currentTask: {}
+  tasks: []
 })
 
 export const getters = {
   getTasks(state) {
     return state.tasks
-  },
-  getCurrentTask(state) {
-    return state.currentTask
   }
 }
 
 export const mutations = {
-  setCurrentTaskRef(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.taskId)
-    Object.assign(state.currentTask, { ...state.tasks[index] })
-  },
   addNewTask(state, params) {
     state.tasks.unshift(params.task)
   },
@@ -78,9 +70,6 @@ export const mutations = {
 }
 
 export const actions = {
-  setCurrentTaskRef({ commit }, params) {
-    commit('setCurrentTaskRef', params)
-  },
   addNewTask({ commit }, params) {
     const date = new Date()
     const task = {

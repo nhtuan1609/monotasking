@@ -103,6 +103,8 @@ export default {
 :root {
   --height-application-header: 60px;
   --height-page-title: 50px;
+
+  --background-color: #fafafa;
 }
 html {
   overflow-y: auto;
