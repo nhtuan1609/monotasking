@@ -102,13 +102,6 @@ export default {
 <style lang="scss">
 html {
   overflow-y: auto;
-}
-body {
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-
   &::-webkit-scrollbar {
     width: 10px;
     background-color: transparent;
@@ -121,6 +114,12 @@ body {
     background-color: var(--v-_base-darken3);
     border-radius: 4px;
   }
+}
+body {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 </style>
 

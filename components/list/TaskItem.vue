@@ -1,5 +1,9 @@
 <template>
-  <div class="task" @contextmenu="(event) => $emit('contextmenu', event)">
+  <div
+    class="task"
+    @contextmenu="(event) => $emit('contextmenu', event)"
+    @click="$router.push(`/myTasks/list/${task.id}`)"
+  >
     <!-- priority -->
     <v-menu transition="scale-transition" offset-y>
       <template #activator="{ on: menu, attrs }">

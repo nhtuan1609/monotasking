@@ -183,6 +183,7 @@ import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
 import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
 
 export default {
+  name: 'TaskList',
   components: {
     WonderingCard,
     TaskItem,

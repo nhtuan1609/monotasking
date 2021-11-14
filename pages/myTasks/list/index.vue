@@ -37,12 +37,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.tool-bar {
-  background-color: rgba(0, 0, 0, 0.2) !important;
-  backdrop-filter: blur(4px);
-  color: white;
-}
-
 .new-task-container {
   position: fixed;
   z-index: 1;
