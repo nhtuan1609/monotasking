@@ -22,7 +22,10 @@ export default {
   css: ['@/assets/css/main.scss'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [{ src: '~/plugins/dateHelper.js', ssr: false }],
+  plugins: [
+    { src: '~/plugins/dateHelper.js', ssr: false },
+    { src: '~/plugins/firebase.js', ssr: false }
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: false,
@@ -71,5 +74,16 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {},
+
+  // env information using to connect width realtime database
+  env: {
+    API_KEY: 'AIzaSyBqbOBPePEyTvabTrKDZe8b1ZNPq56TS48',
+    AUTH_DOMAIN: 'monotasking-380c8.firebaseapp.com',
+    PROJECT_ID: 'monotasking-380c8',
+    STORAGE_BUCKET: 'monotasking-380c8.appspot.com',
+    MESSAGING_SENDER_ID: '242889508859',
+    APP_ID: '1:242889508859:web:11156011714f21ef8e2d5e',
+    MEASUREMENT_ID: 'G-8JHERJPLWR'
+  }
 }

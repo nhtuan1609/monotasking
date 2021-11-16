@@ -1,5 +1,7 @@
 import { v1 as uuidv1 } from 'uuid'
 import { TASK } from '~/constants/task'
+import firebase from '~/plugins/firebase'
+const db = firebase.firestore()
 
 export const state = () => ({
   tasks: []
@@ -14,6 +16,8 @@ export const getters = {
 export const mutations = {
   addNewTask(state, params) {
     state.tasks.unshift(params.task)
+    const docId = db.collection('tasks').doc().id
+    db.collection('tasks').doc(docId).set(params.task)
   },
   deleteTask(state, params) {
     const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
