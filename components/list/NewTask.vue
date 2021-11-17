@@ -10,7 +10,7 @@
         solo
         @focus="isAddingNewTask = true"
         @blur="isAddingNewTask = false"
-        @keydown.enter="addNewTask()"
+        @keydown.enter="addNewTask"
       >
         <template #prepend-inner>
           <v-btn icon>

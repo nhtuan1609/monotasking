@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="!isLoading">
     <wondering-card v-if="tasks.length === 0" class="task-list"></wondering-card>
     <div v-else class="task-list">
       <task-item
@@ -201,7 +201,8 @@ export default {
       selectedTask: {},
       datePickerDueDate: false,
       isShowRenameDialog: false,
-      newTaskContent: ''
+      newTaskContent: '',
+      isLoading: true
     }
   },
   computed: {
@@ -229,6 +230,9 @@ export default {
       if (newValue) {
         this.newTaskContent = this.selectedTask.content
       }
+    },
+    tasks() {
+      this.isLoading = false
     }
   },
   created() {

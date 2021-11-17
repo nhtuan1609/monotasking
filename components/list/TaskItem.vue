@@ -120,7 +120,8 @@
               v-bind="attrs"
               v-on="{ ...tooltip, ...menu }"
             >
-              <v-icon small left>mdi-view-grid-outline</v-icon>
+              <v-icon v-if="task.project && task.project.id" small left>mdi-view-grid-outline</v-icon>
+              <v-icon v-else small left>mdi-cancel</v-icon>
               <span class="text-truncate" style="max-width: 96px">{{
                 task.project && task.project.id ? task.project.name : 'No project'
               }}</span>
@@ -137,10 +138,10 @@
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
         <v-btn class="created-date" width="100" text small outlined :ripple="false" light v-bind="attrs" v-on="on">
-          {{ $formatDate(task._created.toDate()) }}
+          {{ $formatDate(task._created ? task._created.toDate() : '') }}
         </v-btn>
       </template>
-      <span>Created {{ task._created.toDate().toLocaleString() }}</span>
+      <span>Created {{ task._created ? task._created.toDate().toLocaleString() : '' }}</span>
     </v-tooltip>
 
     <!-- assignee -->

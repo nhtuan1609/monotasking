@@ -19,10 +19,10 @@ export const getters = {
 
 export const actions = {
   setTasksRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
-    bindFirestoreRef('tasks', db.collection('tasks'))
+    bindFirestoreRef('tasks', db.collection('tasks').orderBy('_created', 'desc'), { wait: true })
   }),
   setCurrentTaskRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
-    bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id))
+    bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id), { wait: true })
   }),
 
   addNewTask({ state, rootGetters }, params) {

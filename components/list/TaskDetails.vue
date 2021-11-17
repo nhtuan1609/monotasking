@@ -1,6 +1,6 @@
 <template>
   <div class="pa-3">
-    <v-row v-if="task">
+    <v-row v-if="!isLoading">
       <v-col cols="12" md="8">
         <v-card light class="max-height customized-scrollbar background">
           <v-card-title>{{ task.name }}</v-card-title>
@@ -92,6 +92,7 @@
             </v-menu>
           </v-card-text>
 
+          <!-- label -->
           <v-card-text class="details-item">
             <span class="details-item__title">Label</span>
             <v-menu transition="scale-transition" offset-y>
@@ -99,9 +100,10 @@
                 <v-tooltip bottom>
                   <template #activator="{ on: tooltip }">
                     <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <v-avatar class="mr-2" :color="task.label.color" size="10"></v-avatar>
-                      <span class="text-truncate ml-1" style="max-width: 96px">{{
-                        task.label.name ? task.label.name : 'No label'
+                      <v-avatar v-if="task.label.name" class="mr-2" :color="task.label.color" size="10"></v-avatar>
+                      <v-icon v-else small left>mdi-plus</v-icon>
+                      <span class="text-truncate" style="max-width: 140px">{{
+                        task.label.name ? task.label.name : 'Add label'
                       }}</span>
                     </v-btn>
                   </template>
@@ -110,9 +112,6 @@
               </template>
               <label-select-menu :labels="labels" :task="task"></label-select-menu>
             </v-menu>
-          </v-card-text>
-          <v-card-text>
-            <v-divider></v-divider>
           </v-card-text>
 
           <!-- project -->
@@ -123,9 +122,10 @@
                 <v-tooltip bottom>
                   <template #activator="{ on: tooltip }">
                     <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <v-icon small left>mdi-view-grid-outline</v-icon>
+                      <v-icon v-if="task.project && task.project.id" small left>mdi-view-grid-outline</v-icon>
+                      <v-icon v-else small left>mdi-plus</v-icon>
                       <span class="text-truncate" style="max-width: 140px">{{
-                        task.project && task.project.id ? task.project.name : 'No project'
+                        task.project && task.project.id ? task.project.name : 'Add project'
                       }}</span>
                     </v-btn>
                   </template>
@@ -169,6 +169,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      isLoading: true
+    }
+  },
   computed: {
     task() {
       return this.$store.getters['tasks/getCurrentTask']
@@ -187,6 +192,11 @@ export default {
     },
     projects() {
       return this.$store.getters['projects/getProjects']
+    }
+  },
+  watch: {
+    task() {
+      this.isLoading = false
     }
   },
   created() {
