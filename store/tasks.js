@@ -1,85 +1,36 @@
-import { v1 as uuidv1 } from 'uuid'
+import { firestoreAction } from 'vuexfire'
 import { TASK } from '~/constants/task'
 import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 
 export const state = () => ({
-  tasks: []
+  tasks: [],
+  currentTask: {}
 })
 
 export const getters = {
   getTasks(state) {
     return state.tasks
-  }
-}
-
-export const mutations = {
-  addNewTask(state, params) {
-    state.tasks.unshift(params.task)
-    const docId = db.collection('tasks').doc().id
-    db.collection('tasks').doc(docId).set(params.task)
   },
-  deleteTask(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    state.tasks.splice(index, 1)
-  },
-  changePriority(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], priority: params.priority })
-  },
-  changeStatus(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], status: params.status })
-  },
-  changeDueDate(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], dueDate: params.dueDate })
-  },
-  changeProject(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], project: params.project })
-  },
-  changeAssignee(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], assignee: params.assignee })
-  },
-  changeName(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], name: params.task.name })
-  },
-  changeLabel(state, params) {
-    const index = state.tasks.findIndex((taskItem) => taskItem.id === params.task.id)
-    Object.assign(state.tasks[index], { ...state.tasks[index], label: params.label })
-  },
-  loadDataFromLocalStorage(state) {
-    try {
-      const tasks = localStorage.getItem('tasks')
-      state.tasks = tasks ? JSON.parse(tasks) : []
-    } catch (e) {
-      localStorage.removeItem('tasks')
-      // eslint-disable-next-line no-console
-      console.log('Load data from local storage failed.')
-    }
-  },
-  saveDataToLocalStorage(state) {
-    try {
-      const parsedTasks = JSON.stringify(state.tasks)
-      localStorage.setItem('tasks', parsedTasks)
-    } catch (e) {
-      localStorage.removeItem('tasks')
-      // eslint-disable-next-line no-console
-      console.log('save data to local storage failed.')
-    }
+  getCurrentTask(state) {
+    return state.currentTask
   }
 }
 
 export const actions = {
-  addNewTask({ commit }, params) {
-    const date = new Date()
-    const task = {
-      _created: date.toLocaleString(),
-      _updated: date.toLocaleString(),
-      id: uuidv1(),
+  setTasksRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
+    bindFirestoreRef('tasks', db.collection('tasks'))
+  }),
+  setCurrentTaskRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
+    bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id))
+  }),
+
+  addNewTask({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc()
+    const data = {
+      _created: firebase.firestore.FieldValue.serverTimestamp(),
+      _updated: firebase.firestore.FieldValue.serverTimestamp(),
+      id: ref.id,
       priority: { ...TASK.PRIORITY.NO_PRIORITY },
       status: { ...TASK.STATUS.BACKLOG },
       name: params.name,
@@ -89,36 +40,38 @@ export const actions = {
       label: {}
     }
 
-    commit('addNewTask', { task })
+    ref.set(data)
   },
-  deleteTask({ commit }, params) {
-    commit('deleteTask', params)
+  deleteTask({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.delete()
   },
-  changePriority({ commit }, params) {
-    commit('changePriority', params)
+  changePriority({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ priority: params.priority })
   },
-  changeStatus({ commit }, params) {
-    commit('changeStatus', params)
+  changeStatus({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ status: params.status })
   },
-  changeDueDate({ commit }, params) {
-    commit('changeDueDate', params)
+  changeDueDate({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ dueDate: params.dueDate })
   },
-  changeProject({ commit }, params) {
-    commit('changeProject', params)
+  changeProject({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ project: params.project })
   },
-  changeAssignee({ commit }, params) {
-    commit('changeAssignee', params)
+  changeAssignee({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ assignee: params.assignee })
   },
-  changeName({ commit }, params) {
-    commit('changeName', params)
+  changeName({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ name: params.name })
   },
-  changeLabel({ commit }, params) {
-    commit('changeLabel', params)
-  },
-  loadDataFromLocalStorage({ commit }) {
-    commit('loadDataFromLocalStorage')
-  },
-  saveDataToLocalStorage({ commit }) {
-    commit('saveDataToLocalStorage')
+  changeLabel({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    ref.update({ label: params.label })
   }
 }

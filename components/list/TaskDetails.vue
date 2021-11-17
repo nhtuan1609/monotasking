@@ -1,6 +1,6 @@
 <template>
   <div class="pa-3">
-    <v-row>
+    <v-row v-if="task">
       <v-col cols="12" md="8">
         <v-card light class="max-height customized-scrollbar background">
           <v-card-title>{{ task.name }}</v-card-title>
@@ -171,7 +171,7 @@ export default {
   },
   computed: {
     task() {
-      return this.$store.getters['tasks/getTasks'].find((tasks) => tasks.id === this.taskId) ?? {}
+      return this.$store.getters['tasks/getCurrentTask']
     },
     statuses() {
       return Object.values(TASK.STATUS)
@@ -188,6 +188,9 @@ export default {
     projects() {
       return this.$store.getters['projects/getProjects']
     }
+  },
+  created() {
+    this.$store.dispatch('tasks/setCurrentTaskRef', { id: this.taskId })
   }
 }
 </script>

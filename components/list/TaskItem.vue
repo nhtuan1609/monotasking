@@ -137,10 +137,10 @@
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
         <v-btn class="created-date" width="100" text small outlined :ripple="false" light v-bind="attrs" v-on="on">
-          {{ $formatDate(new Date(task._created)) }}
+          {{ $formatDate(task._created.toDate()) }}
         </v-btn>
       </template>
-      <span>Created {{ task._created }}</span>
+      <span>Created {{ task._created.toDate().toLocaleString() }}</span>
     </v-tooltip>
 
     <!-- assignee -->

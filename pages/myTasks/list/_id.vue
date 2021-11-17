@@ -27,14 +27,6 @@ export default {
     taskId() {
       return this.$route.params.id
     }
-  },
-  beforeMount() {
-    this.loadDataFromLocalStorage()
-  },
-  methods: {
-    loadDataFromLocalStorage() {
-      this.$store.dispatch('tasks/loadDataFromLocalStorage')
-    }
   }
 }
 </script>

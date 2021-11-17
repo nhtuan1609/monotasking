@@ -17,21 +17,6 @@ export default {
   components: { PageTitle, TaskList, NewTask },
   head: {
     title: 'My Task - List'
-  },
-  beforeMount() {
-    this.loadDataFromLocalStorage()
-    window.addEventListener('beforeunload', this.saveDataToLocalStorage)
-  },
-  beforeDestroy() {
-    this.saveDataToLocalStorage()
-  },
-  methods: {
-    loadDataFromLocalStorage() {
-      this.$store.dispatch('tasks/loadDataFromLocalStorage')
-    },
-    saveDataToLocalStorage() {
-      this.$store.dispatch('tasks/saveDataToLocalStorage')
-    }
   }
 }
 </script>

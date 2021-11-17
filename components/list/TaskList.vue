@@ -231,6 +231,9 @@ export default {
       }
     }
   },
+  created() {
+    this.$store.dispatch('tasks/setTasksRef')
+  },
   methods: {
     showContextMenu(event, task) {
       event.preventDefault()
