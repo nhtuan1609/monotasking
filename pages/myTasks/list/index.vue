@@ -10,8 +10,8 @@
 
 <script>
 import PageTitle from '~/components/common/PageTitle.vue'
-import TaskList from '~/components/list/TaskList.vue'
-import NewTask from '~/components/list/NewTask.vue'
+import TaskList from '~/components/myTasks/list/TaskList.vue'
+import NewTask from '~/components/myTasks/list/NewTask.vue'
 
 export default {
   components: { PageTitle, TaskList, NewTask },

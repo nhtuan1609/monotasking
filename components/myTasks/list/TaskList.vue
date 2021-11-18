@@ -173,8 +173,8 @@
 </template>
 
 <script>
-import WonderingCard from '~/components/list/WonderingCard.vue'
-import TaskItem from '~/components/list/TaskItem.vue'
+import WonderingCard from '~/components/myTasks/list/WonderingCard.vue'
+import TaskItem from '~/components/myTasks/list/TaskItem.vue'
 import { TASK } from '~/constants/task.js'
 import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'

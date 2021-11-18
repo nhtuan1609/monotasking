@@ -16,7 +16,7 @@
 
 <script>
 import PageTitle from '~/components/common/PageTitle.vue'
-import TaskDetails from '~/components/list/TaskDetails.vue'
+import TaskDetails from '~/components/myTasks/list/taskDetails/Index.vue'
 
 export default {
   components: { PageTitle, TaskDetails },
