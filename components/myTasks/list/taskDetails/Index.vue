@@ -10,158 +10,55 @@
           </v-card-text>
           <v-card-text>
             <h3>Activity</h3>
-            <v-textarea placeholder="Leave a comment..." rows="3" auto-grow outlined hide-details></v-textarea>
-            <div class="d-flex justify-end mt-2">
-              <v-btn elevation="0" color="primary">Comment</v-btn>
-            </div>
+            <v-timeline class="timeline pt-2" align-top dense>
+              <v-timeline-item v-for="(activity, index) in activities" :key="index" color="primary" small>
+                <v-card>
+                  <v-card-subtitle class="d-flex justify-space-between align-center py-2">
+                    {{ activity._created ? activity._created.toDate().toLocaleString() : '' }}
+                    <v-btn icon @click="deleteComment(activity)">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-card-subtitle>
+                  <v-card-text>{{ activity.content }}</v-card-text>
+                </v-card>
+              </v-timeline-item>
+
+              <v-timeline-item color="primary" small>
+                <v-card>
+                  <v-card-text>
+                    <v-textarea
+                      v-model="content"
+                      class="textarea__comment"
+                      placeholder="Leave a comment..."
+                      rows="3"
+                      auto-grow
+                      outlined
+                      hide-details
+                    ></v-textarea>
+                    <div class="d-flex justify-end mt-2">
+                      <v-btn elevation="0" color="primary" @click="addComment">Comment</v-btn>
+                    </div>
+                  </v-card-text>
+                </v-card>
+              </v-timeline-item>
+            </v-timeline>
           </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="4">
-        <v-card light class="max-height customized-scrollbar background">
-          <v-card-title>Details</v-card-title>
-
-          <!-- status -->
-          <v-card-text class="details-item">
-            <span class="details-item__title">Status</span>
-            <v-menu transition="scale-transition" offset-y>
-              <template #activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template #activator="{ on: tooltip }">
-                    <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <status-icon small left :status="task.status"></status-icon>
-                      {{ task.status.name }}
-                    </v-btn>
-                  </template>
-                  <span>{{ task.status.name }} status</span>
-                </v-tooltip>
-              </template>
-              <status-select-menu :statuses="statuses" :task="task"></status-select-menu>
-            </v-menu>
-          </v-card-text>
-
-          <!-- priority -->
-          <v-card-text class="details-item">
-            <span class="details-item__title">Priority</span>
-            <v-menu transition="scale-transition" offset-y>
-              <template #activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template #activator="{ on: tooltip }">
-                    <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <priority-icon small left :priority="task.priority"></priority-icon>
-                      {{ task.priority.name }}
-                    </v-btn>
-                  </template>
-                  <span>{{ task.priority.name }} priority</span>
-                </v-tooltip>
-              </template>
-              <priority-select-menu :priorities="priorities" :task="task"></priority-select-menu>
-            </v-menu>
-          </v-card-text>
-
-          <!-- assignee -->
-          <v-card-text class="details-item">
-            <span class="details-item__title">Assignee</span>
-            <v-menu transition="scale-transition" offset-y>
-              <template #activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template #activator="{ on: tooltip }">
-                    <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <v-avatar
-                        v-if="task.assignee && task.assignee.id"
-                        class="ml-n1 mr-1"
-                        size="20"
-                        :color="task.assignee.color"
-                        v-bind="attrs"
-                        v-on="{ ...tooltip, ...menu }"
-                      >
-                        <span class="white--text" style="font-size: 10px">{{ task.assignee.shortName }}</span>
-                      </v-avatar>
-                      <v-icon v-else size="22" left v-bind="attrs" v-on="{ ...tooltip, ...menu }"
-                        >mdi-account-circle</v-icon
-                      >
-                      <span v-if="task.assignee && task.assignee.id">{{ task.assignee.name }}</span>
-                      <span v-else>Unassigned</span>
-                    </v-btn>
-                  </template>
-                  <span v-if="task.assignee && task.assignee.id">Assigned to {{ task.assignee.name }}</span>
-                  <span v-else>Unassigned</span>
-                </v-tooltip>
-              </template>
-              <assignee-select-menu :members="members" :task="task"></assignee-select-menu>
-            </v-menu>
-          </v-card-text>
-
-          <!-- label -->
-          <v-card-text class="details-item">
-            <span class="details-item__title">Label</span>
-            <v-menu transition="scale-transition" offset-y>
-              <template #activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template #activator="{ on: tooltip }">
-                    <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <v-avatar v-if="task.label.name" class="mr-2" :color="task.label.color" size="10"></v-avatar>
-                      <v-icon v-else small left>mdi-plus</v-icon>
-                      <span class="text-truncate" style="max-width: 140px">{{
-                        task.label.name ? task.label.name : 'Add label'
-                      }}</span>
-                    </v-btn>
-                  </template>
-                  <span>{{ task.label.name }} Label</span>
-                </v-tooltip>
-              </template>
-              <label-select-menu :labels="labels" :task="task"></label-select-menu>
-            </v-menu>
-          </v-card-text>
-
-          <!-- project -->
-          <v-card-text class="details-item">
-            <span class="details-item__title">Project</span>
-            <v-menu transition="scale-transition" offset-y>
-              <template #activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template #activator="{ on: tooltip }">
-                    <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
-                      <v-icon v-if="task.project && task.project.id" small left>mdi-view-grid-outline</v-icon>
-                      <v-icon v-else small left>mdi-plus</v-icon>
-                      <span class="text-truncate" style="max-width: 140px">{{
-                        task.project && task.project.id ? task.project.name : 'Add project'
-                      }}</span>
-                    </v-btn>
-                  </template>
-                  <span v-if="task.project && task.project.id">{{ task.project.name }} project</span>
-                  <span v-else>No project</span>
-                </v-tooltip>
-              </template>
-              <project-select-menu :projects="projects" :task="task"></project-select-menu>
-            </v-menu>
-          </v-card-text>
-        </v-card>
+        <overall-information :task="task" class="max-height customized-scrollbar background"></overall-information>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
-import { TASK } from '~/constants/task.js'
-import StatusIcon from '~/components/common/StatusIcon.vue'
-import PriorityIcon from '~/components/common/PriorityIcon.vue'
-import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
-import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
-import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
-import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
-import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
+import OverallInformation from '~/components/myTasks/list/taskDetails/OverallInformation.vue'
 
 export default {
   name: 'TaskDetails',
   components: {
-    StatusIcon,
-    PriorityIcon,
-    StatusSelectMenu,
-    PrioritySelectMenu,
-    AssigneeSelectMenu,
-    LabelSelectMenu,
-    ProjectSelectMenu
+    OverallInformation
   },
   props: {
     taskId: {
@@ -171,27 +68,16 @@ export default {
   },
   data() {
     return {
-      isLoading: true
+      isLoading: true,
+      content: ''
     }
   },
   computed: {
     task() {
       return this.$store.getters['tasks/getCurrentTask']
     },
-    statuses() {
-      return Object.values(TASK.STATUS)
-    },
-    priorities() {
-      return Object.values(TASK.PRIORITY)
-    },
-    members() {
-      return this.$store.getters['members/getMembers']
-    },
-    labels() {
-      return this.$store.getters['labels/getLabels']
-    },
-    projects() {
-      return this.$store.getters['projects/getProjects']
+    activities() {
+      return this.$store.getters['tasks/getCurrentActivities']
     }
   },
   watch: {
@@ -201,6 +87,16 @@ export default {
   },
   created() {
     this.$store.dispatch('tasks/setCurrentTaskRef', { id: this.taskId })
+    this.$store.dispatch('tasks/setCurrentActivitiesRef', { id: this.taskId })
+  },
+  methods: {
+    addComment() {
+      this.$store.dispatch('tasks/addComment', { task: this.task, content: this.content })
+      this.content = ''
+    },
+    deleteComment(activity) {
+      this.$store.dispatch('tasks/deleteComment', { task: this.task, activity })
+    }
   }
 }
 </script>
@@ -213,19 +109,52 @@ export default {
 .background {
   background-color: var(--background-color);
 }
-.details-item {
-  display: flex;
-  align-items: center;
-  .details-item__title {
-    min-width: 100px;
-    font-size: 14px;
-    font-weight: bold;
+.timeline {
+  &::before {
+    left: 11px !important;
+    display: none;
   }
-  .details-item__button {
-    min-width: 160px;
-    justify-content: start;
-    text-transform: unset;
-    font-size: 14px;
+  & ::v-deep .v-timeline-item__divider {
+    min-width: 40px;
+    justify-content: flex-start;
+  }
+  & ::v-deep .v-timeline-item__body {
+    max-width: unset;
+  }
+  .v-timeline-item {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 11px;
+      width: 0;
+      height: 100%;
+      border-left: 1px solid var(--v-_base-darken2);
+    }
+    .v-card::before,
+    .v-card::after {
+      display: none;
+    }
+  }
+  .v-timeline-item:last-child {
+    padding-bottom: 0;
+    &::before {
+      display: none;
+    }
+  }
+}
+.textarea__comment::v-deep {
+  & fieldset {
+    border: none;
+    padding: 0;
+  }
+  .v-input__slot {
+    padding: 0 !important;
+  }
+  & textarea {
+    // padding: 0 !important;
+    margin: 0 !important;
   }
 }
 </style>

@@ -5,7 +5,8 @@ const db = firebase.firestore()
 
 export const state = () => ({
   tasks: [],
-  currentTask: {}
+  currentTask: {},
+  currentActivities: []
 })
 
 export const getters = {
@@ -14,6 +15,9 @@ export const getters = {
   },
   getCurrentTask(state) {
     return state.currentTask
+  },
+  getCurrentActivities(state) {
+    return state.currentActivities
   }
 }
 
@@ -23,6 +27,11 @@ export const actions = {
   }),
   setCurrentTaskRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id), { wait: true })
+  }),
+  setCurrentActivitiesRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
+    bindFirestoreRef('currentActivities', db.collection('tasks').doc(params.id).collection('activities'), {
+      wait: true
+    })
   }),
 
   addNewTask({ state, rootGetters }, params) {
@@ -73,5 +82,20 @@ export const actions = {
   changeLabel({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.task.id)
     ref.update({ label: params.label })
+  },
+  addComment({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id).collection('activities').doc()
+    const data = {
+      _created: firebase.firestore.FieldValue.serverTimestamp(),
+      _updated: firebase.firestore.FieldValue.serverTimestamp(),
+      id: ref.id,
+      content: params.content
+    }
+
+    ref.set(data)
+  },
+  deleteComment({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id).collection('activities').doc(params.activity.id)
+    ref.delete()
   }
 }
