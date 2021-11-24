@@ -1,7 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="statusIndex">
-      <v-list-item v-for="(status, index) in statuses" :key="index" @click="changeStatus(task, status)">
+      <v-list-item v-for="(status, index) in statuses" :key="index" @click="changeStatus(status)">
         <v-list-item-icon class="mr-2">
           <status-icon small :status="status"></status-icon>
         </v-list-item-icon>
@@ -34,8 +34,8 @@ export default {
     }
   },
   methods: {
-    changeStatus(task, status) {
-      this.$store.dispatch('tasks/changeStatus', { task, status })
+    changeStatus(status) {
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { status } })
       this.$emit('selected')
     }
   }

@@ -10,7 +10,7 @@
         solo
         @focus="isAddingNewTask = true"
         @blur="isAddingNewTask = false"
-        @keydown.enter="addNewTask"
+        @keydown.enter="addTask"
       >
         <template #prepend-inner>
           <v-btn icon>
@@ -33,10 +33,10 @@ export default {
     }
   },
   methods: {
-    addNewTask() {
+    addTask() {
       const validatedName = this.taskName.trim()
       if (validatedName) {
-        this.$store.dispatch('tasks/addNewTask', {
+        this.$store.dispatch('tasks/addTask', {
           name: this.taskName
         })
       }

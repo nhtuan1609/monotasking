@@ -1,7 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="priorityIndex">
-      <v-list-item v-for="(priority, index) in priorities" :key="index" @click="changePriority(task, priority)">
+      <v-list-item v-for="(priority, index) in priorities" :key="index" @click="changePriority(priority)">
         <v-list-item-icon class="mr-2">
           <priority-icon small :priority="priority"></priority-icon>
         </v-list-item-icon>
@@ -34,8 +34,8 @@ export default {
     }
   },
   methods: {
-    changePriority(task, priority) {
-      this.$store.dispatch('tasks/changePriority', { task, priority })
+    changePriority(priority) {
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { priority } })
       this.$emit('selected')
     }
   }

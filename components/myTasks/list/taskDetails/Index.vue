@@ -129,11 +129,11 @@ export default {
   },
   methods: {
     addComment() {
-      this.$store.dispatch('tasks/addComment', { task: this.task, content: this.content })
+      this.$store.dispatch('tasks/addComment', { taskId: this.task.id, content: this.content })
       this.content = ''
     },
     deleteComment(activity) {
-      this.$store.dispatch('tasks/deleteComment', { task: this.task, activity })
+      this.$store.dispatch('tasks/deleteComment', { taskId: this.task.id, id: activity.id })
     },
     editTask() {
       this.editedTaskName = this.task.name
@@ -145,7 +145,7 @@ export default {
         name: this.editedTaskName,
         description: this.editedTaskDescription
       }
-      this.$store.dispatch('tasks/changeTaskInformation', { task: this.task, data })
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data })
       this.isEditing = false
     }
   }

@@ -1,14 +1,14 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="assigneeIndex">
-      <v-list-item @click="changeAssignee(task)">
+      <v-list-item @click="changeAssignee">
         <v-list-item-icon class="mr-2">
           <v-icon size="24" style="margin-left: -2px">mdi-account-circle</v-icon>
         </v-list-item-icon>
         <v-list-item-title>Unassigned</v-list-item-title>
       </v-list-item>
 
-      <v-list-item v-for="(member, index) in members" :key="index" @click="changeAssignee(task, member)">
+      <v-list-item v-for="(member, index) in members" :key="index" @click="changeAssignee(member)">
         <v-list-item-icon class="mr-2">
           <v-avatar size="20" :color="member.color">
             <span class="white--text" style="font-size: 10px">{{ member.shortName }}</span>
@@ -40,8 +40,8 @@ export default {
     }
   },
   methods: {
-    changeAssignee(task, assignee = {}) {
-      this.$store.dispatch('tasks/changeAssignee', { task, assignee })
+    changeAssignee(assignee = {}) {
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { assignee } })
       this.$emit('selected')
     }
   }

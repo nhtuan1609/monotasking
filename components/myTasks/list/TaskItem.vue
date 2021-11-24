@@ -97,10 +97,10 @@
         no-title
         :value="task.dueDate"
         @input="datePickerDueDate = false"
-        @change="(date) => changeDueDate(task, date)"
+        @change="changeDueDate"
       >
         <v-spacer></v-spacer>
-        <v-btn text @click="clearDueDate(task)">Clear</v-btn>
+        <v-btn text @click="clearDueDate">Clear</v-btn>
       </v-date-picker>
     </v-menu>
 
@@ -224,11 +224,11 @@ export default {
     }
   },
   methods: {
-    changeDueDate(task, dueDate) {
-      this.$store.dispatch('tasks/changeDueDate', { task, dueDate })
+    changeDueDate(dueDate) {
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { dueDate } })
     },
-    clearDueDate(task) {
-      this.$store.dispatch('tasks/changeDueDate', { task, dueDate: '' })
+    clearDueDate() {
+      this.$store.dispatch('tasks/updateTask', { id: this.task, data: { dueDate: '' } })
       this.datePickerDueDate = false
     }
   }

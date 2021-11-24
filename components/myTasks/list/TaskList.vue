@@ -128,10 +128,10 @@
             no-title
             :value="selectedTask.dueDate"
             @input="datePickerDueDate = false"
-            @change="(date) => changeDueDate(selectedTask, date)"
+            @change="changeDueDate"
           >
             <v-spacer></v-spacer>
-            <v-btn text @click="clearDueDate(selectedTask)">Clear</v-btn>
+            <v-btn text @click="clearDueDate">Clear</v-btn>
           </v-date-picker>
         </v-dialog>
 
@@ -154,14 +154,14 @@
             <v-card-actions class="pa-4">
               <v-spacer></v-spacer>
               <v-btn text outlined plain @click="cancelRename">Cancel</v-btn>
-              <v-btn elevation="0" color="primary" @click="changeName(selectedTask)">Confirm</v-btn>
+              <v-btn elevation="0" color="primary" @click="changeName">Confirm</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
 
         <!-- delete task -->
         <v-divider class="my-2"></v-divider>
-        <v-list-item @click="deleteTask(selectedTask)">
+        <v-list-item @click="deleteTask">
           <v-list-item-icon class="mr-2">
             <v-icon small>mdi-trash-can</v-icon>
           </v-list-item-icon>
@@ -246,27 +246,27 @@ export default {
       this.menuY = event.clientY
       this.isShowContextMenu = true
     },
-    changeDueDate(task, dueDate) {
-      this.$store.dispatch('tasks/changeDueDate', { task, dueDate })
+    changeDueDate(dueDate) {
+      this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { dueDate } })
       this.isShowContextMenu = false
     },
-    clearDueDate(task) {
-      this.$store.dispatch('tasks/changeDueDate', { task, dueDate: '' })
+    clearDueDate() {
+      this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { dueDate: '' } })
       this.datePickerDueDate = false
       this.isShowContextMenu = false
     },
-    deleteTask(task) {
-      this.$store.dispatch('tasks/deleteTask', { task })
+    deleteTask() {
+      this.$store.dispatch('tasks/deleteTask', { id: this.selectedTask.id })
       this.isShowContextMenu = false
     },
     cancelRename() {
       this.isShowRenameDialog = false
       this.isShowContextMenu = false
     },
-    changeName(task) {
-      const validatedName = task.name.trim()
+    changeName() {
+      const validatedName = this.selectedTask.name.trim()
       if (validatedName) {
-        this.$store.dispatch('tasks/changeName', { task })
+        this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { name: validatedName } })
       }
       this.isShowRenameDialog = false
       this.isShowContextMenu = false

@@ -34,7 +34,7 @@ export const actions = {
     })
   }),
 
-  addNewTask({ state, rootGetters }, params) {
+  addTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc()
     const data = {
       _created: firebase.firestore.FieldValue.serverTimestamp(),
@@ -49,58 +49,28 @@ export const actions = {
       assignee: {},
       label: {}
     }
-
-    ref.set(data)
+    return ref.set(data)
   },
   deleteTask({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.delete()
+    const ref = db.collection('tasks').doc(params.id)
+    return ref.delete()
   },
-  changePriority({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ priority: params.priority })
-  },
-  changeStatus({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ status: params.status })
-  },
-  changeDueDate({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ dueDate: params.dueDate })
-  },
-  changeProject({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ project: params.project })
-  },
-  changeAssignee({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ assignee: params.assignee })
-  },
-  changeName({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ name: params.name })
-  },
-  changeLabel({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    ref.update({ label: params.label })
+  updateTask({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.id)
+    return ref.update({ ...params.data })
   },
   addComment({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id).collection('activities').doc()
+    const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc()
     const data = {
       _created: firebase.firestore.FieldValue.serverTimestamp(),
       _updated: firebase.firestore.FieldValue.serverTimestamp(),
       id: ref.id,
       content: params.content
     }
-
-    ref.set(data)
+    return ref.set(data)
   },
   deleteComment({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id).collection('activities').doc(params.activity.id)
-    ref.delete()
-  },
-  changeTaskInformation({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.task.id)
-    return ref.update({ ...params.data })
+    const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.id)
+    return ref.delete()
   }
 }
