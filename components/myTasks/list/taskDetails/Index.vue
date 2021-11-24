@@ -2,11 +2,19 @@
   <div class="pa-3">
     <v-row v-if="!isLoading">
       <v-col cols="12" md="8">
-        <v-card light class="max-height customized-scrollbar background">
-          <v-card-title>{{ task.name }}</v-card-title>
+        <v-card v-if="!isEditing" light class="max-height customized-scrollbar background">
+          <v-card-title class="task__namespace">
+            Monotasking
+            <v-spacer></v-spacer>
+            <v-btn plain icon @click="editTask">
+              <v-icon>mdi-pencil-outline</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-title class="task__title">{{ task.name }}</v-card-title>
           <v-card-text>
             <h3>Description</h3>
-            <span>Task desception...</span>
+            <span>{{ task.description }}</span>
           </v-card-text>
           <v-card-text>
             <h3>Activity</h3>
@@ -28,7 +36,7 @@
                   <v-card-text>
                     <v-textarea
                       v-model="content"
-                      class="textarea__comment"
+                      class="textarea__default"
                       placeholder="Leave a comment..."
                       rows="3"
                       auto-grow
@@ -42,6 +50,35 @@
                 </v-card>
               </v-timeline-item>
             </v-timeline>
+          </v-card-text>
+        </v-card>
+        <v-card v-else light class="max-height customized-scrollbar background">
+          <v-card-title class="task__namespace">
+            Monotasking
+            <v-spacer></v-spacer>
+            <v-btn text outlined @click="isEditing = false">Cancel</v-btn>
+            <v-btn class="ml-3" elevation="0" color="primary" @click="changeTaskInformation">Save</v-btn>
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text>
+            <v-textarea
+              v-model="editedTaskName"
+              class="textarea__default task__title"
+              rows="1"
+              placeholder="Task name..."
+              auto-grow
+              outlined
+              hide-details
+            ></v-textarea>
+            <v-textarea
+              v-model="editedTaskDescription"
+              class="textarea__default"
+              placeholder="Task description..."
+              rows="1"
+              auto-grow
+              outlined
+              hide-details
+            ></v-textarea>
           </v-card-text>
         </v-card>
       </v-col>
@@ -69,7 +106,8 @@ export default {
   data() {
     return {
       isLoading: true,
-      content: ''
+      content: '',
+      isEditing: false
     }
   },
   computed: {
@@ -96,6 +134,19 @@ export default {
     },
     deleteComment(activity) {
       this.$store.dispatch('tasks/deleteComment', { task: this.task, activity })
+    },
+    editTask() {
+      this.editedTaskName = this.task.name
+      this.editedTaskDescription = this.task.description
+      this.isEditing = true
+    },
+    changeTaskInformation() {
+      const data = {
+        name: this.editedTaskName,
+        description: this.editedTaskDescription
+      }
+      this.$store.dispatch('tasks/changeTaskInformation', { task: this.task, data })
+      this.isEditing = false
     }
   }
 }
@@ -144,7 +195,7 @@ export default {
     }
   }
 }
-.textarea__comment::v-deep {
+.textarea__default::v-deep {
   & fieldset {
     border: none;
     padding: 0;
@@ -153,8 +204,16 @@ export default {
     padding: 0 !important;
   }
   & textarea {
-    // padding: 0 !important;
     margin: 0 !important;
   }
+}
+.task__namespace {
+  height: 60px;
+  padding: 0 16px;
+  font-size: 18px;
+}
+.task__title {
+  font-size: 28px;
+  font-weight: bold;
 }
 </style>

@@ -43,6 +43,7 @@ export const actions = {
       priority: { ...TASK.PRIORITY.NO_PRIORITY },
       status: { ...TASK.STATUS.BACKLOG },
       name: params.name,
+      description: '',
       dueDate: '',
       project: {},
       assignee: {},
@@ -97,5 +98,9 @@ export const actions = {
   deleteComment({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.task.id).collection('activities').doc(params.activity.id)
     ref.delete()
+  },
+  changeTaskInformation({ state, rootGetters }, params) {
+    const ref = db.collection('tasks').doc(params.task.id)
+    return ref.update({ ...params.data })
   }
 }
