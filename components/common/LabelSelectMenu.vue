@@ -1,7 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="labelIndex">
-      <v-list-item @click="changeLabel">
+      <v-list-item @click="changeLabel()">
         <v-icon size="10" class="mr-2">mdi-cancel</v-icon>
         <v-list-item-title>No label</v-list-item-title>
       </v-list-item>

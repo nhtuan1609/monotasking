@@ -1,7 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="projectIndex">
-      <v-list-item @click="changeProject">
+      <v-list-item @click="changeProject()">
         <v-list-item-icon class="mr-2">
           <v-icon small>mdi-cancel</v-icon>
         </v-list-item-icon>

@@ -86,7 +86,8 @@
                 }}</span>
               </v-btn>
             </template>
-            <span>{{ task.label.name }} Label</span>
+            <span v-if="task.label && task.label.name">{{ task.label.name }} label</span>
+            <span>No label</span>
           </v-tooltip>
         </template>
         <label-select-menu :labels="labels" :task="task"></label-select-menu>
@@ -94,6 +95,7 @@
     </v-card-text>
 
     <!-- project -->
+    <v-divider></v-divider>
     <v-card-text class="details-item">
       <span class="details-item__title">Project</span>
       <v-menu transition="scale-transition" offset-y>
@@ -115,6 +117,38 @@
         <project-select-menu :projects="projects" :task="task"></project-select-menu>
       </v-menu>
     </v-card-text>
+    <v-divider></v-divider>
+
+    <!-- due date -->
+    <v-card-text class="details-item">
+      <span class="details-item__title">Due date</span>
+      <v-dialog v-model="datePickerDueDate" max-width="290px">
+        <template #activator="{ on: menu, attrs }">
+          <v-tooltip bottom>
+            <template #activator="{ on: tooltip }">
+              <v-btn class="details-item__button" text small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
+                <due-date-icon v-if="task.dueDate" small left :due-date="task.dueDate"></due-date-icon>
+                <v-icon v-else small left>mdi-plus</v-icon>
+                <span>{{ task.dueDate ? $formatDate(new Date(task.dueDate)) : 'Set due date' }}</span>
+              </v-btn>
+            </template>
+            <span v-if="task.dueDate">Due on {{ $formatDate(new Date(task.dueDate)) }}</span>
+            <span v-else>No due date</span>
+          </v-tooltip>
+        </template>
+        <v-date-picker
+          color="primary"
+          light
+          no-title
+          :value="task.dueDate"
+          @input="datePickerDueDate = false"
+          @change="changeDueDate"
+        >
+          <v-spacer></v-spacer>
+          <v-btn text @click="changeDueDate('')">Clear</v-btn>
+        </v-date-picker>
+      </v-dialog>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -122,6 +156,7 @@
 import { TASK } from '~/constants/task.js'
 import StatusIcon from '~/components/common/StatusIcon.vue'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
+import DueDateIcon from '~/components/common/DueDateIcon.vue'
 import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
@@ -133,6 +168,7 @@ export default {
   components: {
     StatusIcon,
     PriorityIcon,
+    DueDateIcon,
     StatusSelectMenu,
     PrioritySelectMenu,
     AssigneeSelectMenu,
@@ -143,6 +179,11 @@ export default {
     task: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      datePickerDueDate: false
     }
   },
   computed: {
@@ -160,6 +201,12 @@ export default {
     },
     projects() {
       return this.$store.getters['projects/getProjects']
+    }
+  },
+  methods: {
+    changeDueDate(dueDate) {
+      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { dueDate } })
+      this.datePickerDueDate = false
     }
   }
 }

@@ -131,7 +131,7 @@
             @change="changeDueDate"
           >
             <v-spacer></v-spacer>
-            <v-btn text @click="clearDueDate">Clear</v-btn>
+            <v-btn text @click="changeDueDate()">Clear</v-btn>
           </v-date-picker>
         </v-dialog>
 
@@ -246,14 +246,10 @@ export default {
       this.menuY = event.clientY
       this.isShowContextMenu = true
     },
-    changeDueDate(dueDate) {
+    changeDueDate(dueDate = '') {
       this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { dueDate } })
       this.isShowContextMenu = false
-    },
-    clearDueDate() {
-      this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { dueDate: '' } })
       this.datePickerDueDate = false
-      this.isShowContextMenu = false
     },
     deleteTask() {
       this.$store.dispatch('tasks/deleteTask', { id: this.selectedTask.id })

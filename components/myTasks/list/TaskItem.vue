@@ -100,7 +100,7 @@
         @change="changeDueDate"
       >
         <v-spacer></v-spacer>
-        <v-btn text @click="clearDueDate">Clear</v-btn>
+        <v-btn text @click="changeDueDate()">Clear</v-btn>
       </v-date-picker>
     </v-menu>
 
@@ -224,11 +224,8 @@ export default {
     }
   },
   methods: {
-    changeDueDate(dueDate) {
+    changeDueDate(dueDate = '') {
       this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { dueDate } })
-    },
-    clearDueDate() {
-      this.$store.dispatch('tasks/updateTask', { id: this.task, data: { dueDate: '' } })
       this.datePickerDueDate = false
     }
   }

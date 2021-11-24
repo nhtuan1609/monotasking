@@ -1,7 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="assigneeIndex">
-      <v-list-item @click="changeAssignee">
+      <v-list-item @click="changeAssignee()">
         <v-list-item-icon class="mr-2">
           <v-icon size="24" style="margin-left: -2px">mdi-account-circle</v-icon>
         </v-list-item-icon>
