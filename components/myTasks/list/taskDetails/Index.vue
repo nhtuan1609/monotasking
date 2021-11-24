@@ -6,16 +6,34 @@
           <v-card-title class="task__namespace">
             Monotasking
             <v-spacer></v-spacer>
-            <v-btn plain icon @click="editTask">
+            <v-btn class="mr-2" icon @click="editTask">
               <v-icon>mdi-pencil-outline</v-icon>
             </v-btn>
+
+            <v-menu min-width="200" bottom offset-y transition="slide-y-transition">
+              <template #activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-horizontal</v-icon>
+                </v-btn>
+              </template>
+              <v-list light dense>
+                <v-list-item @click="deleteTask">
+                  <v-list-item-icon class="mr-2">
+                    <v-icon small>mdi-trash-can</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-card-title>
           <v-divider></v-divider>
+
           <v-card-title class="task__title">{{ task.name }}</v-card-title>
           <v-card-text>
             <h3>Description</h3>
             <span>{{ task.description }}</span>
           </v-card-text>
+
           <v-card-text>
             <h3>Activity</h3>
             <v-timeline class="timeline pt-2" align-top dense>
@@ -52,6 +70,7 @@
             </v-timeline>
           </v-card-text>
         </v-card>
+
         <v-card v-else light class="max-height customized-scrollbar background">
           <v-card-title class="task__namespace">
             Monotasking
@@ -60,6 +79,7 @@
             <v-btn class="ml-3" elevation="0" color="primary" @click="changeTaskInformation">Save</v-btn>
           </v-card-title>
           <v-divider></v-divider>
+
           <v-card-text>
             <v-textarea
               v-model="editedTaskName"
@@ -70,6 +90,7 @@
               outlined
               hide-details
             ></v-textarea>
+
             <v-textarea
               v-model="editedTaskDescription"
               class="textarea__default"
@@ -147,6 +168,10 @@ export default {
       }
       this.$store.dispatch('tasks/updateTask', { id: this.task.id, data })
       this.isEditing = false
+    },
+    deleteTask() {
+      this.$store.dispatch('tasks/deleteTask', { id: this.task.id })
+      this.$router.push('/myTasks/list')
     }
   }
 }
