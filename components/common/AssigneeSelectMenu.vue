@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { TASK } from '~/constants/task'
+
 export default {
   name: 'AssigneeSelectMenu',
   props: {
@@ -41,7 +43,11 @@ export default {
   },
   methods: {
     changeAssignee(assignee = {}) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { assignee } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { assignee },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_ASSIGNEE
+      })
       this.$emit('selected')
     }
   }

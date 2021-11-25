@@ -247,7 +247,11 @@ export default {
       this.isShowContextMenu = true
     },
     changeDueDate(dueDate = '') {
-      this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { dueDate } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.selectedTask.id,
+        data: { dueDate },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_DUE_DATE
+      })
       this.isShowContextMenu = false
       this.datePickerDueDate = false
     },
@@ -262,7 +266,11 @@ export default {
     changeName() {
       const validatedName = this.selectedTask.name.trim()
       if (validatedName) {
-        this.$store.dispatch('tasks/updateTask', { id: this.selectedTask.id, data: { name: validatedName } })
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.selectedTask.id,
+          data: { name: validatedName },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
+        })
       }
       this.isShowRenameDialog = false
       this.isShowContextMenu = false

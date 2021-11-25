@@ -203,7 +203,11 @@ export default {
   },
   methods: {
     changeDueDate(dueDate) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { dueDate } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { dueDate },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_DUE_DATE
+      })
       this.datePickerDueDate = false
     }
   }

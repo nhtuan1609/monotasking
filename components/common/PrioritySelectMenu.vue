@@ -13,6 +13,7 @@
 
 <script>
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
+import { TASK } from '~/constants/task'
 
 export default {
   name: 'PrioritySelectMenu',
@@ -35,7 +36,11 @@ export default {
   },
   methods: {
     changePriority(priority) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { priority } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { priority },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_PRIORITY
+      })
       this.$emit('selected')
     }
   }

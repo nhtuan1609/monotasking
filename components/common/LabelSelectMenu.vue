@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { TASK } from '~/constants/task'
+
 export default {
   name: 'LabelSelectMenu',
   props: {
@@ -37,7 +39,11 @@ export default {
   },
   methods: {
     changeLabel(label = {}) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { label } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { label },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_LABEL
+      })
       this.$emit('selected')
     }
   }

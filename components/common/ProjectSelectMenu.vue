@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import { TASK } from '~/constants/task'
+
 export default {
   name: 'ProjectSelectMenu',
   props: {
@@ -39,7 +41,11 @@ export default {
   },
   methods: {
     changeProject(project = {}) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { project } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { project },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_PROJECT
+      })
       this.$emit('selected')
     }
   }

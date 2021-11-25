@@ -13,6 +13,7 @@
 
 <script>
 import StatusIcon from '~/components/common/StatusIcon.vue'
+import { TASK } from '~/constants/task'
 
 export default {
   name: 'StatusSelectMenu',
@@ -35,7 +36,11 @@ export default {
   },
   methods: {
     changeStatus(status) {
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data: { status } })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data: { status },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_STATUS
+      })
       this.$emit('selected')
     }
   }

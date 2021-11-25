@@ -48,7 +48,38 @@ const STATUS = {
   }
 }
 
+const ACTIVITY_TYPE = {
+  CREATE_TASK: {
+    code: '0'
+  },
+  CHANGE_STATUS: {
+    code: '1'
+  },
+  CHANGE_PRIORITY: {
+    code: '3'
+  },
+  CHANGE_ASSIGNEE: {
+    code: '4'
+  },
+  CHANGE_LABEL: {
+    code: '5'
+  },
+  CHANGE_PROJECT: {
+    code: '6'
+  },
+  CHANGE_DUE_DATE: {
+    code: '7'
+  },
+  CHANGE_NAME: {
+    code: '8'
+  },
+  ADD_COMMENT: {
+    code: '9'
+  }
+}
+
 export const TASK = Object.freeze({
   PRIORITY,
-  STATUS
+  STATUS,
+  ACTIVITY_TYPE
 })

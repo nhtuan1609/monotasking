@@ -112,6 +112,7 @@
 
 <script>
 import OverallInformation from '~/components/myTasks/list/taskDetails/OverallInformation.vue'
+import { TASK } from '~/constants/task'
 
 export default {
   name: 'TaskDetails',
@@ -166,7 +167,11 @@ export default {
         name: this.editedTaskName,
         description: this.editedTaskDescription
       }
-      this.$store.dispatch('tasks/updateTask', { id: this.task.id, data })
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.task.id,
+        data,
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
+      })
       this.isEditing = false
     },
     deleteTask() {
