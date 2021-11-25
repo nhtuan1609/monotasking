@@ -95,7 +95,6 @@
     </v-card-text>
 
     <!-- project -->
-    <v-divider></v-divider>
     <v-card-text class="details-item">
       <span class="details-item__title">Project</span>
       <v-menu transition="scale-transition" offset-y>
@@ -117,7 +116,6 @@
         <project-select-menu :projects="projects" :task="task"></project-select-menu>
       </v-menu>
     </v-card-text>
-    <v-divider></v-divider>
 
     <!-- due date -->
     <v-card-text class="details-item">

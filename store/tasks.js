@@ -29,9 +29,11 @@ export const actions = {
     bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id), { wait: true })
   }),
   setCurrentActivitiesRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
-    bindFirestoreRef('currentActivities', db.collection('tasks').doc(params.id).collection('activities'), {
-      wait: true
-    })
+    bindFirestoreRef(
+      'currentActivities',
+      db.collection('tasks').doc(params.id).collection('activities').orderBy('_created', 'desc'),
+      { wait: true }
+    )
   }),
 
   addTask({ state, rootGetters }, params) {

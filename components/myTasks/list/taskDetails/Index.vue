@@ -37,18 +37,6 @@
           <v-card-text>
             <h3>Activity</h3>
             <v-timeline class="timeline pt-2" align-top dense>
-              <v-timeline-item v-for="(activity, index) in activities" :key="index" color="primary" small>
-                <v-card>
-                  <v-card-subtitle class="d-flex justify-space-between align-center py-2">
-                    {{ activity._created ? activity._created.toDate().toLocaleString() : '' }}
-                    <v-btn icon @click="deleteComment(activity)">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </v-card-subtitle>
-                  <v-card-text>{{ activity.content }}</v-card-text>
-                </v-card>
-              </v-timeline-item>
-
               <v-timeline-item color="primary" small>
                 <v-card>
                   <v-card-text>
@@ -65,6 +53,18 @@
                       <v-btn elevation="0" color="primary" @click="addComment">Comment</v-btn>
                     </div>
                   </v-card-text>
+                </v-card>
+              </v-timeline-item>
+
+              <v-timeline-item v-for="(activity, index) in activities" :key="index" color="primary" small>
+                <v-card>
+                  <v-card-subtitle class="d-flex justify-space-between align-center py-2">
+                    {{ activity._created ? activity._created.toDate().toLocaleString() : '' }}
+                    <v-btn icon @click="deleteComment(activity)">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </v-card-subtitle>
+                  <v-card-text>{{ activity.content }}</v-card-text>
                 </v-card>
               </v-timeline-item>
             </v-timeline>
