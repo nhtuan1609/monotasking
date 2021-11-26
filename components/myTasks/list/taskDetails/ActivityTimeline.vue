@@ -1,6 +1,11 @@
 <template>
   <v-timeline class="timeline" align-top dense v-bind="$attrs" v-on="$listeners">
     <v-timeline-item color="primary" small>
+      <template #icon>
+        <v-avatar size="28" color="#585a2b">
+          <span class="white--text" style="font-size: 10px">T</span>
+        </v-avatar>
+      </template>
       <v-card>
         <v-card-text>
           <v-textarea
@@ -29,7 +34,15 @@
         </template>
         <div style="margin-top: 2px">
           <span class="font-weight-bold">{{ activity.updater.name }}</span>
-          created the task. {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+          created the task.
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
         </div>
       </v-timeline-item>
 
@@ -47,7 +60,14 @@
           change status to
           <span class="font-weight-bold">{{ activity.data.status.name }}</span
           >.
-          <span>{{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}</span>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
         </div>
       </v-timeline-item>
 
@@ -57,7 +77,23 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">Priority was changed to {{ activity.data.priority.name }}</div>
+        <template #icon>
+          <priority-icon small :priority="activity.data.priority"></priority-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <span class="font-weight-bold">{{ activity.updater.name }}</span>
+          change priority to
+          <span class="font-weight-bold">{{ activity.data.priority.name }}</span
+          >.
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
       </v-timeline-item>
 
       <!-- change assignee activity-->
@@ -66,7 +102,31 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">Assignee was changed to {{ activity.data.assignee.name }}</div>
+        <template #icon>
+          <v-avatar size="20" :color="activity.updater.color">
+            <span class="white--text" style="font-size: 10px">{{ activity.updater.shortName }}</span>
+          </v-avatar>
+        </template>
+        <div style="margin-top: 2px">
+          <template v-if="activity.data.assignee && activity.data.assignee.name">
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            re-assigned to
+            <span class="font-weight-bold">{{ activity.data.assignee.name }}</span
+            >.
+          </template>
+          <template v-else>
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            removed assignee.
+          </template>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
       </v-timeline-item>
 
       <!-- change label activity-->
@@ -75,7 +135,30 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">Label was changed to {{ activity.data.label.name }}</div>
+        <template #icon>
+          <v-icon small>mdi-label</v-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <template v-if="activity.data.label && activity.data.label.name">
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            changed label to
+            <v-avatar :color="task.label.color" size="6"></v-avatar>
+            <span class="font-weight-bold">{{ activity.data.label.name }}</span
+            >.
+          </template>
+          <template v-else>
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            removed label.
+          </template>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
       </v-timeline-item>
 
       <!-- change project activity-->
@@ -84,7 +167,31 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">Project was changed to {{ activity.data.project.name }}</div>
+        <template #icon>
+          <v-avatar size="20" :color="activity.updater.color">
+            <span class="white--text" style="font-size: 10px">{{ activity.updater.shortName }}</span>
+          </v-avatar>
+        </template>
+        <div style="margin-top: 2px">
+          <template v-if="activity.data.project && activity.data.project.name">
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            changed project to
+            <span class="font-weight-bold">{{ activity.data.project.name }}</span
+            >.
+          </template>
+          <template v-else>
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            removed project.
+          </template>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
       </v-timeline-item>
 
       <!-- change due date activity-->
@@ -93,8 +200,29 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">
-          Due date was set on {{ activity.data.dueDate ? $formatDate(new Date(activity.data.dueDate)) : '' }}
+        <template #icon>
+          <due-date-icon v-if="activity.data.dueDate" small :due-date="activity.data.dueDate"></due-date-icon>
+          <v-icon v-else small>mdi-calendar</v-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <template v-if="activity.data.dueDate">
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            set due date to
+            <span class="font-weight-bold">{{ $formatDate(new Date(activity.data.dueDate)) }}</span
+            >.
+          </template>
+          <template v-else>
+            <span class="font-weight-bold">{{ activity.updater.name }}</span>
+            removed due date.
+          </template>
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
         </div>
       </v-timeline-item>
 
@@ -104,7 +232,21 @@
         :key="activity.id"
         small
       >
-        <div class="mt-1">Name and description are edited</div>
+        <template #icon>
+          <v-icon small>mdi-pencil-outline</v-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <span class="font-weight-bold">{{ activity.updater.name }}</span>
+          updated name and description.
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
       </v-timeline-item>
 
       <!-- comment activity -->
@@ -125,7 +267,7 @@
               <span class="font-weight-bold">{{ activity.updater.name }}</span>
               <v-tooltip top>
                 <template #activator="{ on, attrs }">
-                  <span class="comment__time-ago" v-bind="attrs" v-on="on">
+                  <span class="text--hover" v-bind="attrs" v-on="on">
                     {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
                   </span>
                 </template>
@@ -146,10 +288,12 @@
 <script>
 import { TASK } from '~/constants/task'
 import StatusIcon from '~/components/common/StatusIcon.vue'
+import PriorityIcon from '~/components/common/PriorityIcon.vue'
+import DueDateIcon from '~/components/common/DueDateIcon.vue'
 
 export default {
   name: 'ActivityTimeline',
-  components: { StatusIcon },
+  components: { StatusIcon, PriorityIcon, DueDateIcon },
   props: {
     task: {
       type: Object,
@@ -212,7 +356,7 @@ export default {
       display: none;
     }
     & ::v-deep .v-timeline-item__dot {
-      background-color: var(--background-color) !important;
+      background-color: var(--color-background) !important;
       box-shadow: none;
       .v-timeline-item__inner-dot {
         margin: 2px;
@@ -234,10 +378,6 @@ export default {
     .v-timeline-item__dot {
       margin-top: 12px;
     }
-    .comment__time-ago:hover {
-      cursor: pointer;
-      text-decoration: underline;
-    }
     .comment__content {
       color: var(--v-_text-base);
     }
@@ -254,5 +394,8 @@ export default {
   & textarea {
     margin: 0 !important;
   }
+}
+.text--hover {
+  cursor: default;
 }
 </style>

@@ -151,7 +151,7 @@ export default {
   overflow-y: auto;
 }
 .background {
-  background-color: var(--background-color);
+  background-color: var(--color-background);
 }
 .textarea__default::v-deep {
   & fieldset {

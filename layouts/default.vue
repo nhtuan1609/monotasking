@@ -104,7 +104,8 @@ export default {
   --height-application-header: 60px;
   --height-page-title: 50px;
 
-  --background-color: #fafafa;
+  --color-background: #fafafa;
+  --color-border: #c4c4c4;
 }
 html {
   overflow-y: auto;
