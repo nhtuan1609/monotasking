@@ -108,17 +108,33 @@
       <v-timeline-item
         v-if="activity.activityType.code === ACTIVITY_TYPE.ADD_COMMENT.code"
         :key="index"
+        class="comment"
         color="primary"
         small
       >
+        <template #icon>
+          <v-avatar size="28" :color="activity.updater.color">
+            <span class="white--text" style="font-size: 14px">{{ activity.updater.shortName }}</span>
+          </v-avatar>
+        </template>
         <v-card>
-          <v-card-subtitle class="d-flex justify-space-between align-center py-2">
-            {{ activity._created ? activity._created.toDate().toLocaleString() : '' }}
+          <v-card-subtitle class="d-flex align-center justify-space-between py-2">
+            <div>
+              <span class="font-weight-bold">{{ activity.updater.name }}</span>
+              <v-tooltip top>
+                <template #activator="{ on, attrs }">
+                  <span class="comment__time-ago" v-bind="attrs" v-on="on">
+                    {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+                  </span>
+                </template>
+                <span>{{ $formatDateTime(activity._created.toDate()) }}</span>
+              </v-tooltip>
+            </div>
             <v-btn icon @click="deleteComment(activity)">
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-card-subtitle>
-          <v-card-text>{{ activity.data.content }}</v-card-text>
+          <v-card-text class="comment__content">{{ activity.data.content }}</v-card-text>
         </v-card>
       </v-timeline-item>
     </template>
@@ -195,6 +211,18 @@ export default {
     padding-bottom: 0;
     &::before {
       display: none;
+    }
+  }
+  .comment ::v-deep {
+    .v-timeline-item__dot {
+      margin-top: 12px;
+    }
+    .comment__time-ago:hover {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .comment__content {
+      color: var(--v-_text-base);
     }
   }
 }
