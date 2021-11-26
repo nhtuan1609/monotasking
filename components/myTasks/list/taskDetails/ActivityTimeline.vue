@@ -19,34 +19,42 @@
       </v-card>
     </v-timeline-item>
 
-    <template v-for="(activity, index) in activities">
+    <template v-for="activity in activities">
       <!-- create task activity-->
-      <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CREATE_TASK.code"
-        :key="index"
-        color="primary"
-        small
-      >
-        <div class="mt-1">
-          Task was created on {{ activity._created ? $formatDate(activity._created.toDate()) : '' }}
+      <v-timeline-item v-if="activity.activityType.code === ACTIVITY_TYPE.CREATE_TASK.code" :key="activity.id" small>
+        <template #icon>
+          <v-avatar size="20" :color="activity.updater.color">
+            <span class="white--text" style="font-size: 10px">{{ activity.updater.shortName }}</span>
+          </v-avatar>
+        </template>
+        <div style="margin-top: 2px">
+          <span class="font-weight-bold">{{ activity.updater.name }}</span>
+          created the task. {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
         </div>
       </v-timeline-item>
 
       <!-- change status activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_STATUS.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_STATUS.code"
+        :key="activity.id"
         small
       >
-        <div class="mt-1">Status was changed to {{ activity.data.status.name }}</div>
+        <template #icon>
+          <status-icon small :status="activity.data.status"></status-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <span class="font-weight-bold">{{ activity.updater.name }}</span>
+          change status to
+          <span class="font-weight-bold">{{ activity.data.status.name }}</span
+          >.
+          <span>{{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}</span>
+        </div>
       </v-timeline-item>
 
       <!-- change priority activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_PRIORITY.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_PRIORITY.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">Priority was changed to {{ activity.data.priority.name }}</div>
@@ -54,9 +62,8 @@
 
       <!-- change assignee activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_ASSIGNEE.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_ASSIGNEE.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">Assignee was changed to {{ activity.data.assignee.name }}</div>
@@ -64,9 +71,8 @@
 
       <!-- change label activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_LABEL.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_LABEL.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">Label was changed to {{ activity.data.label.name }}</div>
@@ -74,9 +80,8 @@
 
       <!-- change project activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_PROJECT.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_PROJECT.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">Project was changed to {{ activity.data.project.name }}</div>
@@ -84,9 +89,8 @@
 
       <!-- change due date activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_DUE_DATE.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_DUE_DATE.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">
@@ -96,9 +100,8 @@
 
       <!-- change name activity-->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_NAME.code"
-        :key="index"
-        color="primary"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.CHANGE_NAME.code"
+        :key="activity.id"
         small
       >
         <div class="mt-1">Name and description are edited</div>
@@ -106,10 +109,9 @@
 
       <!-- comment activity -->
       <v-timeline-item
-        v-if="activity.activityType.code === ACTIVITY_TYPE.ADD_COMMENT.code"
-        :key="index"
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.ADD_COMMENT.code"
+        :key="activity.id"
         class="comment"
-        color="primary"
         small
       >
         <template #icon>
@@ -127,7 +129,7 @@
                     {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
                   </span>
                 </template>
-                <span>{{ $formatDateTime(activity._created.toDate()) }}</span>
+                <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
               </v-tooltip>
             </div>
             <v-btn icon @click="deleteComment(activity)">
@@ -143,9 +145,11 @@
 
 <script>
 import { TASK } from '~/constants/task'
+import StatusIcon from '~/components/common/StatusIcon.vue'
 
 export default {
   name: 'ActivityTimeline',
+  components: { StatusIcon },
   props: {
     task: {
       type: Object,
@@ -179,6 +183,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// css for activity timeline
 .timeline {
   &::before {
     left: 11px !important;
@@ -205,6 +210,18 @@ export default {
     .v-card::before,
     .v-card::after {
       display: none;
+    }
+    & ::v-deep .v-timeline-item__dot {
+      background-color: var(--background-color) !important;
+      box-shadow: none;
+      .v-timeline-item__inner-dot {
+        margin: 2px;
+        background-color: transparent !important;
+        & i {
+          margin-top: 2px;
+          font-size: 20px !important;
+        }
+      }
     }
   }
   .v-timeline-item:last-child {

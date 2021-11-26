@@ -86,7 +86,13 @@ export const actions = {
         id: activityRef.id,
         activityType: params.activityType,
         before: before.data(),
-        data: params.data
+        data: params.data,
+        updater: {
+          id: '0',
+          name: 'Hoang Tuan',
+          color: '#585a2b',
+          shortName: 'T'
+        }
       }
       activityRef.set(activity)
     })
