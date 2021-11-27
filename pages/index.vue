@@ -84,14 +84,14 @@ export default {
     margin-bottom: 40px;
     font-size: 60px;
     font-weight: bold;
-    color: var(--v-_white-base);
-    text-shadow: 2px 2px #000000;
+    color: var(--color-white);
+    text-shadow: 2px 2px black;
   }
   .sub-title {
     margin-top: 10px;
     font-size: 26px;
-    color: var(--v-_white-base);
-    text-shadow: 2px 2px #000000;
+    color: var(--color-white);
+    text-shadow: 2px 2px black;
   }
   .divider {
     width: 100%;
@@ -148,7 +148,7 @@ export default {
   font-size: 30px;
   background: transparent;
   text-align: center;
-  color: var(--v-_white-base);
-  text-shadow: 2px 2px #000000;
+  color: var(--color-white);
+  text-shadow: 2px 2px black;
 }
 </style>

@@ -349,7 +349,7 @@ export default {
       left: 11px;
       width: 0;
       height: 100%;
-      border-left: 1px solid var(--v-_base-darken2);
+      border-left: 1px solid var(--color-border);
     }
     .v-card::before,
     .v-card::after {
@@ -379,7 +379,7 @@ export default {
       margin-top: 12px;
     }
     .comment__content {
-      color: var(--v-_text-base);
+      color: var(--color-text);
     }
   }
 }

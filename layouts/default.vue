@@ -107,9 +107,11 @@ export default {
   --color-primary: var(--v-primary-base);
   --color-text: var(--v-_text-base);
   --color-base: var(--v-_base-base);
+  --color-white: var(--v-_white-base);
 
   --color-background: #fafafa;
   --color-border: #c4c4c4;
+  --color-scrollbar-thumb: var(--v-_base-darken3);
 }
 html {
   overflow-y: auto;
@@ -119,10 +121,10 @@ html {
   }
   &::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: var(--v-_base-base);
+    background-color: var(--color-base);
   }
   &::-webkit-scrollbar-thumb {
-    background-color: var(--v-_base-darken3);
+    background-color: var(--color-scrollbar-thumb);
     border-radius: 4px;
   }
 }
