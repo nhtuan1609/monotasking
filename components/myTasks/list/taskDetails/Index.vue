@@ -73,7 +73,10 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4">
-        <overall-information :task="task" class="max-height customized-scrollbar background"></overall-information>
+        <v-card light class="max-height customized-scrollbar">
+          <overall-information overall-information :task="task" class="background"></overall-information>
+          <progress-summary class="background"></progress-summary>
+        </v-card>
       </v-col>
     </v-row>
   </div>
@@ -83,12 +86,14 @@
 import { TASK } from '~/constants/task'
 import OverallInformation from '~/components/myTasks/list/taskDetails/OverallInformation.vue'
 import ActivityTimeline from '~/components/myTasks/list/taskDetails/ActivityTimeline.vue'
+import ProgressSummary from '~/components/myTasks/list/taskDetails/ProgressSummary.vue'
 
 export default {
   name: 'TaskDetails',
   components: {
     OverallInformation,
-    ActivityTimeline
+    ActivityTimeline,
+    ProgressSummary
   },
   props: {
     taskId: {

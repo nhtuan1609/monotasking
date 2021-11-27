@@ -1,5 +1,5 @@
 <template>
-  <v-card light>
+  <v-card light tile elevation="0">
     <v-card-title>Overall information</v-card-title>
 
     <!-- status -->

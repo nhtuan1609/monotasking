@@ -104,6 +104,10 @@ export default {
   --height-application-header: 60px;
   --height-page-title: 50px;
 
+  --color-primary: var(--v-primary-base);
+  --color-text: var(--v-_text-base);
+  --color-base: var(--v-_base-base);
+
   --color-background: #fafafa;
   --color-border: #c4c4c4;
 }
