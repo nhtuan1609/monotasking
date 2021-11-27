@@ -1,8 +1,11 @@
 <template>
   <div class="pa-3">
     <v-row v-if="!isLoading">
+      <!-- task name, description and activity -->
       <v-col cols="12" md="8">
+        <!-- view mode -->
         <v-card v-if="!isEditing" light class="max-height customized-scrollbar background">
+          <!-- workspace and header button -->
           <v-card-title class="task__namespace">
             Monotasking
             <v-spacer></v-spacer>
@@ -28,19 +31,25 @@
           </v-card-title>
           <v-divider></v-divider>
 
+          <!-- task name -->
           <v-card-title class="task__title">{{ task.name }}</v-card-title>
+
+          <!-- task description -->
           <v-card-text>
             <h3>Description</h3>
             <span>{{ task.description }}</span>
           </v-card-text>
 
+          <!-- task activity -->
           <v-card-text>
             <h3>Activity</h3>
             <activity-timeline class="pt-2" :task="task" :activities="activities"></activity-timeline>
           </v-card-text>
         </v-card>
 
+        <!-- edit mode -->
         <v-card v-else light class="max-height customized-scrollbar background">
+          <!-- workspace and header button -->
           <v-card-title class="task__namespace">
             Monotasking
             <v-spacer></v-spacer>
@@ -49,29 +58,34 @@
           </v-card-title>
           <v-divider></v-divider>
 
+          <!-- edit task name and description -->
           <v-card-text>
-            <v-textarea
-              v-model="editedTaskName"
-              class="textarea__default task__title"
-              rows="1"
-              placeholder="Task name..."
-              auto-grow
-              outlined
-              hide-details
-            ></v-textarea>
+            <v-form ref="form">
+              <v-textarea
+                v-model="editedTaskName"
+                class="textarea__default task__title"
+                rows="1"
+                placeholder="Task name..."
+                auto-grow
+                outlined
+                :rules="[$rules.required]"
+              ></v-textarea>
 
-            <v-textarea
-              v-model="editedTaskDescription"
-              class="textarea__default"
-              placeholder="Task description..."
-              rows="1"
-              auto-grow
-              outlined
-              hide-details
-            ></v-textarea>
+              <v-textarea
+                v-model="editedTaskDescription"
+                class="textarea__default"
+                placeholder="Task description..."
+                rows="1"
+                auto-grow
+                outlined
+                hide-details
+              ></v-textarea>
+            </v-form>
           </v-card-text>
         </v-card>
       </v-col>
+
+      <!-- task overall information and progress summary -->
       <v-col cols="12" md="4">
         <v-card light class="max-height customized-scrollbar">
           <overall-information overall-information :task="task" class="background"></overall-information>
@@ -131,6 +145,8 @@ export default {
       this.isEditing = true
     },
     changeTaskInformation() {
+      if (!this.$refs.form.validate()) return
+
       const data = {
         name: this.editedTaskName,
         description: this.editedTaskDescription
@@ -164,10 +180,14 @@ export default {
     padding: 0;
   }
   .v-input__slot {
+    min-height: unset;
     padding: 0 !important;
   }
   & textarea {
     margin: 0 !important;
+  }
+  .v-text-field__details {
+    padding: 0;
   }
 }
 .task__namespace {
