@@ -3,7 +3,7 @@
     <v-flex>
       <page-title title="Tasks in list view"></page-title>
       <task-list></task-list>
-      <new-task class="new-task-container"></new-task>
+      <new-task></new-task>
     </v-flex>
   </v-layout>
 </template>
@@ -20,15 +20,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.new-task-container {
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0 0 60px 0;
-  backdrop-filter: blur(2px);
-}
-</style>

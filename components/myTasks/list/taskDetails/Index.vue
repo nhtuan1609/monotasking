@@ -139,11 +139,19 @@ export default {
     this.$store.dispatch('tasks/setCurrentActivitiesRef', { id: this.taskId })
   },
   methods: {
+    /**
+     * change to mode edit name and description current task
+     * @return {void}
+     */
     editTask() {
       this.editedTaskName = this.task.name
       this.editedTaskDescription = this.task.description
       this.isEditing = true
     },
+    /**
+     * produce update name and description current task
+     * @return {void}
+     */
     changeTaskInformation() {
       if (!this.$refs.form.validate()) return
 
@@ -158,6 +166,10 @@ export default {
       })
       this.isEditing = false
     },
+    /**
+     * produce delete current task
+     * @return {void}
+     */
     deleteTask() {
       this.$store.dispatch('tasks/deleteTask', { id: this.task.id })
       this.$router.push('/myTasks/list')
@@ -171,9 +183,11 @@ export default {
   max-height: calc(100vh - (var(--height-application-header) + var(--height-page-title) + 24px));
   overflow-y: auto;
 }
+
 .background {
   background-color: var(--color-background);
 }
+
 .textarea__default::v-deep {
   & fieldset {
     border: none;
@@ -190,11 +204,13 @@ export default {
     padding: 0;
   }
 }
+
 .task__namespace {
   height: 60px;
   padding: 0 16px;
   font-size: 18px;
 }
+
 .task__title {
   font-size: 28px;
   font-weight: bold;

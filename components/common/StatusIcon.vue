@@ -13,6 +13,7 @@ export default {
     }
   },
   computed: {
+    // using to display icon and color for status based on status code
     icon() {
       switch (this.status?.code) {
         case TASK.STATUS.BACKLOG.code:

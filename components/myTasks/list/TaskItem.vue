@@ -224,6 +224,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce change due date of selected task
+     * @param {object} dueDate - due date information which is selected
+     * @return {void}
+     */
     changeDueDate(dueDate = '') {
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
@@ -250,6 +255,7 @@ export default {
     background-color: var(--v-primary-lighten2);
   }
 }
+
 .task .task-content {
   flex: 1;
   white-space: nowrap;
@@ -258,9 +264,11 @@ export default {
   padding: 0 6px;
   font-weight: bold;
 }
+
 .task .v-btn {
   text-transform: unset;
 }
+
 .task .created-date {
   justify-content: flex-end;
   padding-right: 4px;

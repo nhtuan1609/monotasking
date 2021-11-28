@@ -12,6 +12,7 @@ export default {
     }
   },
   computed: {
+    // using to display icon and color based on due date
     icon() {
       if (!this.dueDate) return undefined
       const currentDate = new Date()

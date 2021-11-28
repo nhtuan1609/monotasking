@@ -13,6 +13,7 @@ export default {
     }
   },
   computed: {
+    // using to display icon for priority
     icon() {
       switch (this.priority?.code) {
         case TASK.PRIORITY.NO_PRIORITY.code:

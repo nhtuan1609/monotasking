@@ -22,9 +22,21 @@ export const mutations = {
 }
 
 export const actions = {
+  /**
+   * produce update color to store
+   * @param {object} commit - using to call function in mutations to update state
+   * @param {object} params - parameter will be updated
+   * @return {void}
+   */
   updateColor({ commit }, params) {
     commit('updateColor', params)
   },
+  /**
+   * produce update background to store
+   * @param {object} commit - using to call function in mutations to update state
+   * @param {object} params - params will be updated
+   * @return {void}
+   */
   updateBackground({ commit }, params) {
     commit('updateBackground', params)
   }

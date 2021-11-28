@@ -1,6 +1,7 @@
 <template>
   <v-list light dense>
     <v-list-item-group :value="assigneeIndex">
+      <!-- unassigned -->
       <v-list-item @click="changeAssignee()">
         <v-list-item-icon class="mr-2">
           <v-icon size="24" style="margin-left: -2px">mdi-account-circle</v-icon>
@@ -8,6 +9,7 @@
         <v-list-item-title>Unassigned</v-list-item-title>
       </v-list-item>
 
+      <!-- members -->
       <v-list-item v-for="(member, index) in members" :key="index" @click="changeAssignee(member)">
         <v-list-item-icon class="mr-2">
           <v-avatar size="20" :color="member.color">
@@ -36,12 +38,18 @@ export default {
     }
   },
   computed: {
+    // using to display current selected assignee in menu
     assigneeIndex() {
       if (!this.task?.assignee?.id) return 0
       return this.members.findIndex((member) => member.id === this.task.assignee.id) + 1
     }
   },
   methods: {
+    /**
+     * produce change assignee of selected task
+     * @param {object} assignee - assignee information which is assigned
+     * @return {void}
+     */
     changeAssignee(assignee = {}) {
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
@@ -53,5 +61,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

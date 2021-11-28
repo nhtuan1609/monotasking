@@ -202,6 +202,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce change due date of current task
+     * @param {object} dueDate - due date information which is selected
+     * @return {void}
+     */
     changeDueDate(dueDate) {
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,

@@ -2,6 +2,7 @@
   <v-card light tile elevation="0">
     <v-card-title>Progress summary</v-card-title>
     <v-card-text>
+      <!-- progress slider -->
       <div class="progress__value my-4">{{ progress }}%</div>
       <v-slider
         v-model="progress"
@@ -11,6 +12,8 @@
         track-color="var(--v-_base-darken1)"
         step="5"
       ></v-slider>
+
+      <!-- checklist -->
       <div class="checklist mt-4 pa-4">
         <div class="d-flex align-center">
           <v-text-field
@@ -76,6 +79,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce add new item for checklist
+     * @return {void}
+     */
     addCheckItem() {
       const validatedName = this.newCheckItemName.trim()
       if (validatedName) {
@@ -83,6 +90,12 @@ export default {
         this.newCheckItemName = ''
       }
     },
+    /**
+     * produce change priority of selected task
+     * @param {object} index - index of check item
+     * @param {object} point - point of item using to calculate progress percentage
+     * @return {void}
+     */
     changePoint(index, point) {
       this.checkList[index].point = point
     }

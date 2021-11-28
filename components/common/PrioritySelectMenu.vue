@@ -29,12 +29,18 @@ export default {
     }
   },
   computed: {
+    // using to display current selected priority in menu
     priorityIndex() {
       if (!this.task?.priority?.code) return -1
       return this.priorities.findIndex((priority) => priority.code === this.task.priority.code)
     }
   },
   methods: {
+    /**
+     * produce change priority of selected task
+     * @param {object} priority - priority information which is selected
+     * @return {void}
+     */
     changePriority(priority) {
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
@@ -46,5 +52,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

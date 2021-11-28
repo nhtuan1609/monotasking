@@ -1,6 +1,9 @@
 <template>
   <v-container v-if="!isLoading">
+    <!-- show wondering card if tasks length is 0 -->
     <wondering-card v-if="tasks.length === 0" class="task-list"></wondering-card>
+
+    <!-- tasks -->
     <div v-else class="task-list">
       <task-item
         v-for="(task, index) in tasks"
@@ -11,6 +14,7 @@
       ></task-item>
     </div>
 
+    <!-- show context menu when right clicking on a task-->
     <v-menu
       v-model="isShowContextMenu"
       min-width="200"
@@ -239,6 +243,12 @@ export default {
     this.$store.dispatch('tasks/setTasksRef')
   },
   methods: {
+    /**
+     * produce show context menu for selected task
+     * @param {object} event - right mouse click event
+     * @param {object} task - task information which is selected
+     * @return {void}
+     */
     showContextMenu(event, task) {
       event.preventDefault()
       this.selectedTask = { ...task }
@@ -246,6 +256,11 @@ export default {
       this.menuY = event.clientY
       this.isShowContextMenu = true
     },
+    /**
+     * produce change due date for selected task
+     * @param {object} task - due date information which is selected
+     * @return {void}
+     */
     changeDueDate(dueDate = '') {
       this.$store.dispatch('tasks/updateTask', {
         id: this.selectedTask.id,
@@ -255,14 +270,26 @@ export default {
       this.isShowContextMenu = false
       this.datePickerDueDate = false
     },
+    /**
+     * produce delete selected task
+     * @return {void}
+     */
     deleteTask() {
       this.$store.dispatch('tasks/deleteTask', { id: this.selectedTask.id })
       this.isShowContextMenu = false
     },
+    /**
+     * close rename dialog nad context menu
+     * @return {void}
+     */
     cancelRename() {
       this.isShowRenameDialog = false
       this.isShowContextMenu = false
     },
+    /**
+     * produce change name of selected task
+     * @return {void}
+     */
     changeName() {
       const validatedName = this.selectedTask.name.trim()
       if (validatedName) {

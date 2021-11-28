@@ -7,7 +7,6 @@
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
-
     <v-divider />
 
     <div v-for="(item, itemIndex) in menus" :key="itemIndex">
@@ -55,6 +54,11 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce open and close drawer
+     * @param {object} isOpenDrawer - decide to open or close the drawer
+     * @return {void}
+     */
     toggleDrawer(isOpenDrawer) {
       if (!isOpenDrawer) {
         this.$emit('toggleDrawer')

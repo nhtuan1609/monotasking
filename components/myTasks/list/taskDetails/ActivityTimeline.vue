@@ -1,5 +1,6 @@
 <template>
   <v-timeline class="timeline" align-top dense v-bind="$attrs" v-on="$listeners">
+    <!-- add new comment field -->
     <v-timeline-item color="primary" small>
       <template #icon>
         <v-avatar size="28" color="#585a2b">
@@ -24,6 +25,7 @@
       </v-card>
     </v-timeline-item>
 
+    <!-- activity -->
     <template v-for="activity in activities">
       <!-- create task activity-->
       <v-timeline-item v-if="activity.activityType.code === ACTIVITY_TYPE.CREATE_TASK.code" :key="activity.id" small>
@@ -315,10 +317,18 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce add new comment for current task
+     * @return {void}
+     */
     addComment() {
       this.$store.dispatch('tasks/addComment', { taskId: this.task.id, content: this.content })
       this.content = ''
     },
+    /**
+     * produce delete comment of current task
+     * @return {void}
+     */
     deleteComment(activity) {
       this.$store.dispatch('tasks/deleteComment', { taskId: this.task.id, id: activity.id })
     }
@@ -383,6 +393,7 @@ export default {
     }
   }
 }
+
 .textarea__default::v-deep {
   & fieldset {
     border: none;
@@ -395,6 +406,7 @@ export default {
     margin: 0 !important;
   }
 }
+
 .text--hover {
   cursor: default;
 }

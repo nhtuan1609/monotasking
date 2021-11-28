@@ -29,12 +29,18 @@ export default {
     }
   },
   computed: {
+    // using to display current selected status in menu
     statusIndex() {
       if (!this.task?.status?.code) return -1
       return this.statuses.findIndex((status) => status.code === this.task.status.code)
     }
   },
   methods: {
+    /**
+     * produce change status of selected task
+     * @param {object} status - status information which is selected
+     * @return {void}
+     */
     changeStatus(status) {
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
@@ -46,5 +52,3 @@ export default {
   }
 }
 </script>
-
-<style></style>

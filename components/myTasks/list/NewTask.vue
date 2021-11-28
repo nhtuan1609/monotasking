@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="new-task-container">
     <v-container class="pt-0">
       <v-text-field
         v-model="taskName"
@@ -33,6 +33,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce add new task
+     * @return {void}
+     */
     addTask() {
       const validatedName = this.taskName.trim()
       if (validatedName) {
@@ -47,6 +51,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.new-task-container {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 0 60px 0;
+  backdrop-filter: blur(2px);
+}
+
 .new-task {
   & ::v-deep .v-icon {
     color: white !important;

@@ -22,12 +22,15 @@ export const getters = {
 }
 
 export const actions = {
+  // binding tasks collection
   setTasksRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef('tasks', db.collection('tasks').orderBy('_created', 'desc'), { wait: true })
   }),
+  // binding current selected task
   setCurrentTaskRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id), { wait: true })
   }),
+  // binding activities of current selected task
   setCurrentActivitiesRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef(
       'currentActivities',
@@ -36,6 +39,13 @@ export const actions = {
     )
   }),
 
+  /**
+   * add new task to task collection
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.name - name of new task
+   * @return {void}
+   */
   async addTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc()
     const data = {
@@ -71,10 +81,26 @@ export const actions = {
       await activityRef.set(activity)
     })
   },
+  /**
+   * delete task in task collection
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.id - id of task will be deleted
+   * @return {void}
+   */
   deleteTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.id)
     return ref.delete()
   },
+  /**
+   * update data for task
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.id - id task will be updated
+   * @param {object} params.data - data will be updated
+   * @param {object} params.activityType - type of activity
+   * @return {void}
+   */
   async updateTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.id)
     await ref.update(params.data).then(async () => {
@@ -97,6 +123,14 @@ export const actions = {
       activityRef.set(activity)
     })
   },
+  /**
+   * add new comment for current task
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.taskId - id of current task
+   * @param {object} params.content - content of comment
+   * @return {void}
+   */
   addComment({ state, rootGetters }, params) {
     const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc()
     const activity = {
@@ -117,6 +151,14 @@ export const actions = {
     }
     return activityRef.set(activity)
   },
+  /**
+   * delete comment of current task
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.taskId - id of current task
+   * @param {object} params.id - id of comment will be deleted
+   * @return {void}
+   */
   deleteComment({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.id)
     return ref.delete()

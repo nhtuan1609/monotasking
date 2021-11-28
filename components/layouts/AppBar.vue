@@ -2,9 +2,9 @@
   <v-app-bar class="primary" fixed app height="60">
     <v-app-bar-nav-icon @click.stop="$emit('toggleDrawer')" />
     <v-toolbar-title style="cursor: pointer" @click="$router.push('/')" v-text="title" />
-
     <v-spacer />
 
+    <!-- color menu -->
     <v-menu light bottom transition="slide-y-transition">
       <template #activator="{ on, attrs }">
         <v-btn class="mr-2" color="primary" small fab v-bind="attrs" v-on="on"></v-btn>
@@ -17,6 +17,7 @@
       </v-list>
     </v-menu>
 
+    <!-- background menu -->
     <v-menu light bottom transition="slide-y-transition">
       <template #activator="{ on, attrs }">
         <v-btn color="primary" small fab v-bind="attrs" v-on="on">
@@ -64,9 +65,19 @@ export default {
     }
   },
   methods: {
+    /**
+     * produce change color for the application
+     * @param {object} color - color information which is selected
+     * @return {void}
+     */
     selectColor(color) {
       this.$store.dispatch('preferences/updateColor', { color })
     },
+    /**
+     * produce change background for the application
+     * @param {object} background - background information which is selected
+     * @return {void}
+     */
     selectBackground(background) {
       this.$store.dispatch('preferences/updateBackground', { background })
     }
