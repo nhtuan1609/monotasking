@@ -93,7 +93,7 @@ export const actions = {
     return ref.delete()
   },
   /**
-   * update data for task
+   * update data for task and create activity
    * @param {object} state - local state
    * @param {object} rootGetters - getter function of store
    * @param {object} params.id - id task will be updated
@@ -104,14 +104,34 @@ export const actions = {
   async updateTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.id)
     await ref.update(params.data).then(async () => {
-      const before = await ref.get()
-      const activityRef = db.collection('tasks').doc(params.id).collection('activities').doc()
+      const beforeRef = await ref.get()
+      let activityRef = db.collection('tasks').doc(params.id).collection('activities').doc()
+
+      // check latest activity, if it was same type and created less than 30 minutes, we will update it with new data
+      const activities = await db
+        .collection('tasks')
+        .doc(params.id)
+        .collection('activities')
+        .orderBy('_created', 'desc')
+        .get()
+
+      const latestActivity = activities.docs[0]?.data()
+      if (latestActivity) {
+        const currentTime = new Date().valueOf()
+        const latestTime = latestActivity._created.toDate().valueOf()
+        const diffTime = 30 * 60 * 1000 // milliseconds
+        if (latestActivity.activityType.code === params.activityType.code && currentTime - latestTime < diffTime) {
+          activityRef = activities.docs[0].ref
+        }
+      }
+
+      // create activity
       const activity = {
         _created: firebase.firestore.FieldValue.serverTimestamp(),
         _updated: firebase.firestore.FieldValue.serverTimestamp(),
         id: activityRef.id,
         activityType: params.activityType,
-        before: before.data(),
+        before: beforeRef.data() ?? {},
         data: params.data,
         updater: {
           id: '0',
