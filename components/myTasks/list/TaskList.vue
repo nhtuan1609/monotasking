@@ -152,8 +152,10 @@
           <v-card light class="pa-0">
             <v-card-title class="primary white--text py-2 px-4">Change task name</v-card-title>
             <v-card-text class="pa-4">
-              <h4>New name</h4>
-              <v-text-field v-model="selectedTask.name" outlined dense autofocus hide-details></v-text-field>
+              <v-form ref="form">
+                <h4>New name</h4>
+                <v-text-field v-model="newTaskName" outlined dense autofocus :rules="[$rules.required]"></v-text-field>
+              </v-form>
             </v-card-text>
             <v-card-actions class="pa-4">
               <v-spacer></v-spacer>
@@ -205,7 +207,7 @@ export default {
       selectedTask: {},
       datePickerDueDate: false,
       isShowRenameDialog: false,
-      newTaskContent: '',
+      newTaskName: '',
       isLoading: true
     }
   },
@@ -232,7 +234,7 @@ export default {
   watch: {
     isShowRenameDialog(newValue) {
       if (newValue) {
-        this.newTaskContent = this.selectedTask.content
+        this.newTaskName = this.selectedTask.name
       }
     },
     tasks() {
@@ -293,14 +295,17 @@ export default {
      * @return {void}
      */
     changeName() {
-      const validatedName = this.selectedTask.name.trim()
-      if (!validatedName || validatedName === this.task.name) return
+      if (!this.$refs.form.validate()) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.selectedTask.id,
-        data: { name: validatedName },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
-      })
+      const validatedName = this.newTaskName.trim()
+      if (validatedName && validatedName !== this.selectedTask.name) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.selectedTask.id,
+          data: { name: validatedName },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
+        })
+      }
+
       this.isShowRenameDialog = false
       this.isShowContextMenu = false
     }
