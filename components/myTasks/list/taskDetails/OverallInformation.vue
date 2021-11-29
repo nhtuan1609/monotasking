@@ -208,6 +208,8 @@ export default {
      * @return {void}
      */
     changeDueDate(dueDate) {
+      if (dueDate === this.task.dueDate) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { dueDate },

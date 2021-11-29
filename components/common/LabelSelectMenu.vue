@@ -47,6 +47,8 @@ export default {
      * @return {void}
      */
     changeLabel(label = {}) {
+      if (label.id === this.task.label.id) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { label },

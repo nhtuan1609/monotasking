@@ -42,6 +42,8 @@ export default {
      * @return {void}
      */
     changePriority(priority) {
+      if (priority.code === this.task.priority.code) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { priority },

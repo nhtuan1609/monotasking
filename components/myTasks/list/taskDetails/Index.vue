@@ -154,6 +154,7 @@ export default {
      */
     changeTaskInformation() {
       if (!this.$refs.form.validate()) return
+      if (this.editedTaskName === this.task.name && this.editedTaskDescription === this.task.description) return
 
       const data = {
         name: this.editedTaskName,

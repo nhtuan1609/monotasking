@@ -51,6 +51,8 @@ export default {
      * @return {void}
      */
     changeAssignee(assignee = {}) {
+      if (assignee.id === this.task.assignee.id) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { assignee },

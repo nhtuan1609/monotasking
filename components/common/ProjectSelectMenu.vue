@@ -49,6 +49,8 @@ export default {
      * @return {void}
      */
     changeProject(project = {}) {
+      if (project.id === this.task.project.id) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { project },

@@ -262,6 +262,8 @@ export default {
      * @return {void}
      */
     changeDueDate(dueDate = '') {
+      if (dueDate === this.task.dueDate) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.selectedTask.id,
         data: { dueDate },
@@ -292,13 +294,13 @@ export default {
      */
     changeName() {
       const validatedName = this.selectedTask.name.trim()
-      if (validatedName) {
-        this.$store.dispatch('tasks/updateTask', {
-          id: this.selectedTask.id,
-          data: { name: validatedName },
-          activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
-        })
-      }
+      if (!validatedName || validatedName === this.task.name) return
+
+      this.$store.dispatch('tasks/updateTask', {
+        id: this.selectedTask.id,
+        data: { name: validatedName },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_NAME
+      })
       this.isShowRenameDialog = false
       this.isShowContextMenu = false
     }

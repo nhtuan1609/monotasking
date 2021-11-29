@@ -42,6 +42,8 @@ export default {
      * @return {void}
      */
     changeStatus(status) {
+      if (status.code === this.task.status.code) return
+
       this.$store.dispatch('tasks/updateTask', {
         id: this.task.id,
         data: { status },
