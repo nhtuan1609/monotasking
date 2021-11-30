@@ -75,6 +75,9 @@ const ACTIVITY_TYPE = {
   },
   ADD_COMMENT: {
     code: '9'
+  },
+  UPDATE_CHECKLIST: {
+    code: '10'
   }
 }
 

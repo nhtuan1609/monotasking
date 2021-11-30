@@ -59,7 +59,8 @@ export const actions = {
       dueDate: '',
       project: {},
       assignee: {},
-      label: {}
+      label: {},
+      checklist: []
     }
 
     await ref.set(data).then(async () => {
