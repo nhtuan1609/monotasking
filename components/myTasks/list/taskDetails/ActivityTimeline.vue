@@ -283,6 +283,30 @@
           <v-card-text class="comment__content">{{ activity.data.content }}</v-card-text>
         </v-card>
       </v-timeline-item>
+
+      <!-- update checklist activity-->
+      <v-timeline-item
+        v-else-if="activity.activityType.code === ACTIVITY_TYPE.UPDATE_CHECKLIST.code"
+        :key="activity.id"
+        small
+      >
+        <template #icon>
+          <v-icon small>mdi-pencil-outline</v-icon>
+        </template>
+        <div style="margin-top: 2px">
+          <span class="font-weight-bold">{{ activity.updater.name }}</span>
+          updated checklist with
+          <span class="font-weight-bold">{{ activity.data.checklist.progress }}%</span> progress.
+          <v-tooltip top>
+            <template #activator="{ on, attrs }">
+              <span class="text--hover" v-bind="attrs" v-on="on">
+                {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+              </span>
+            </template>
+            <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
+          </v-tooltip>
+        </div>
+      </v-timeline-item>
     </template>
   </v-timeline>
 </template>

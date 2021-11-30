@@ -60,10 +60,14 @@ export const actions = {
       project: {},
       assignee: {},
       label: {},
-      checklist: []
+      checklist: {
+        _autoNumber: 0,
+        checkedIds: [],
+        items: []
+      }
     }
 
-    await ref.set(data).then(async () => {
+    await ref.set(data).then(() => {
       const activityRef = db.collection('tasks').doc(ref.id).collection('activities').doc()
       const activity = {
         _created: firebase.firestore.FieldValue.serverTimestamp(),
@@ -79,7 +83,7 @@ export const actions = {
           shortName: 'T'
         }
       }
-      await activityRef.set(activity)
+      return activityRef.set(activity)
     })
   },
   /**
@@ -141,7 +145,7 @@ export const actions = {
           shortName: 'T'
         }
       }
-      activityRef.set(activity)
+      return activityRef.set(activity)
     })
   },
   /**

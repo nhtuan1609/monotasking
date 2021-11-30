@@ -112,6 +112,7 @@ export default {
   --color-background: #fafafa;
   --color-border: #c4c4c4;
   --color-scrollbar-thumb: var(--v-_base-darken3);
+  --color-checkbox: var(--v-_base-darken4);
 }
 html {
   overflow-y: auto;

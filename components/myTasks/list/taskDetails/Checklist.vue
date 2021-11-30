@@ -5,15 +5,15 @@
       <v-spacer></v-spacer>
       <!-- view mode -->
       <template v-if="!isEditMode">
-        <v-btn v-if="task.checklist && task.checklist.length" icon @click="changeToEditMode">
+        <v-btn v-if="!isChecklistEmpty" icon @click="changeToEditMode">
           <v-icon>mdi-pencil-outline</v-icon>
         </v-btn>
       </template>
 
       <!-- edit mode -->
       <template v-else>
-        <v-btn class="mr-2" icon @click="updateChecklist">
-          <v-icon>mdi-content-save</v-icon>
+        <v-btn icon @click="updateChecklist">
+          <v-icon>mdi-content-save-edit-outline</v-icon>
         </v-btn>
         <v-btn icon @click="cancelEditMode">
           <v-icon>mdi-close-box-outline</v-icon>
@@ -25,19 +25,39 @@
       <div class="checklist pa-4">
         <!-- view mode -->
         <template v-if="!isEditMode">
-          <v-btn v-if="!task.checklist || !task.checklist.length" text outlined width="100%" @click="changeToEditMode">
+          <v-btn v-if="isChecklistEmpty" text outlined width="100%" @click="changeToEditMode">
             <v-icon small left>mdi-plus</v-icon>
             Add check item
           </v-btn>
           <template v-else>
-            <div v-for="(checkItem, index) in task.checklist" :key="index" class="d-flex align-center">
-              <v-btn class="mr-2" text outlined small>{{ checkItem.point }}P</v-btn>
-              <v-checkbox v-model="checkItem.isChecked" class="mt-0 pt-0" hide-details readonly>
-                <template #label>
-                  <div style="word-break: break-word">{{ checkItem.name }}</div>
-                </template>
-              </v-checkbox>
-            </div>
+            <v-treeview
+              ref="treeView"
+              key="mode-view"
+              class="checklist__tree--view"
+              selected-color="primary"
+              item-disabled="locked"
+              dense
+              selectable
+              open-all
+              hoverable
+              transition
+              :items="checklist"
+              :value="checkedIds"
+            >
+              <template #label="{ item }">
+                <v-tooltip bottom>
+                  <template #activator="{ on, attrs }">
+                    <span v-bind="attrs" v-on="on">
+                      {{ item.name }}
+                    </span>
+                  </template>
+                  <span>{{ item.name }}</span>
+                </v-tooltip>
+              </template>
+              <template #append="{ item }">
+                <v-btn v-if="item.point" text outlined small>{{ item.point }}P</v-btn>
+              </template>
+            </v-treeview>
           </template>
         </template>
 
@@ -45,11 +65,11 @@
         <template v-else>
           <v-text-field
             v-model="newCheckItemName"
-            class="mb-4"
             placeholder="Add check item..."
             outlined
             dense
             hide-details
+            autofocus
             @keydown.enter="addCheckItem"
           >
             <template #prepend-inner>
@@ -57,30 +77,50 @@
             </template>
           </v-text-field>
 
-          <div v-for="(checkItem, index) in editedChecklist" :key="index" class="d-flex align-center">
-            <v-menu light transition="slide-x-transition" right offset-x>
-              <template #activator="{ on, attrs }">
-                <v-btn class="mr-2" text outlined small v-bind="attrs" v-on="on">{{ checkItem.point }}P</v-btn>
+          <v-form ref="form">
+            <v-treeview
+              v-if="editedChecklist.items.length"
+              ref="treeEdit"
+              key="mode-edit"
+              v-model="editedChecklist.checkedIds"
+              class="checklist__tree--edit mt-4"
+              selected-color="primary"
+              selectable
+              open-all
+              hoverable
+              transition
+              :items="editedChecklist.items"
+            >
+              <template #label="{ item }">
+                <v-text-field v-model="item.name" outlined dense hide-details :rules="[$rules.required]">
+                  <template #append>
+                    <v-menu v-if="item.point" light transition="slide-x-transition" left offset-x>
+                      <template #activator="{ on, attrs }">
+                        <v-btn text outlined small v-bind="attrs" v-on="on">{{ item.point }}P</v-btn>
+                      </template>
+                      <v-list dense>
+                        <v-list-item
+                          v-for="(point, listIndex) in [1, 2, 3, 4, 5]"
+                          :key="listIndex"
+                          @click="changeCheckItemPoint(item, point)"
+                        >
+                          <v-list-item-title>{{ point }} {{ point === 1 ? 'point' : 'points' }}</v-list-item-title>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </template>
+                </v-text-field>
               </template>
-              <v-list>
-                <v-list-item
-                  v-for="(point, listIndex) in [1, 2, 3, 4, 5]"
-                  :key="listIndex"
-                  @click="changePoint(index, point)"
-                >
-                  <v-list-item-title>{{ point }} {{ point === 1 ? 'point' : 'points' }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <v-checkbox v-model="checkItem.isChecked" class="mt-0 pt-0" hide-details>
-              <template #label>
-                <div style="word-break: break-word">{{ checkItem.name }}</div>
-                <v-btn icon small @click="deleteCheckItem(index)">
-                  <v-icon>mdi-close</v-icon>
+              <template #append="{ item }">
+                <v-btn icon small @click="addChildCheckItem(item)">
+                  <v-icon>mdi-plus-circle-outline</v-icon>
+                </v-btn>
+                <v-btn icon small @click="deleteChildCheckItem(editedChecklist.items, item.id)">
+                  <v-icon>mdi-delete-outline</v-icon>
                 </v-btn>
               </template>
-            </v-checkbox>
-          </div>
+            </v-treeview>
+          </v-form>
         </template>
       </div>
     </v-card-text>
@@ -106,14 +146,14 @@ export default {
     }
   },
   computed: {
-    progress() {
-      if (!this.task.checklist?.length) return 0
-      const totalPoints = this.task.checklist.reduce((sum, checkItem) => sum + checkItem.point, 0)
-      const checkedPoints = this.task.checklist.reduce(
-        (sum, checkItem) => (checkItem.isChecked ? sum + checkItem.point : sum),
-        0
-      )
-      return Math.floor((100 * checkedPoints) / totalPoints)
+    isChecklistEmpty() {
+      return !this.task.checklist?.items?.length
+    },
+    checklist() {
+      return this.task.checklist?.items ?? []
+    },
+    checkedIds() {
+      return this.task.checklist?.checkedIds ?? []
     }
   },
   methods: {
@@ -124,37 +164,40 @@ export default {
     addCheckItem() {
       const validatedName = this.newCheckItemName.trim()
       if (validatedName) {
-        this.editedChecklist.push({ name: validatedName, isChecked: false, point: 1 })
+        this.editedChecklist.items.push({
+          id: this.editedChecklist._autoNumber++,
+          name: validatedName,
+          point: 1,
+          locked: true
+        })
         this.newCheckItemName = ''
       }
     },
     /**
-     * delete check item of checklist
-     * @param {number} index - index of check item
-     * @return {void}
-     */
-    deleteCheckItem(index) {
-      this.editedChecklist.splice(index, 1)
-    },
-    /**
      * change priority of selected task
-     * @param {number} index - index of check item
-     * @param {object} point - point of item using to calculate progress percentage
+     * @param {object} item - check item object
+     * @param {number} point - point of item using to calculate progress percentage
      * @return {void}
      */
-    changePoint(index, point) {
-      this.editedChecklist[index].point = point
+    changeCheckItemPoint(item, point) {
+      item.point = point
     },
     /**
      * change checklist to edit mode
      * @return {void}
      */
     changeToEditMode() {
-      this.editedChecklist = []
-      if (this.task?.checklist) {
-        this.editedChecklist = this.task.checklist.map((item) => {
-          return { ...item }
-        })
+      this.editedChecklist = {
+        _autoNumber: 0,
+        checkedIds: [],
+        items: []
+      }
+      if (this.task?.checklist?.items) {
+        this.editedChecklist._autoNumber = this.task.checklist?._autoNumber ?? 0
+        this.editedChecklist.checkedIds = this.task.checklist?.checkedIds ?? []
+        this.editedChecklist.items = this.task.checklist?.items
+          ? JSON.parse(JSON.stringify(this.task.checklist?.items))
+          : []
       }
 
       this.isEditMode = true
@@ -170,14 +213,92 @@ export default {
      * update checklist for task
      * @return {void}
      */
-    updateChecklist() {
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { checklist: this.editedChecklist },
-        activityType: TASK.ACTIVITY_TYPE.UPDATE_CHECKLIST
-      })
+    async updateChecklist() {
+      if (!this.$refs.form.validate()) return
 
+      // reset _autoNumber if checklist is empty
+      if (!this.editedChecklist.items.length) {
+        this.editedChecklist._autoNumber = 0
+      }
+
+      // calculate progress percentage of checklist
+      this.editedChecklist.progress = this.calculateProgress(this.editedChecklist)
+
+      // update checklist for task to firestore
+      if (JSON.stringify(this.task.checklist) !== JSON.stringify(this.editedChecklist)) {
+        await this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { checklist: this.editedChecklist },
+          activityType: TASK.ACTIVITY_TYPE.UPDATE_CHECKLIST
+        })
+      }
+
+      // change to view mode after updating
       this.isEditMode = false
+    },
+    /**
+     * add child check item for parent check item
+     * @param {object} item - child check item object
+     * @return {void}
+     */
+    addChildCheckItem(item) {
+      if (!item.children) {
+        this.$set(item, 'children', [])
+      }
+      item.children.push({
+        id: this.editedChecklist._autoNumber++,
+        name: 'New item',
+        locked: true
+      })
+      this.$refs.treeEdit.updateAll(true)
+    },
+    /**
+     * delete child check item for parent check item
+     * @param {object} items - list of check items in same level
+     * @param {number} id - id of check item which will be deleted
+     * @return {void}
+     */
+    deleteChildCheckItem(items, id) {
+      if (!items) return
+      items.forEach((item, index) => {
+        if (item.id === id) {
+          items.splice(index, 1)
+        } else {
+          this.deleteChildCheckItem(item.children, id)
+        }
+      })
+    },
+    /**
+     * check all items whether are checked or not
+     * @param {object} items - list of check items in same level
+     * @param {array} checkedIds - checked ids of checklist
+     * @return {void}
+     */
+    isCheckedAll(items, checkedIds) {
+      return items.every((item) => {
+        if (!item.children?.length) return checkedIds.includes(item.id)
+        return this.isCheckedAll(item.children, checkedIds)
+      })
+    },
+    /**
+     * calculate progress percentage of checklist based on check point
+     * @param {object} checklist.items - list of check items in same level
+     * @param {array} checklist.checkedIds - checked ids of checklist
+     * @return {number}
+     */
+    calculateProgress(checklist) {
+      if (!checklist.items?.length) return 0
+      const totalPoints = checklist.items.reduce((sum, item) => sum + item.point, 0)
+      const checkedPoints = checklist.items.reduce((sum, item) => {
+        if (
+          checklist.checkedIds.includes(item.id) ||
+          (item.children?.length && this.isCheckedAll(item.children, checklist.checkedIds))
+        ) {
+          return sum + item.point
+        }
+        return sum
+      }, 0)
+      return Math.floor((100 * checkedPoints) / totalPoints)
     }
   }
 }
@@ -186,5 +307,24 @@ export default {
 <style lang="scss" scoped>
 .checklist {
   border: 1px solid var(--color-border);
+}
+
+.checklist__tree--view ::v-deep {
+  .v-treeview-node__checkbox.v-icon--disabled {
+    color: var(--color-checkbox) !important;
+    &.mdi-checkbox-marked,
+    &.mdi-minus-box {
+      color: var(--color-primary) !important;
+    }
+  }
+  .v-treeview-node__label {
+    color: var(--color-text);
+  }
+}
+
+.checklist__tree--edit ::v-deep {
+  .v-input__append-inner {
+    margin-top: 6px !important;
+  }
 }
 </style>

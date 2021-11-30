@@ -26,13 +26,7 @@ export default {
   },
   computed: {
     progress() {
-      if (!this.task.checklist?.length) return 0
-      const totalPoints = this.task.checklist.reduce((sum, checkItem) => sum + checkItem.point, 0)
-      const checkedPoints = this.task.checklist.reduce(
-        (sum, checkItem) => (checkItem.isChecked ? sum + checkItem.point : sum),
-        0
-      )
-      return Math.floor((100 * checkedPoints) / totalPoints)
+      return this.task.checklist?.progress ?? 0
     }
   }
 }
