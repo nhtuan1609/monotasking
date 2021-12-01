@@ -77,12 +77,7 @@ export const actions = {
         activityType: TASK.ACTIVITY_TYPE.CREATE_TASK,
         before: {},
         data,
-        updater: {
-          id: '0',
-          name: 'Hoang Tuan',
-          color: '#585a2b',
-          shortName: 'T'
-        }
+        updater: rootGetters['users/getCurrentUser']
       }
       return activityRef.set(activity)
     })
@@ -139,12 +134,7 @@ export const actions = {
         activityType: params.activityType,
         before: beforeRef.data() ?? {},
         data: params.data,
-        updater: {
-          id: '0',
-          name: 'Hoang Tuan',
-          color: '#585a2b',
-          shortName: 'T'
-        }
+        updater: rootGetters['users/getCurrentUser']
       }
       return activityRef.set(activity)
     })
@@ -168,12 +158,7 @@ export const actions = {
       data: {
         content: params.content
       },
-      updater: {
-        id: '0',
-        name: 'Hoang Tuan',
-        color: '#585a2b',
-        shortName: 'T'
-      }
+      updater: rootGetters['users/getCurrentUser']
     }
     return activityRef.set(activity)
   },

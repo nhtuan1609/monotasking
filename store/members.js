@@ -3,7 +3,7 @@ export const state = () => ({
     {
       id: '0',
       name: 'Hoang Tuan',
-      color: '#585a2b',
+      color: '#FFC312',
       shortName: 'T'
     },
     {

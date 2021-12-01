@@ -3,8 +3,8 @@
     <!-- add new comment field -->
     <v-timeline-item color="primary" small>
       <template #icon>
-        <v-avatar size="28" color="#585a2b">
-          <span class="white--text" style="font-size: 10px">T</span>
+        <v-avatar size="28" :color="currentUser.color">
+          <span class="white--text" style="font-size: 14px">{{ currentUser.shortName }}</span>
         </v-avatar>
       </template>
       <v-card>
@@ -338,6 +338,9 @@ export default {
   computed: {
     ACTIVITY_TYPE() {
       return TASK.ACTIVITY_TYPE
+    },
+    currentUser() {
+      return this.$store.getters['users/getCurrentUser']
     }
   },
   methods: {
