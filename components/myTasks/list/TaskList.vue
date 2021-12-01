@@ -264,7 +264,7 @@ export default {
      * @return {void}
      */
     changeDueDate(dueDate = '') {
-      if (dueDate === this.task.dueDate) return
+      if (dueDate === this.selectedTask.dueDate) return
 
       this.$store.dispatch('tasks/updateTask', {
         id: this.selectedTask.id,

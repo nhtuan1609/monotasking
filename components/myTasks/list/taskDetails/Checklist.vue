@@ -209,36 +209,6 @@ export default {
       this.isEditMode = false
     },
     /**
-     * update checklist for task
-     * @return {void}
-     */
-    async updateChecklist() {
-      if (!this.$refs.form.validate()) return
-
-      // reset _autoNumber if checklist is empty
-      if (!this.editedChecklist.items.length) {
-        this.editedChecklist._autoNumber = 0
-      }
-
-      // calculate progress percentage of checklist
-      this.editedChecklist.progress = this.calculateProgress(this.editedChecklist)
-
-      // update checklist for task to firestore
-      if (
-        JSON.stringify(this.task.checklist, Object.keys(this.task.checklist).sort()) !==
-        JSON.stringify(this.editedChecklist, Object.keys(this.editedChecklist).sort())
-      ) {
-        await this.$store.dispatch('tasks/updateTask', {
-          id: this.task.id,
-          data: { checklist: this.editedChecklist },
-          activityType: TASK.ACTIVITY_TYPE.UPDATE_CHECKLIST
-        })
-      }
-
-      // change to view mode after updating
-      this.isEditMode = false
-    },
-    /**
      * add child check item for parent check item
      * @param {object} item - child check item object
      * @return {void}
@@ -301,6 +271,33 @@ export default {
         return sum
       }, 0)
       return Math.floor((100 * checkedPoints) / totalPoints)
+    },
+    /**
+     * update checklist for task
+     * @return {void}
+     */
+    async updateChecklist() {
+      if (!this.$refs.form.validate()) return
+
+      // reset _autoNumber if checklist is empty
+      if (!this.editedChecklist.items.length) {
+        this.editedChecklist._autoNumber = 0
+      }
+
+      // calculate progress percentage of checklist
+      this.editedChecklist.progress = this.calculateProgress(this.editedChecklist)
+
+      // update checklist for task to firestore
+      if (JSON.stringify(this.task.checklist) !== JSON.stringify(this.editedChecklist)) {
+        await this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { checklist: this.editedChecklist },
+          activityType: TASK.ACTIVITY_TYPE.UPDATE_CHECKLIST
+        })
+      }
+
+      // change to view mode after updating
+      this.isEditMode = false
     }
   }
 }

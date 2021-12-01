@@ -4,6 +4,25 @@
     @contextmenu="(event) => $emit('contextmenu', event)"
     @click="$router.push(`/myTasks/list/${task.id}`)"
   >
+    <!-- progress -->
+
+    <v-tooltip bottom>
+      <template #activator="{ on, attrs }">
+        <v-progress-circular
+          class="mx-2"
+          :rotate="-90"
+          :size="18"
+          :width="4"
+          :value="task.checklist ? task.checklist.progress : 0"
+          color="primary"
+          v-bind="attrs"
+          v-on="on"
+        >
+        </v-progress-circular>
+      </template>
+      <span>Task progress {{ task.checklist ? task.checklist.progress : 0 }}%</span>
+    </v-tooltip>
+
     <!-- priority -->
     <v-menu transition="scale-transition" offset-y>
       <template #activator="{ on: menu, attrs }">
