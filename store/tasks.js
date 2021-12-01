@@ -63,7 +63,8 @@ export const actions = {
       checklist: {
         _autoNumber: 0,
         checkedIds: [],
-        items: []
+        items: [],
+        progress: 0
       }
     }
 

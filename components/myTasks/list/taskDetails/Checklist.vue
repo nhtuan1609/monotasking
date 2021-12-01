@@ -140,9 +140,9 @@ export default {
   },
   data() {
     return {
-      editedChecklist: [],
       newCheckItemName: '',
-      isEditMode: false
+      isEditMode: false,
+      editedChecklist: {}
     }
   },
   computed: {
@@ -168,7 +168,7 @@ export default {
           id: this.editedChecklist._autoNumber++,
           name: validatedName,
           point: 1,
-          locked: true
+          locked: true // using to lock checkbox in view mode
         })
         this.newCheckItemName = ''
       }
@@ -190,15 +190,14 @@ export default {
       this.editedChecklist = {
         _autoNumber: 0,
         checkedIds: [],
-        items: []
+        items: [],
+        progress: 0
       }
-      if (this.task?.checklist?.items) {
-        this.editedChecklist._autoNumber = this.task.checklist?._autoNumber ?? 0
-        this.editedChecklist.checkedIds = this.task.checklist?.checkedIds ?? []
-        this.editedChecklist.items = this.task.checklist?.items
-          ? JSON.parse(JSON.stringify(this.task.checklist?.items))
-          : []
-      }
+      this.editedChecklist._autoNumber = this.task.checklist?._autoNumber ?? 0
+      this.editedChecklist.checkedIds = this.task.checklist?.checkedIds ? [...this.task.checklist.checkedIds] : []
+      this.editedChecklist.items = this.task.checklist?.items
+        ? JSON.parse(JSON.stringify(this.task.checklist?.items))
+        : []
 
       this.isEditMode = true
     },
@@ -225,7 +224,10 @@ export default {
       this.editedChecklist.progress = this.calculateProgress(this.editedChecklist)
 
       // update checklist for task to firestore
-      if (JSON.stringify(this.task.checklist) !== JSON.stringify(this.editedChecklist)) {
+      if (
+        JSON.stringify(this.task.checklist, Object.keys(this.task.checklist).sort()) !==
+        JSON.stringify(this.editedChecklist, Object.keys(this.editedChecklist).sort())
+      ) {
         await this.$store.dispatch('tasks/updateTask', {
           id: this.task.id,
           data: { checklist: this.editedChecklist },
@@ -254,7 +256,7 @@ export default {
     },
     /**
      * delete child check item for parent check item
-     * @param {object} items - list of check items in same level
+     * @param {array} items - list of check items in same level
      * @param {number} id - id of check item which will be deleted
      * @return {void}
      */
@@ -270,7 +272,7 @@ export default {
     },
     /**
      * check all items whether are checked or not
-     * @param {object} items - list of check items in same level
+     * @param {array} items - list of check items in same level
      * @param {array} checkedIds - checked ids of checklist
      * @return {void}
      */
@@ -282,7 +284,7 @@ export default {
     },
     /**
      * calculate progress percentage of checklist based on check point
-     * @param {object} checklist.items - list of check items in same level
+     * @param {array} checklist.items - list of check items in same level
      * @param {array} checklist.checkedIds - checked ids of checklist
      * @return {number}
      */
