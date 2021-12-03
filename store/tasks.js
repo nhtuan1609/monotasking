@@ -106,9 +106,10 @@ export const actions = {
     const ref = db.collection('tasks').doc(params.id)
     await ref.update(params.data).then(async () => {
       const beforeRef = await ref.get()
+      const currentUser = rootGetters['users/getCurrentUser']
       let activityRef = db.collection('tasks').doc(params.id).collection('activities').doc()
 
-      // check latest activity, if it was same type and created less than 30 minutes, we will update it with new data
+      // check latest activity, if it was created by same user, same type and less than 30 minutes, we will update it with new data
       const activities = await db
         .collection('tasks')
         .doc(params.id)
@@ -117,7 +118,7 @@ export const actions = {
         .get()
 
       const latestActivity = activities.docs[0]?.data()
-      if (latestActivity) {
+      if (latestActivity && latestActivity.updater.id === currentUser.id) {
         const currentTime = new Date().valueOf()
         const latestTime = latestActivity._created.toDate().valueOf()
         const diffTime = 30 * 60 * 1000 // milliseconds
@@ -134,7 +135,7 @@ export const actions = {
         activityType: params.activityType,
         before: beforeRef.data() ?? {},
         data: params.data,
-        updater: rootGetters['users/getCurrentUser']
+        updater: currentUser
       }
       return activityRef.set(activity)
     })

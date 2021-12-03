@@ -6,11 +6,11 @@
     <!-- tasks -->
     <div v-else class="task-list">
       <task-item
-        v-for="(task, index) in tasks"
-        :key="index"
+        v-for="task in tasks"
+        :key="task.id"
         :task="task"
         :class="isShowContextMenu && selectedTask.id === task.id ? 'selecting' : isShowContextMenu && 'no-selecting'"
-        @contextmenu="(event) => showContextMenu(event, task)"
+        @contextmenu="showContextMenu($event, task)"
       ></task-item>
     </div>
 
@@ -27,7 +27,7 @@
     >
       <v-list light dense>
         <!-- change status -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+        <v-menu :key="'status-' + selectedTask.id" min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
@@ -45,7 +45,7 @@
         </v-menu>
 
         <!-- change assignee -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+        <v-menu :key="'assignee-' + selectedTask.id" min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
@@ -63,7 +63,7 @@
         </v-menu>
 
         <!-- change priority -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+        <v-menu :key="'priority-' + selectedTask.id" min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
@@ -81,7 +81,7 @@
         </v-menu>
 
         <!-- change label -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+        <v-menu :key="'label-' + selectedTask.id" min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
@@ -99,7 +99,7 @@
         </v-menu>
 
         <!-- change project -->
-        <v-menu min-width="100" offset-x nudge-top="8" open-on-hover>
+        <v-menu :key="'project-' + selectedTask.id" min-width="100" offset-x nudge-top="8" open-on-hover>
           <template #activator="{ on, attrs }">
             <v-list-item v-bind="attrs" v-on="on">
               <v-list-item-icon class="mr-2">
@@ -253,7 +253,7 @@ export default {
      */
     showContextMenu(event, task) {
       event.preventDefault()
-      this.selectedTask = { ...task }
+      this.selectedTask = JSON.parse(JSON.stringify(task))
       this.menuX = event.clientX
       this.menuY = event.clientY
       this.isShowContextMenu = true
