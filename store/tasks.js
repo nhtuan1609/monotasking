@@ -89,8 +89,14 @@ export const actions = {
    * @param {object} params.id - id of task will be deleted
    * @return {void}
    */
-  deleteTask({ state, rootGetters }, params) {
+  async deleteTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.id)
+
+    // delete all activies before delete task to hard delete
+    const activityRef = await ref.collection('activities').get()
+    for (const doc of activityRef.docs) {
+      doc.ref.delete()
+    }
     return ref.delete()
   },
   /**
