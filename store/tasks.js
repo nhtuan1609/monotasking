@@ -110,6 +110,7 @@ export const actions = {
    */
   async updateTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc(params.id)
+    params.data._updated = firebase.firestore.FieldValue.serverTimestamp()
     await ref.update(params.data).then(async () => {
       const beforeRef = await ref.get()
       const currentUser = rootGetters['users/getCurrentUser']
@@ -174,11 +175,24 @@ export const actions = {
    * @param {object} state - local state
    * @param {object} rootGetters - getter function of store
    * @param {object} params.taskId - id of current task
-   * @param {object} params.id - id of comment will be deleted
+   * @param {object} params.activityId - id of comment will be deleted
    * @return {void}
    */
   deleteComment({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.id)
+    const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
     return ref.delete()
+  },
+  /**
+   * update comment of current task
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.taskId - id of current task
+   * @param {object} params.activityId - id of current comment
+   * @param {object} params.content - content of comment will be update
+   * @return {void}
+   */
+  updateComment({ state, rootGetters }, params) {
+    const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
+    return activityRef.update({ isEdited: true, 'data.content': params.content })
   }
 }

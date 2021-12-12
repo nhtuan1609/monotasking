@@ -9,15 +9,15 @@
       </template>
       <v-card>
         <v-card-text>
-          <v-textarea
-            v-model="content"
-            class="textarea__default"
-            placeholder="Leave a comment..."
-            rows="3"
-            auto-grow
-            outlined
-            hide-details
-          ></v-textarea>
+          <editor
+            ref="editor-add"
+            autofocus
+            class="editor--padding-bottom"
+            :options="editorOptions"
+            height="auto"
+            initial-edit-type="wysiwyg"
+            preview-style="vertical"
+          ></editor>
           <div class="d-flex justify-end mt-2">
             <v-btn elevation="0" color="primary" @click="addComment">Comment</v-btn>
           </div>
@@ -264,23 +264,64 @@
           </v-avatar>
         </template>
         <v-card>
-          <v-card-subtitle class="d-flex align-center justify-space-between py-2">
+          <v-card-subtitle v-if="!isEditingComment[activity.id]" class="d-flex align-center justify-space-between py-2">
             <div>
               <span class="font-weight-bold">{{ activity.updater.name }}</span>
               <v-tooltip top>
                 <template #activator="{ on, attrs }">
                   <span class="text--hover" v-bind="attrs" v-on="on">
                     {{ activity._created ? $formatTimeAgo(activity._created.toDate()) : '' }}
+                    {{ activity.isEdited ? '(edited)' : '' }}
                   </span>
                 </template>
                 <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
               </v-tooltip>
             </div>
-            <v-btn icon @click="deleteComment(activity)">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
+            <v-menu min-width="160" transition="slide-y-transition" left offset-y>
+              <template #activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon>mdi-dots-horizontal</v-icon>
+                </v-btn>
+              </template>
+              <v-list light dense>
+                <v-list-item @click="$set(isEditingComment, activity.id, true)">
+                  <v-list-item-icon class="mr-2">
+                    <v-icon small>mdi-pencil-outline</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Edit</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="deleteComment(activity)">
+                  <v-list-item-icon class="mr-2">
+                    <v-icon small>mdi-trash-can</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-card-subtitle>
-          <v-card-text class="comment__content">{{ activity.data.content }}</v-card-text>
+          <v-card-text v-if="!isEditingComment[activity.id]" class="comment__content">
+            <viewer
+              :ref="getRefName('viewer', 'update', activity.id)"
+              :initial-value="activity.data.content"
+              height="auto"
+              @change="onViewerChange(activity)"
+            ></viewer>
+          </v-card-text>
+          <v-card-text v-else>
+            <editor
+              :ref="getRefName('editor', 'update', activity.id)"
+              class="editor--padding-bottom"
+              :initial-value="activity.data.content"
+              :options="editorOptions"
+              height="auto"
+              initial-edit-type="wysiwyg"
+              preview-style="vertical"
+            ></editor>
+            <div class="d-flex justify-end mt-2">
+              <v-btn class="mr-2" text outlined @click="$set(isEditingComment, activity.id, false)">Cancel</v-btn>
+              <v-btn elevation="0" color="primary" @click="updateComment(activity)">Save</v-btn>
+            </div>
+          </v-card-text>
         </v-card>
       </v-timeline-item>
 
@@ -312,6 +353,10 @@
 </template>
 
 <script>
+import 'codemirror/lib/codemirror.css'
+import '@toast-ui/editor/dist/toastui-editor.css'
+import '@toast-ui/editor/dist/toastui-editor-viewer.css'
+import { Editor, Viewer } from '@toast-ui/vue-editor'
 import { TASK } from '~/constants/task'
 import StatusIcon from '~/components/common/StatusIcon.vue'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
@@ -319,7 +364,7 @@ import DueDateIcon from '~/components/common/DueDateIcon.vue'
 
 export default {
   name: 'ActivityTimeline',
-  components: { StatusIcon, PriorityIcon, DueDateIcon },
+  components: { StatusIcon, PriorityIcon, DueDateIcon, Editor, Viewer },
   props: {
     task: {
       type: Object,
@@ -332,7 +377,26 @@ export default {
   },
   data() {
     return {
-      content: ''
+      isEditingComment: {},
+      editorOptions: {
+        hideModeSwitch: true,
+        toolbarItems: [
+          'heading',
+          'bold',
+          'italic',
+          'strike',
+          'divider',
+          'hr',
+          'quote',
+          'divider',
+          'ul',
+          'ol',
+          'task',
+          'divider',
+          'image',
+          'link'
+        ]
+      }
     }
   },
   computed: {
@@ -345,19 +409,52 @@ export default {
   },
   methods: {
     /**
-     * produce add new comment for current task
+     * add new comment for current task
      * @return {void}
      */
-    addComment() {
-      this.$store.dispatch('tasks/addComment', { taskId: this.task.id, content: this.content })
-      this.content = ''
+    async addComment() {
+      const content = this.$refs['editor-add'].invoke('getMarkdown')
+      await this.$store.dispatch('tasks/addComment', { taskId: this.task.id, content })
+      this.$refs['editor-add'].invoke('setMarkdown')
     },
     /**
-     * produce delete comment of current task
+     * delete comment of current task
      * @return {void}
      */
     deleteComment(activity) {
-      this.$store.dispatch('tasks/deleteComment', { taskId: this.task.id, id: activity.id })
+      this.$store.dispatch('tasks/deleteComment', { taskId: this.task.id, activityId: activity.id })
+    },
+    /**
+     * update comment for current task
+     * @param {object} activity - current editing comment
+     * @return {void}
+     */
+    async updateComment(activity) {
+      const refName = this.getRefName('editor', 'update', activity.id)
+      const content = this.$refs[refName][0].invoke('getMarkdown')
+      await this.$store.dispatch('tasks/updateComment', { taskId: this.task.id, activityId: activity.id, content })
+      this.$set(this.isEditingComment, activity.id, false)
+    },
+    /**
+     * update comment in view mode
+     * @param {object} activity - current editing comment
+     * @return {void}
+     */
+    async onViewerChange(activity) {
+      const refName = this.getRefName('viewer', 'update', activity.id)
+      // TODO: fix bug getMarkDown in view mod (https://github.com/nhn/tui.editor/issues/1177)
+      const content = this.$refs[refName][0].invoke('getMarkdown')
+      await this.$store.dispatch('tasks/updateComment', { taskId: this.task.id, activityId: activity.id, content })
+    },
+    /**
+     * update comment for current task
+     * @param {object} component - 'editor' or 'viewer'
+     * @param {object} type - 'update'
+     * @param {object} id - id of activity
+     * @return {string}
+     */
+    getRefName(component, type, id) {
+      return `${component}-${type}-${id}`
     }
   }
 }
@@ -436,5 +533,11 @@ export default {
 
 .text--hover {
   cursor: default;
+}
+
+.editor--padding-bottom ::v-deep {
+  .tui-editor-contents {
+    padding-bottom: 16px;
+  }
 }
 </style>
