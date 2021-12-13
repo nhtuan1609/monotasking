@@ -194,5 +194,18 @@ export const actions = {
   updateComment({ state, rootGetters }, params) {
     const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
     return activityRef.update({ isEdited: true, 'data.content': params.content })
+  },
+  /**
+   * update emojis of comment of current task
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} params.taskId - id of current task
+   * @param {object} params.activityId - id of current comment
+   * @param {object} params.emojis - emojis of comment will be update
+   * @return {void}
+   */
+  updateEmojiComment({ state, rootGetters }, params) {
+    const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
+    return activityRef.update({ 'data.emojis': params.emojis })
   }
 }

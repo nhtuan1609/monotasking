@@ -265,6 +265,7 @@
         </template>
         <v-card>
           <v-card-subtitle v-if="!isEditingComment[activity.id]" class="d-flex align-center justify-space-between py-2">
+            <!-- time -->
             <div>
               <span class="font-weight-bold">{{ activity.updater.name }}</span>
               <v-tooltip top>
@@ -277,36 +278,68 @@
                 <span>{{ activity._created ? $formatDateTime(activity._created.toDate()) : '' }}</span>
               </v-tooltip>
             </div>
-            <v-menu min-width="160" transition="slide-y-transition" left offset-y>
-              <template #activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-              <v-list light dense>
-                <v-list-item @click="$set(isEditingComment, activity.id, true)">
-                  <v-list-item-icon class="mr-2">
-                    <v-icon small>mdi-pencil-outline</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-title>Edit</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="deleteComment(activity)">
-                  <v-list-item-icon class="mr-2">
-                    <v-icon small>mdi-trash-can</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+
+            <!-- control button -->
+            <div>
+              <emoji-picker @select="(emoji) => addEmoji(activity, emoji)"></emoji-picker>
+
+              <v-menu min-width="160" transition="slide-y-transition" left offset-y>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon v-bind="attrs" v-on="on">
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+                <v-list light dense>
+                  <!-- edit button -->
+                  <v-list-item @click="$set(isEditingComment, activity.id, true)">
+                    <v-list-item-icon class="mr-2">
+                      <v-icon small>mdi-pencil-outline</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Edit</v-list-item-title>
+                  </v-list-item>
+
+                  <!-- delete button -->
+                  <v-list-item @click="deleteComment(activity)">
+                    <v-list-item-icon class="mr-2">
+                      <v-icon small>mdi-trash-can</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
           </v-card-subtitle>
+
+          <!-- view mode -->
           <v-card-text v-if="!isEditingComment[activity.id]" class="comment__content">
+            <!-- comment content -->
             <viewer
               :ref="getRefName('viewer', 'update', activity.id)"
               :initial-value="activity.data.content"
               height="auto"
               @change="onViewerChange(activity)"
             ></viewer>
+
+            <!-- emotion -->
+            <template v-if="activity.data.emojis && activity.data.emojis.length">
+              <div>
+                <v-chip
+                  v-for="(emoji, index) in displayEmoji(activity.data.emojis)"
+                  :key="index"
+                  class="chip__emoji"
+                  outlined
+                  small
+                  @click="removeEmoji(activity, index)"
+                >
+                  {{ emoji.icon }}
+                  {{ emoji.quantity }}
+                </v-chip>
+                <emoji-picker @select="(emoji) => addEmoji(activity, emoji)"></emoji-picker>
+              </div>
+            </template>
           </v-card-text>
+
+          <!-- edit mode -->
           <v-card-text v-else>
             <editor
               :ref="getRefName('editor', 'update', activity.id)"
@@ -317,6 +350,7 @@
               initial-edit-type="wysiwyg"
               preview-style="vertical"
             ></editor>
+
             <div class="d-flex justify-end mt-2">
               <v-btn class="mr-2" text outlined @click="$set(isEditingComment, activity.id, false)">Cancel</v-btn>
               <v-btn elevation="0" color="primary" @click="updateComment(activity)">Save</v-btn>
@@ -361,10 +395,11 @@ import { TASK } from '~/constants/task'
 import StatusIcon from '~/components/common/StatusIcon.vue'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
 import DueDateIcon from '~/components/common/DueDateIcon.vue'
+import EmojiPicker from '~/components/common/EmojiPicker.vue'
 
 export default {
   name: 'ActivityTimeline',
-  components: { StatusIcon, PriorityIcon, DueDateIcon, Editor, Viewer },
+  components: { StatusIcon, PriorityIcon, DueDateIcon, Editor, Viewer, EmojiPicker },
   props: {
     task: {
       type: Object,
@@ -455,6 +490,65 @@ export default {
      */
     getRefName(component, type, id) {
       return `${component}-${type}-${id}`
+    },
+    /**
+     * add emotion for comment
+     * @param {object} activity - data object of comment
+     * @param {object} emoji - icon of emotion
+     * @return {void}
+     */
+    addEmoji(activity, emoji) {
+      const emojiData = {
+        ...emoji,
+        userId: this.currentUser.id
+      }
+      let emojis = []
+      if (!activity.data.emojis?.length) {
+        emojis = [emojiData]
+      } else {
+        // if user select the emoji twice times, it will be removed
+        emojis = [...activity.data.emojis]
+        const index = emojis.findIndex((item) => item.userId === this.currentUser.id && item.icon === emoji.icon)
+        if (index !== -1) {
+          emojis.splice(index, 1)
+        } else {
+          emojis.push(emojiData)
+        }
+      }
+
+      this.$store.dispatch('tasks/updateEmojiComment', { taskId: this.task.id, activityId: activity.id, emojis })
+    },
+    /**
+     * remove emotion for comment
+     * @param {object} activity - data object of comment
+     * @param {number} index - position of emotion will be removed
+     * @return {void}
+     */
+    removeEmoji(activity, index) {
+      const emojis = [...activity.data.emojis]
+      emojis.splice(index, 1)
+      this.$store.dispatch('tasks/updateEmojiComment', { taskId: this.task.id, activityId: activity.id, emojis })
+    },
+    /**
+     * restructure emojis list to display with format icon + quantity
+     * @param {object} emojis - list of emotion of comment
+     * @return {object}
+     */
+    displayEmoji(emojis) {
+      const result = []
+      emojis.forEach((emoji) => {
+        const index = result.findIndex((item) => item.icon === emoji.icon)
+        if (index < 0) {
+          return result.push({
+            icon: emoji.icon,
+            quantity: 1
+          })
+        } else {
+          result[index].quantity += 1
+          return result
+        }
+      })
+      return result
     }
   }
 }
@@ -538,6 +632,14 @@ export default {
 .editor--padding-bottom ::v-deep {
   .tui-editor-contents {
     padding-bottom: 16px;
+  }
+}
+
+.chip__emoji {
+  margin-left: 8px;
+  padding: 0 4px;
+  &:first-child {
+    margin-left: 0;
   }
 }
 </style>
