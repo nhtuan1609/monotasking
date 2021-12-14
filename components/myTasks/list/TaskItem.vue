@@ -5,7 +5,6 @@
     @click="$router.push(`/myTasks/list/${task.id}`)"
   >
     <!-- progress -->
-
     <v-tooltip bottom>
       <template #activator="{ on, attrs }">
         <v-progress-circular
