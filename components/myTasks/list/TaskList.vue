@@ -255,10 +255,13 @@ import { TASK } from '~/constants/task.js'
 import WonderingCard from '~/components/myTasks/list/WonderingCard.vue'
 import ContextMenu from '~/components/myTasks/list/ContextMenu.vue'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
-import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
 import StatusIcon from '~/components/common/StatusIcon.vue'
-import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import DueDateIcon from '~/components/common/DueDateIcon.vue'
+import PrioritySelectMenu from '~/components/common/PrioritySelectMenu.vue'
+import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
+import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
+import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
+import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
 
 export default {
   name: 'TaskList',
@@ -266,10 +269,13 @@ export default {
     WonderingCard,
     ContextMenu,
     PriorityIcon,
-    PrioritySelectMenu,
     StatusIcon,
+    DueDateIcon,
+    PrioritySelectMenu,
     StatusSelectMenu,
-    DueDateIcon
+    LabelSelectMenu,
+    ProjectSelectMenu,
+    AssigneeSelectMenu
   },
   data() {
     return {
