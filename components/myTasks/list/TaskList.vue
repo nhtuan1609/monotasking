@@ -1,5 +1,14 @@
 <template>
-  <v-container v-if="!isLoading">
+  <div v-if="!isLoading" class="pa-4">
+    <!-- add new task -->
+    <v-toolbar class="toolbar" light elevation="0">
+      <v-spacer></v-spacer>
+      <v-btn depressed color="primary" @click="isAddingNewTask = true">
+        <v-icon small left>mdi-square-edit-outline</v-icon>
+        New task
+      </v-btn>
+    </v-toolbar>
+
     <!-- show wondering card if tasks length is 0 -->
     <wondering-card v-if="!tasks.length" class="task__wondering-card"></wondering-card>
 
@@ -247,7 +256,27 @@
       :menu-y="menuY"
       :selected-task="selectedTask"
     ></context-menu>
-  </v-container>
+
+    <!-- show dialog to add new task -->
+    <v-dialog v-model="isAddingNewTask" width="500">
+      <v-card light class="pa-0">
+        <v-card-title class="primary white--text py-2 px-4">Add new task</v-card-title>
+        <v-card-text class="pa-4">
+          <v-form ref="form">
+            <h4>Name</h4>
+            <v-text-field v-model="newTask.name" outlined dense autofocus :rules="[$rules.required]"></v-text-field>
+            <h4>Description</h4>
+            <v-text-field v-model="newTask.description" outlined dense></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn text outlined plain @click="closeAddNewTaskDialog">Cancel</v-btn>
+          <v-btn elevation="0" color="primary" @click="addNewTask">Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -283,7 +312,9 @@ export default {
       menuX: 0,
       menuY: 0,
       selectedTask: {},
-      isLoading: true
+      isLoading: true,
+      isAddingNewTask: false,
+      newTask: {}
     }
   },
   computed: {
@@ -321,10 +352,18 @@ export default {
   watch: {
     tasks() {
       this.isLoading = false
+    },
+    isAddingNewTask(newValue) {
+      if (newValue) {
+        this.$nextTick(() => {
+          this.$refs.form.resetValidation()
+        })
+      }
     }
   },
   created() {
     this.$store.dispatch('tasks/setTasksRef')
+    this.resetNewTask()
   },
   methods: {
     /**
@@ -358,6 +397,41 @@ export default {
      */
     toTaskDetails(event, { item }) {
       this.$router.push(`/myTasks/list/${item.id}`)
+    },
+    /**
+     * reset new task object
+     * @return {void}
+     */
+    resetNewTask() {
+      this.newTask = {
+        name: '',
+        description: ''
+      }
+    },
+    /**
+     * reset new task object and close dialog
+     * @return {void}
+     */
+    closeAddNewTaskDialog() {
+      this.resetNewTask()
+      this.isAddingNewTask = false
+    },
+    /**
+     * add new task item
+     * @return {void}
+     */
+    addNewTask() {
+      if (!this.$refs.form.validate()) return
+
+      const validatedName = this.newTask.name.trim()
+      if (validatedName) {
+        this.$store.dispatch('tasks/addTask', {
+          name: validatedName,
+          description: this.newTask.description.trim()
+        })
+      }
+
+      this.closeAddNewTaskDialog()
     }
   }
 }
@@ -419,5 +493,9 @@ export default {
       cursor: pointer;
     }
   }
+}
+
+.toolbar {
+  background-color: transparent !important;
 }
 </style>
