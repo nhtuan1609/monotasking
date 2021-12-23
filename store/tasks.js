@@ -49,23 +49,10 @@ export const actions = {
   async addTask({ state, rootGetters }, params) {
     const ref = db.collection('tasks').doc()
     const data = {
+      ...params,
       _created: firebase.firestore.FieldValue.serverTimestamp(),
       _updated: firebase.firestore.FieldValue.serverTimestamp(),
-      id: ref.id,
-      priority: { ...TASK.PRIORITY.NO_PRIORITY },
-      status: { ...TASK.STATUS.BACKLOG },
-      name: params.name,
-      description: '',
-      dueDate: '',
-      project: {},
-      assignee: {},
-      label: {},
-      checklist: {
-        _autoNumber: 0,
-        checkedIds: [],
-        items: [],
-        progress: 0
-      }
+      id: ref.id
     }
 
     await ref.set(data).then(() => {

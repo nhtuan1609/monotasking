@@ -44,12 +44,15 @@ export default {
     changePriority(priority) {
       if (priority.code === this.task.priority.code) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { priority },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_PRIORITY
-      })
-      this.$emit('selected')
+      if (this.task.id) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { priority },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_PRIORITY
+        })
+      }
+
+      this.$emit('selected', priority)
     }
   }
 }

@@ -3,7 +3,7 @@
     <!-- add new task -->
     <v-toolbar class="toolbar" light elevation="0">
       <v-spacer></v-spacer>
-      <v-btn depressed color="primary" @click="isAddingNewTask = true">
+      <v-btn depressed color="primary" @click="isShowAddNewTaskDialog = true">
         <v-icon small left>mdi-square-edit-outline</v-icon>
         New task
       </v-btn>
@@ -159,10 +159,10 @@
             no-title
             :value="item.dueDate"
             @input="datePickerDueDate = false"
-            @change="changeDueDate"
+            @change="(dueDate) => changeDueDate(dueDate, item)"
           >
             <v-spacer></v-spacer>
-            <v-btn text @click="changeDueDate()">Clear</v-btn>
+            <v-btn text @click="changeDueDate('', item)">Clear</v-btn>
           </v-date-picker>
         </v-menu>
       </template>
@@ -199,7 +199,7 @@
         </v-menu>
       </template>
 
-      <!-- name -->
+      <!-- created -->
       <template #[`item._created`]="{ item }">
         <v-tooltip bottom>
           <template #activator="{ on, attrs }">
@@ -221,7 +221,7 @@
         </v-tooltip>
       </template>
 
-      <!-- name -->
+      <!-- assignee -->
       <template #[`item.assignee.name`]="{ item }">
         <v-menu transition="scale-transition" offset-y>
           <template #activator="{ on: menu, attrs }">
@@ -258,24 +258,7 @@
     ></context-menu>
 
     <!-- show dialog to add new task -->
-    <v-dialog v-model="isAddingNewTask" width="500">
-      <v-card light class="pa-0">
-        <v-card-title class="primary white--text py-2 px-4">Add new task</v-card-title>
-        <v-card-text class="pa-4">
-          <v-form ref="form">
-            <h4>Name</h4>
-            <v-text-field v-model="newTask.name" outlined dense autofocus :rules="[$rules.required]"></v-text-field>
-            <h4>Description</h4>
-            <v-text-field v-model="newTask.description" outlined dense></v-text-field>
-          </v-form>
-        </v-card-text>
-        <v-card-actions class="pa-4">
-          <v-spacer></v-spacer>
-          <v-btn text outlined plain @click="closeAddNewTaskDialog">Cancel</v-btn>
-          <v-btn elevation="0" color="primary" @click="addNewTask">Confirm</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <new-task :is-show="isShowAddNewTaskDialog" @close="isShowAddNewTaskDialog = false"></new-task>
   </div>
 </template>
 
@@ -291,6 +274,7 @@ import StatusSelectMenu from '~/components/common/StatusSelectMenu.vue'
 import ProjectSelectMenu from '~/components/common/ProjectSelectMenu.vue'
 import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
 import LabelSelectMenu from '~/components/common/LabelSelectMenu.vue'
+import NewTask from '~/components/myTasks/list/NewTask.vue'
 
 export default {
   name: 'TaskList',
@@ -304,7 +288,8 @@ export default {
     StatusSelectMenu,
     LabelSelectMenu,
     ProjectSelectMenu,
-    AssigneeSelectMenu
+    AssigneeSelectMenu,
+    NewTask
   },
   data() {
     return {
@@ -313,8 +298,8 @@ export default {
       menuY: 0,
       selectedTask: {},
       isLoading: true,
-      isAddingNewTask: false,
-      newTask: {}
+      isShowAddNewTaskDialog: false,
+      datePickerDueDate: false
     }
   },
   computed: {
@@ -352,18 +337,10 @@ export default {
   watch: {
     tasks() {
       this.isLoading = false
-    },
-    isAddingNewTask(newValue) {
-      if (newValue) {
-        this.$nextTick(() => {
-          this.$refs.form.resetValidation()
-        })
-      }
     }
   },
   created() {
     this.$store.dispatch('tasks/setTasksRef')
-    this.resetNewTask()
   },
   methods: {
     /**
@@ -399,39 +376,19 @@ export default {
       this.$router.push(`/myTasks/list/${item.id}`)
     },
     /**
-     * reset new task object
+     * produce change due date for selected task
+     * @param {object} task - due date information which is selected
      * @return {void}
      */
-    resetNewTask() {
-      this.newTask = {
-        name: '',
-        description: ''
-      }
-    },
-    /**
-     * reset new task object and close dialog
-     * @return {void}
-     */
-    closeAddNewTaskDialog() {
-      this.resetNewTask()
-      this.isAddingNewTask = false
-    },
-    /**
-     * add new task item
-     * @return {void}
-     */
-    addNewTask() {
-      if (!this.$refs.form.validate()) return
+    changeDueDate(dueDate = '', item) {
+      if (dueDate === item.dueDate) return
 
-      const validatedName = this.newTask.name.trim()
-      if (validatedName) {
-        this.$store.dispatch('tasks/addTask', {
-          name: validatedName,
-          description: this.newTask.description.trim()
-        })
-      }
-
-      this.closeAddNewTaskDialog()
+      this.$store.dispatch('tasks/updateTask', {
+        id: item.id,
+        data: { dueDate },
+        activityType: TASK.ACTIVITY_TYPE.CHANGE_DUE_DATE
+      })
+      this.datePickerDueDate = false
     }
   }
 }

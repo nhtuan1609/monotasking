@@ -51,12 +51,15 @@ export default {
     changeProject(project = {}) {
       if (project.id === this.task.project.id) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { project },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_PROJECT
-      })
-      this.$emit('selected')
+      if (this.task.id) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { project },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_PROJECT
+        })
+      }
+
+      this.$emit('selected', project)
     }
   }
 }

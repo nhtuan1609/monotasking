@@ -44,12 +44,15 @@ export default {
     changeStatus(status) {
       if (status.code === this.task.status.code) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { status },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_STATUS
-      })
-      this.$emit('selected')
+      if (this.task.id) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { status },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_STATUS
+        })
+      }
+
+      this.$emit('selected', status)
     }
   }
 }

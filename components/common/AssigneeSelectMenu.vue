@@ -53,12 +53,15 @@ export default {
     changeAssignee(assignee = {}) {
       if (assignee.id === this.task.assignee.id) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { assignee },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_ASSIGNEE
-      })
-      this.$emit('selected')
+      if (this.task.id) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { assignee },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_ASSIGNEE
+        })
+      }
+
+      this.$emit('selected', assignee)
     }
   }
 }

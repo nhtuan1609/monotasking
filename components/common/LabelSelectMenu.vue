@@ -49,12 +49,15 @@ export default {
     changeLabel(label = {}) {
       if (label.id === this.task.label.id) return
 
-      this.$store.dispatch('tasks/updateTask', {
-        id: this.task.id,
-        data: { label },
-        activityType: TASK.ACTIVITY_TYPE.CHANGE_LABEL
-      })
-      this.$emit('selected')
+      if (this.task.id) {
+        this.$store.dispatch('tasks/updateTask', {
+          id: this.task.id,
+          data: { label },
+          activityType: TASK.ACTIVITY_TYPE.CHANGE_LABEL
+        })
+      }
+
+      this.$emit('selected', label)
     }
   }
 }
