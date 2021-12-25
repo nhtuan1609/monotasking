@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/default
 import firebase from 'firebase/app'
 import 'firebase/firestore'
-import 'firebase/analytics'
+import 'firebase/auth'
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -13,7 +13,6 @@ if (!firebase.apps.length) {
     appId: process.env.APP_ID,
     measurementId: process.env.MEASUREMENT_ID
   })
-  firebase.analytics()
 }
 
 export default firebase

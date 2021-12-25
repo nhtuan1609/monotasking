@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <navigation-drawer v-model="drawer" :menus="menus" @toggleDrawer="toggleDrawer"></navigation-drawer>
+    <navigation-drawer v-if="tenantId" v-model="drawer" :menus="menus" @toggleDrawer="toggleDrawer"></navigation-drawer>
 
     <app-bar @toggleDrawer="toggleDrawer"></app-bar>
 
@@ -19,8 +19,24 @@ export default {
   components: { NavigationDrawer, AppBar },
   data() {
     return {
-      drawer: false,
-      menus: [
+      drawer: false
+    }
+  },
+  computed: {
+    THEME() {
+      return THEME
+    },
+    color() {
+      return this.$store.getters['preferences/getColor']
+    },
+    background() {
+      return this.$store.getters['preferences/getBackground']
+    },
+    tenantId() {
+      return this.$store.getters['profile/getTenantId']
+    },
+    menus() {
+      return [
         {
           icon: 'mdi-apps',
           title: 'Welcome',
@@ -48,17 +64,6 @@ export default {
           ]
         }
       ]
-    }
-  },
-  computed: {
-    THEME() {
-      return THEME
-    },
-    color() {
-      return this.$store.getters['preferences/getColor']
-    },
-    background() {
-      return this.$store.getters['preferences/getBackground']
     }
   },
   watch: {
@@ -108,6 +113,8 @@ export default {
   --color-text: var(--v-_text-base);
   --color-base: var(--v-_base-base);
   --color-white: var(--v-_white-base);
+  --color-error: var(--v-error-base);
+  --color-error-background: var(--v-error-lighten5);
 
   --color-background: #fafafa;
   --color-border: #c4c4c4;

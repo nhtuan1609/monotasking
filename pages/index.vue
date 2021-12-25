@@ -11,7 +11,10 @@
           </div>
         </div>
         <div class="use-button">
-          <v-btn color="primary" large min-width="300" @click="$router.push('/myTasks/list')">Use for free</v-btn>
+          <v-btn v-if="tenantId" color="primary" large min-width="300" @click="$router.push('/myTasks/list')"
+            >Go to task list</v-btn
+          >
+          <v-btn v-else color="primary" large min-width="300" @click="$router.push('/signIn')">Use for free</v-btn>
         </div>
       </v-col>
       <v-col cols="12" md="6" style="position: relative" class="d-flex flex-column justify-center">
@@ -65,6 +68,11 @@ export default {
           color: '#996633'
         }
       ]
+    }
+  },
+  computed: {
+    tenantId() {
+      return this.$store.getters['profile/getTenantId']
     }
   }
 }
