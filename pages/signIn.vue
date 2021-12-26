@@ -10,27 +10,36 @@
         Error: The email or password that you've entered is incorrect!
       </div>
 
-      <v-text-field v-model="email" type="text" placeholder="Email" filled color="white">
-        <template #prepend-inner>
-          <v-icon size="22" left>mdi-email-outline</v-icon>
-        </template>
-      </v-text-field>
-      <v-text-field
-        v-model="password"
-        :type="isShowPassword ? 'text' : 'password'"
-        placeholder="Password"
-        filled
-        color="white"
-      >
-        <template #prepend-inner>
-          <v-icon size="22" left>mdi-lock-outline</v-icon>
-        </template>
-        <template #append>
-          <v-icon size="22" left @click="isShowPassword = !isShowPassword">{{
-            isShowPassword ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
-          }}</v-icon>
-        </template>
-      </v-text-field>
+      <v-form ref="form">
+        <v-text-field v-model="email" type="text" placeholder="Email" filled color="white" :rules="[$rules.required]">
+          <template #prepend-inner>
+            <v-icon size="22" left>mdi-email-outline</v-icon>
+          </template>
+          <template #message="{ message }">
+            <div v-if="message" class="form__error-message small">{{ message }}</div>
+          </template>
+        </v-text-field>
+        <v-text-field
+          v-model="password"
+          :type="isShowPassword ? 'text' : 'password'"
+          placeholder="Password"
+          filled
+          color="white"
+          :rules="[$rules.required]"
+        >
+          <template #prepend-inner>
+            <v-icon size="22" left>mdi-lock-outline</v-icon>
+          </template>
+          <template #append>
+            <v-icon size="22" left @click="isShowPassword = !isShowPassword">{{
+              isShowPassword ? 'mdi-eye-outline' : 'mdi-eye-off-outline'
+            }}</v-icon>
+          </template>
+          <template #message="{ message }">
+            <div v-if="message" class="form__error-message small">{{ message }}</div>
+          </template>
+        </v-text-field>
+      </v-form>
 
       <div class="form__button">
         <v-btn min-width="200px" height="48px" elevation="0" color="primary" rounded @click="login">Sign in</v-btn>
@@ -59,11 +68,14 @@ export default {
   },
   methods: {
     login() {
+      if (!this.$refs.form.validate()) return
+
       this.$store.dispatch('profile/login', { email: this.email, password: this.password }).then((isSuccess) => {
-        if (!isSuccess) {
+        if (isSuccess) {
+          this.$router.push('/myTasks/list')
+        } else {
           this.isShowErrorMessage = true
         }
-        this.$router.push('/myTasks/list')
       })
     }
   }
@@ -95,6 +107,12 @@ export default {
     padding: 10px;
     text-align: left;
     border-radius: 4px;
+    &.small {
+      margin: 0;
+      font-size: 14px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
   }
   .form__button {
     display: flex;

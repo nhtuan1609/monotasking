@@ -103,10 +103,11 @@ export default {
       if (!this.$refs.form.validate()) return
 
       this.$store.dispatch('profile/register', { email: this.email, password: this.password }).then((isSuccess) => {
-        if (!isSuccess) {
+        if (isSuccess) {
+          this.$router.push('/myTasks/list')
+        } else {
           this.isShowErrorMessage = true
         }
-        this.$router.push('/myTasks/list')
       })
     }
   }
