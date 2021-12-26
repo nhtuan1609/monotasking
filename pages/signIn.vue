@@ -70,7 +70,11 @@ export default {
     login() {
       if (!this.$refs.form.validate()) return
 
-      this.$store.dispatch('profile/login', { email: this.email, password: this.password }).then((isSuccess) => {
+      const user = {
+        email: this.email,
+        password: this.password
+      }
+      this.$store.dispatch('profile/login', { user }).then((isSuccess) => {
         if (isSuccess) {
           this.$router.push('/myTasks/list')
         } else {

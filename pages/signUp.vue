@@ -11,6 +11,15 @@
       </div>
 
       <v-form ref="form">
+        <v-text-field v-model="name" type="text" placeholder="Name" filled color="white" :rules="[$rules.required]">
+          <template #prepend-inner>
+            <v-icon size="22" left>mdi-account-outline</v-icon>
+          </template>
+          <template #message="{ message }">
+            <div v-if="message" class="form__error-message small">{{ message }}</div>
+          </template>
+        </v-text-field>
+
         <v-text-field
           v-model="email"
           type="text"
@@ -26,6 +35,7 @@
             <div v-if="message" class="form__error-message small">{{ message }}</div>
           </template>
         </v-text-field>
+
         <v-text-field
           v-model="password"
           :type="isShowPassword ? 'text' : 'password'"
@@ -79,6 +89,7 @@
 export default {
   data() {
     return {
+      name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -102,7 +113,12 @@ export default {
     register() {
       if (!this.$refs.form.validate()) return
 
-      this.$store.dispatch('profile/register', { email: this.email, password: this.password }).then((isSuccess) => {
+      const user = {
+        name: this.name,
+        email: this.email,
+        password: this.password
+      }
+      this.$store.dispatch('profile/register', { user }).then((isSuccess) => {
         if (isSuccess) {
           this.$router.push('/myTasks/list')
         } else {
