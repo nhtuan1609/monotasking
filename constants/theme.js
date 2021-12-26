@@ -1,4 +1,5 @@
 const COLORS_DEFAULT = {
+  id: '0',
   name: 'Cyan',
   primary: '#60a3bc',
   primaryDark: '#3c6382',
@@ -19,6 +20,7 @@ const COLORS_DEFAULT = {
 const COLORS = [
   COLORS_DEFAULT,
   {
+    id: '1',
     name: 'Green',
     primary: '#7cb342',
     primaryDark: '#008A00',
@@ -36,6 +38,7 @@ const COLORS = [
     _hightLight: '#fffde7'
   },
   {
+    id: '2',
     name: 'Navy',
     primary: '#0f536e',
     primaryDark: '#082a38',
@@ -53,6 +56,7 @@ const COLORS = [
     _hightLight: '#fffde7'
   },
   {
+    id: '3',
     name: 'Pink',
     primary: '#f48fb1',
     primaryDark: '#C2185B',
@@ -70,6 +74,7 @@ const COLORS = [
     _hightLight: '#fffde7'
   },
   {
+    id: '4',
     name: 'Yellow',
     primary: '#ffb300',
     primaryDark: '#F57F17',
@@ -88,18 +93,18 @@ const COLORS = [
   }
 ]
 
-const BACKGROUND_DEFAULT = { path: '/images/backgrounds/andre-ouellet-cga32YQt0Kw-unsplash.jpg' }
+const BACKGROUND_DEFAULT = { id: '0', path: '/images/backgrounds/andre-ouellet-cga32YQt0Kw-unsplash.jpg' }
 
 const BACKGROUNDS = [
-  { path: '/images/backgrounds/andre-ouellet-cga32YQt0Kw-unsplash.jpg' },
-  { path: '/images/backgrounds/chang-duong-qJXGIsF_wwo-unsplash.jpg' },
-  { path: '/images/backgrounds/kiril-dobrev-UB0QiVPsXgc-unsplash.jpg' },
-  { path: '/images/backgrounds/linh-pham-gm-ZwnNSpVg-unsplash.jpg' },
-  { path: '/images/backgrounds/seb-MOsRi5Ou_mU-unsplash.jpg' },
-  { path: '/images/backgrounds/thinh-nguyen-A6Fg9OvGkpI-unsplash.jpg' },
-  { path: '/images/backgrounds/tuan-anh-tran-tHfJ3mevHi0-unsplash.jpg' },
-  { path: '/images/backgrounds/tuan-thanh-cao-6lrnBIBUbgg-unsplash.jpg' },
-  { path: '/images/backgrounds/vu-khoi-pLWHT92RFg4-unsplash.jpg' }
+  BACKGROUND_DEFAULT,
+  { id: '1', path: '/images/backgrounds/chang-duong-qJXGIsF_wwo-unsplash.jpg' },
+  { id: '2', path: '/images/backgrounds/kiril-dobrev-UB0QiVPsXgc-unsplash.jpg' },
+  { id: '3', path: '/images/backgrounds/linh-pham-gm-ZwnNSpVg-unsplash.jpg' },
+  { id: '4', path: '/images/backgrounds/seb-MOsRi5Ou_mU-unsplash.jpg' },
+  { id: '5', path: '/images/backgrounds/thinh-nguyen-A6Fg9OvGkpI-unsplash.jpg' },
+  { id: '6', path: '/images/backgrounds/tuan-anh-tran-tHfJ3mevHi0-unsplash.jpg' },
+  { id: '7', path: '/images/backgrounds/tuan-thanh-cao-6lrnBIBUbgg-unsplash.jpg' },
+  { id: '8', path: '/images/backgrounds/vu-khoi-pLWHT92RFg4-unsplash.jpg' }
 ]
 
 export const THEME = Object.freeze({

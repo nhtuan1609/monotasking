@@ -8,6 +8,8 @@ export default function ({ route, store, redirect, $logger }) {
       const data = userRef.data()
       store.commit('profile/setUser', data)
       store.commit('profile/setTenantId', data.tenantId)
+    } else if (route.name !== 'index' && route.name !== 'signIn' && route.name !== 'signUp') {
+      redirect('/')
     }
   })
 }
