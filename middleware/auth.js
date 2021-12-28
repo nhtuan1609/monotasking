@@ -2,13 +2,14 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 
 export default function ({ route, store, redirect, $logger }) {
-  firebase.auth().onAuthStateChanged(async (user) => {
+  firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      const userRef = await firebase.firestore().collection('tenantUsers').doc(user.email).get()
-      const data = userRef.data()
-      store.commit('profile/setUser', data)
-      store.commit('profile/setTenantId', data.tenantId)
-    } else if (route.name !== 'index' && route.name !== 'signIn' && route.name !== 'signUp') {
+      const currentUser = store.getters['profile/getUser']
+      if (currentUser.email && user.email !== currentUser.email) {
+        store.commit('profile/clearAll')
+        firebase.auth().signOut()
+      }
+    } else if (!['index', 'signIn', 'signOut'].includes(route.name)) {
       redirect('/')
     }
   })

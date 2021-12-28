@@ -11,7 +11,15 @@
       </div>
 
       <v-form ref="form">
-        <v-text-field v-model="name" type="text" placeholder="Name" filled color="white" :rules="[$rules.required]">
+        <v-text-field
+          v-model="name"
+          type="text"
+          placeholder="Name"
+          filled
+          color="white"
+          :rules="[$rules.required]"
+          @keyup.enter="register"
+        >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-account-outline</v-icon>
           </template>
@@ -27,6 +35,7 @@
           filled
           color="white"
           :rules="[$rules.required, $rules.email]"
+          @keyup.enter="register"
         >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-email-outline</v-icon>
@@ -43,6 +52,7 @@
           filled
           color="white"
           :rules="[$rules.required, $rules.password]"
+          @keyup.enter="register"
         >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-lock-outline</v-icon>
@@ -56,6 +66,7 @@
             <div v-if="message" class="form__error-message small">{{ message }}</div>
           </template>
         </v-text-field>
+
         <v-text-field
           v-model="confirmPassword"
           :type="isShowConfirmPassword ? 'text' : 'password'"
@@ -63,6 +74,7 @@
           filled
           color="white"
           :rules="[$rules.required, $rules.confirmPassword(password, confirmPassword)]"
+          @keyup.enter="register"
         >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-lock-outline</v-icon>

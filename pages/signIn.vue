@@ -11,7 +11,15 @@
       </div>
 
       <v-form ref="form">
-        <v-text-field v-model="email" type="text" placeholder="Email" filled color="white" :rules="[$rules.required]">
+        <v-text-field
+          v-model="email"
+          type="text"
+          placeholder="Email"
+          filled
+          color="white"
+          :rules="[$rules.required]"
+          @keyup.enter="login"
+        >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-email-outline</v-icon>
           </template>
@@ -26,6 +34,7 @@
           filled
           color="white"
           :rules="[$rules.required]"
+          @keyup.enter="login"
         >
           <template #prepend-inner>
             <v-icon size="22" left>mdi-lock-outline</v-icon>

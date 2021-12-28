@@ -18,7 +18,7 @@
               <span class="white--text" style="font-size: 20px; text-transform: uppercase">{{ user.shortName }}</span>
             </v-avatar>
             <div>
-              <div style="font-size: 24px; font: bold; margin-bottom: 4px">{{ user.name }}</div>
+              <div style="font-size: 18px; font: bold; margin-bottom: 4px">{{ user.name }}</div>
               <div>View your profile</div>
             </div>
           </v-list-item-title>

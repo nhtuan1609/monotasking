@@ -23,6 +23,10 @@ export const mutations = {
   },
   setTenantId(state, tenantId) {
     state.tenantId = tenantId
+  },
+  clearAll(state) {
+    state.user = {}
+    state.tenantId = null
   }
 }
 
@@ -129,8 +133,7 @@ export const actions = {
       .auth()
       .signOut()
       .then(() => {
-        commit('setUser', {})
-        commit('setTenantId', null)
+        commit('clearAll')
         isSuccess = true
       })
       .catch((error) => {
