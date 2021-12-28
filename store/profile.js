@@ -31,6 +31,7 @@ export const actions = {
    * register new user
    * @param {object} state - local state
    * @param {object} rootGetters - getter function of store
+   * @param {object} commit - action to update store
    * @param {object} params.email
    * @param {object} params.password
    * @return {void}
@@ -69,6 +70,7 @@ export const actions = {
    * login user
    * @param {object} state - local state
    * @param {object} rootGetters - getter function of store
+   * @param {object} commit - action to update store
    * @param {object} params.email
    * @param {object} params.password
    * @return {void}
@@ -118,6 +120,7 @@ export const actions = {
    * logout
    * @param {object} state - local state
    * @param {object} rootGetters - getter function of store
+   * @param {object} commit - action to update store
    * @return {void}
    */
   async logout({ state, rootGetters, commit }) {
@@ -135,5 +138,21 @@ export const actions = {
       })
 
     return isSuccess
+  },
+  /**
+   * update user's profile
+   * @param {object} state - local state
+   * @param {object} rootGetters - getter function of store
+   * @param {object} commit - action to update store
+   * @param {object} params.data - data of user will be updated
+   * @return {void}
+   */
+  async updateProfile({ state, rootGetters, commit }, params) {
+    const { data } = params
+    const ref = db.collection('tenantUsers').doc(data.email)
+    data._updated = firebase.firestore.FieldValue.serverTimestamp()
+    await ref.update(params.data).then(() => {
+      commit('setUser', data)
+    })
   }
 }
