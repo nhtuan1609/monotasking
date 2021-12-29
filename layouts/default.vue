@@ -65,6 +65,16 @@ export default {
               to: '/myTasks/calendar'
             }
           ]
+        },
+        {
+          icon: 'mdi-view-grid-outline',
+          title: 'Projects',
+          to: '/projects'
+        },
+        {
+          icon: 'mdi-account-group',
+          title: 'Members',
+          to: '/members'
         }
       ]
     }
