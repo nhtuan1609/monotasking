@@ -7,6 +7,8 @@
     <v-main>
       <nuxt />
     </v-main>
+
+    <snack-bar></snack-bar>
   </v-app>
 </template>
 
@@ -14,9 +16,10 @@
 import { THEME } from '~/constants/theme.js'
 import NavigationDrawer from '~/components/layouts/NavigationDrawer.vue'
 import AppBar from '~/components/layouts/AppBar.vue'
+import SnackBar from '~/components/layouts/SnackBar.vue'
 
 export default {
-  components: { NavigationDrawer, AppBar },
+  components: { NavigationDrawer, AppBar, SnackBar },
   data() {
     return {
       drawer: false

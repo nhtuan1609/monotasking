@@ -26,7 +26,8 @@ export default {
     { src: '~/plugins/dateHelper.js', ssr: false },
     { src: '~/plugins/firebase.js', ssr: false },
     { src: '~/plugins/commonValidations.js', ssr: false },
-    { src: '~/plugins/localStorage.js', ssr: false }
+    { src: '~/plugins/localStorage.js', ssr: false },
+    { src: '~/plugins/commonUtils.js', ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

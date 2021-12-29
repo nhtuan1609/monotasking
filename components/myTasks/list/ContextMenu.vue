@@ -258,7 +258,9 @@ export default {
      * @return {void}
      */
     deleteTask() {
-      this.$store.dispatch('tasks/deleteTask', { id: this.selectedTask.id })
+      this.$store.dispatch('tasks/deleteTask', { id: this.selectedTask.id }).then(() => {
+        this.$showSuccessNotification('Delete task successfully')
+      })
       this.$parent.isShowContextMenu = false
     },
     /**

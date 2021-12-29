@@ -85,8 +85,10 @@ export default {
       }
       this.$store.dispatch('profile/login', { user }).then((isSuccess) => {
         if (isSuccess) {
+          this.$showSuccessNotification('Login successfully')
           this.$router.push('/myTasks/list')
         } else {
+          this.$showErrorNotification('Login failed')
           this.isShowErrorMessage = true
         }
       })

@@ -9,7 +9,7 @@ export default function ({ route, store, redirect, $logger }) {
         store.commit('profile/clearAll')
         firebase.auth().signOut()
       }
-    } else if (!['index', 'signIn', 'signOut'].includes(route.name)) {
+    } else if (!['index', 'signIn', 'signUp'].includes(route.name)) {
       redirect('/')
     }
   })

@@ -259,11 +259,15 @@ export default {
       const validatedName = this.newTask.name.trim()
       if (validatedName) {
         const description = this.$refs.editor.invoke('getMarkdown')
-        this.$store.dispatch('tasks/addTask', {
-          ...this.newTask,
-          name: validatedName,
-          description
-        })
+        this.$store
+          .dispatch('tasks/addTask', {
+            ...this.newTask,
+            name: validatedName,
+            description
+          })
+          .then(() => {
+            this.$showSuccessNotification('Create task successfully')
+          })
       }
 
       this.$refs.editor.invoke('setMarkdown')
