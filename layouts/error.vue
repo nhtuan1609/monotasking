@@ -59,22 +59,22 @@ export default {
   width: 100%;
   height: 100%;
 
-  & .error__oops {
+  .error__oops {
     font-size: 40px;
     font-weight: bold;
   }
 
-  & .error__image {
+  .error__image {
     flex: none;
   }
 
-  & .error__type {
+  .error__type {
     font-size: 32px;
     font-weight: bold;
     color: var(--color-error);
   }
 
-  & .error__description {
+  .error__description {
     font-size: 18px;
     margin: 12px 0;
   }
