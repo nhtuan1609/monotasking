@@ -8,6 +8,8 @@ export default function ({ route, store, redirect, $logger }) {
       if (currentUser.email && user.email !== currentUser.email) {
         store.commit('profile/clearAll')
         firebase.auth().signOut()
+      } else if (['signIn', 'signUp'].includes(route.name)) {
+        redirect('/')
       }
     } else if (!['index', 'signIn', 'signUp'].includes(route.name)) {
       redirect('/')
