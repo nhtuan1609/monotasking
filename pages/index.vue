@@ -11,7 +11,7 @@
           </div>
         </div>
         <div class="use-button">
-          <v-btn v-if="tenantId" color="primary" large min-width="300" @click="$router.push('/myTasks/list')"
+          <v-btn v-if="activeWorkspaceId" color="primary" large min-width="300" @click="$router.push('/myTasks/list')"
             >Go to task list</v-btn
           >
           <v-btn v-else color="primary" large min-width="300" @click="$router.push('/signIn')">Use for free</v-btn>
@@ -71,8 +71,8 @@ export default {
     }
   },
   computed: {
-    tenantId() {
-      return this.$store.getters['profile/getTenantId']
+    activeWorkspaceId() {
+      return this.$store.getters['profile/getActiveWorkspaceId']
     }
   }
 }

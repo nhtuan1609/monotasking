@@ -1,6 +1,6 @@
 <template>
   <v-app-bar class="primary" fixed app height="60">
-    <v-app-bar-nav-icon v-if="tenantId" @click.stop="$emit('toggleDrawer')" />
+    <v-app-bar-nav-icon v-if="activeWorkspaceId" @click.stop="$emit('toggleDrawer')" />
     <v-toolbar-title style="cursor: pointer" @click="$router.push('/')" v-text="title" />
     <v-spacer />
 
@@ -12,7 +12,7 @@
         </v-btn>
       </template>
       <v-list dense>
-        <v-list-item v-if="tenantId" style="height: 60px" @click="$router.push('/profile')">
+        <v-list-item v-if="user.email" style="height: 60px" @click="$router.push('/profile')">
           <v-list-item-title class="d-flex align-center">
             <v-avatar class="mr-2" size="40" :color="user.color">
               <span class="white--text" style="font-size: 20px; text-transform: uppercase">{{ user.shortName }}</span>
@@ -25,7 +25,7 @@
         </v-list-item>
         <v-list-item v-else @click="$router.push('/signIn')">
           <v-list-item-title>
-            <v-icon>mdi-login</v-icon>
+            <v-icon left>mdi-login</v-icon>
             Sign in
           </v-list-item-title>
         </v-list-item>
@@ -34,16 +34,51 @@
           <v-divider></v-divider>
         </div>
 
+        <v-list-item v-if="user.email && userWorkspaces.length">
+          <v-list-item-title>
+            <v-icon left>mdi-dresser</v-icon>
+            Workspace
+            <div class="my-2">
+              <v-list-item
+                v-for="(workspace, index) in userWorkspaces"
+                :key="index"
+                @click="changeWorkspace(workspace)"
+              >
+                <v-list-item-title>
+                  <v-avatar class="mr-2" size="20" :color="workspace.color">
+                    <span class="white--text" style="font-size: 10px">{{ workspace.shortName[0] }}</span>
+                  </v-avatar>
+                  {{ workspace.name }}
+                </v-list-item-title>
+                <v-list-item-action v-if="workspace.id === activeWorkspaceId">
+                  <v-icon small>mdi-check</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+            </div>
+          </v-list-item-title>
+        </v-list-item>
+
+        <div v-if="user.email" class="py-2">
+          <v-divider></v-divider>
+        </div>
+
+        <v-list-item v-if="user.email" @click="$router.push('/workspaces/create')">
+          <v-list-item-title>
+            <v-icon left>mdi-plus-box</v-icon>
+            Create a workspace
+          </v-list-item-title>
+        </v-list-item>
+
         <v-list-item @click="isShowThemeDialog = true">
           <v-list-item-title>
-            <v-icon>mdi-palette</v-icon>
+            <v-icon left>mdi-palette</v-icon>
             Display & Accessibility
           </v-list-item-title>
         </v-list-item>
 
-        <v-list-item v-if="tenantId" @click="logout">
+        <v-list-item v-if="user.email" @click="logout">
           <v-list-item-title>
-            <v-icon>mdi-logout</v-icon>
+            <v-icon left>mdi-logout</v-icon>
             Log out
           </v-list-item-title>
         </v-list-item>
@@ -122,8 +157,23 @@ export default {
     user() {
       return this.$store.getters['profile/getUser']
     },
-    tenantId() {
-      return this.$store.getters['profile/getTenantId']
+    activeWorkspaceId() {
+      return this.$store.getters['profile/getActiveWorkspaceId']
+    },
+    userWorkspaces() {
+      return this.$store.getters['workspaces/getUserWorkspaces']
+    }
+  },
+  watch: {
+    'user.email'() {
+      if (this.user.email) {
+        this.$store.dispatch('workspaces/setUserWorkspacesRef', { email: this.user.email })
+      }
+    }
+  },
+  created() {
+    if (this.user.email) {
+      this.$store.dispatch('workspaces/setUserWorkspacesRef', { email: this.user.email })
     }
   },
   methods: {
@@ -134,7 +184,7 @@ export default {
     logout() {
       this.$store.dispatch('profile/logout').then((isSuccess) => {
         if (isSuccess) {
-          this.$router.push('/signIn')
+          this.$showSuccessNotification('Log out successfully')
         }
       })
     },
@@ -183,6 +233,11 @@ export default {
       this.currentColor = {}
       this.currentBackground = {}
       this.isShowThemeDialog = false
+    },
+    changeWorkspace(workspace) {
+      this.$store.dispatch('profile/updateProfile', {
+        data: { ...this.user, activeWorkspaceId: workspace.id }
+      })
     }
   }
 }

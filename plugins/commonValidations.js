@@ -5,5 +5,6 @@ Vue.prototype.$rules = {
   email: (value) =>
     !value || /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(value) || 'Please enter valid email address.',
   password: (value) => value.length >= 6 || 'The password must be at least 6 characters long.',
-  confirmPassword: (value1, value2) => () => value1 === value2 || 'The confirm password is incorrect.'
+  confirmPassword: (value1, value2) => () => value1 === value2 || 'The confirm password is incorrect.',
+  maxLength: (length) => (value) => !(value.length > length) || `The maximum length is ${length} characters.`
 }

@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <navigation-drawer v-if="tenantId" v-model="drawer" :menus="menus" @toggleDrawer="toggleDrawer"></navigation-drawer>
+    <navigation-drawer
+      v-if="activeWorkspaceId"
+      v-model="drawer"
+      :menus="menus"
+      @toggleDrawer="toggleDrawer"
+    ></navigation-drawer>
 
     <app-bar @toggleDrawer="toggleDrawer"></app-bar>
 
@@ -35,8 +40,8 @@ export default {
     background() {
       return this.$store.getters['preferences/getBackground']
     },
-    tenantId() {
-      return this.$store.getters['profile/getTenantId']
+    activeWorkspaceId() {
+      return this.$store.getters['profile/getActiveWorkspaceId']
     },
     menus() {
       return [
