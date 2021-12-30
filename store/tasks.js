@@ -24,17 +24,37 @@ export const getters = {
 export const actions = {
   // binding tasks collection
   setTasksRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
-    bindFirestoreRef('tasks', db.collection('tasks').orderBy('_created', 'desc'), { wait: true })
+    bindFirestoreRef(
+      'tasks',
+      db
+        .collection('workspaces')
+        .doc(rootGetters['profile/getActiveWorkspaceId'])
+        .collection('tasks')
+        .orderBy('_created', 'desc'),
+      {
+        wait: true
+      }
+    )
   }),
   // binding current selected task
   setCurrentTaskRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
-    bindFirestoreRef('currentTask', db.collection('tasks').doc(params.id), { wait: true })
+    bindFirestoreRef(
+      'currentTask',
+      db.collection('workspaces').doc(rootGetters['profile/getActiveWorkspaceId']).collection('tasks').doc(params.id),
+      { wait: true }
+    )
   }),
   // binding activities of current selected task
   setCurrentActivitiesRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef(
       'currentActivities',
-      db.collection('tasks').doc(params.id).collection('activities').orderBy('_created', 'desc'),
+      db
+        .collection('workspaces')
+        .doc(rootGetters['profile/getActiveWorkspaceId'])
+        .collection('tasks')
+        .doc(params.id)
+        .collection('activities')
+        .orderBy('_created', 'desc'),
       { wait: true }
     )
   }),
@@ -47,7 +67,7 @@ export const actions = {
    * @return {void}
    */
   async addTask({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc()
+    const ref = db.collection('workspaces').doc(rootGetters['profile/getActiveWorkspaceId']).collection('tasks').doc()
     const data = {
       ...params,
       _created: firebase.firestore.FieldValue.serverTimestamp(),
@@ -56,7 +76,13 @@ export const actions = {
     }
 
     await ref.set(data).then(() => {
-      const activityRef = db.collection('tasks').doc(ref.id).collection('activities').doc()
+      const activityRef = db
+        .collection('workspaces')
+        .doc(rootGetters['profile/getActiveWorkspaceId'])
+        .collection('tasks')
+        .doc(ref.id)
+        .collection('activities')
+        .doc()
       const activity = {
         _created: firebase.firestore.FieldValue.serverTimestamp(),
         _updated: firebase.firestore.FieldValue.serverTimestamp(),
@@ -64,7 +90,7 @@ export const actions = {
         activityType: TASK.ACTIVITY_TYPE.CREATE_TASK,
         before: {},
         data,
-        updater: rootGetters['users/getCurrentUser']
+        updater: rootGetters['profile/getUser']
       }
       return activityRef.set(activity)
     })
@@ -77,7 +103,11 @@ export const actions = {
    * @return {void}
    */
   async deleteTask({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.id)
+    const ref = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.id)
 
     // delete all activies before delete task to hard delete
     const activityRef = await ref.collection('activities').get()
@@ -96,15 +126,27 @@ export const actions = {
    * @return {void}
    */
   async updateTask({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.id)
+    const ref = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.id)
     params.data._updated = firebase.firestore.FieldValue.serverTimestamp()
     await ref.update(params.data).then(async () => {
       const beforeRef = await ref.get()
-      const currentUser = rootGetters['users/getCurrentUser']
-      let activityRef = db.collection('tasks').doc(params.id).collection('activities').doc()
+      const currentUser = rootGetters['profile/getUser']
+      let activityRef = db
+        .collection('workspaces')
+        .doc(rootGetters['profile/getActiveWorkspaceId'])
+        .collection('tasks')
+        .doc(params.id)
+        .collection('activities')
+        .doc()
 
       // check latest activity, if it was created by same user, same type and less than 30 minutes, we will update it with new data
       const activities = await db
+        .collection('workspaces')
+        .doc(rootGetters['profile/getActiveWorkspaceId'])
         .collection('tasks')
         .doc(params.id)
         .collection('activities')
@@ -143,7 +185,13 @@ export const actions = {
    * @return {void}
    */
   addComment({ state, rootGetters }, params) {
-    const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc()
+    const activityRef = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.taskId)
+      .collection('activities')
+      .doc()
     const activity = {
       _created: firebase.firestore.FieldValue.serverTimestamp(),
       _updated: firebase.firestore.FieldValue.serverTimestamp(),
@@ -153,7 +201,7 @@ export const actions = {
       data: {
         content: params.content
       },
-      updater: rootGetters['users/getCurrentUser']
+      updater: rootGetters['profile/getUser']
     }
     return activityRef.set(activity)
   },
@@ -166,7 +214,13 @@ export const actions = {
    * @return {void}
    */
   deleteComment({ state, rootGetters }, params) {
-    const ref = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
+    const ref = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.taskId)
+      .collection('activities')
+      .doc(params.activityId)
     return ref.delete()
   },
   /**
@@ -179,7 +233,13 @@ export const actions = {
    * @return {void}
    */
   updateComment({ state, rootGetters }, params) {
-    const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
+    const activityRef = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.taskId)
+      .collection('activities')
+      .doc(params.activityId)
     return activityRef.update({ isEdited: true, 'data.content': params.content })
   },
   /**
@@ -192,7 +252,13 @@ export const actions = {
    * @return {void}
    */
   updateEmojiComment({ state, rootGetters }, params) {
-    const activityRef = db.collection('tasks').doc(params.taskId).collection('activities').doc(params.activityId)
+    const activityRef = db
+      .collection('workspaces')
+      .doc(rootGetters['profile/getActiveWorkspaceId'])
+      .collection('tasks')
+      .doc(params.taskId)
+      .collection('activities')
+      .doc(params.activityId)
     return activityRef.update({ 'data.emojis': params.emojis })
   }
 }

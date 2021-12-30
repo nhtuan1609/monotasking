@@ -58,7 +58,7 @@
           </v-list-item-title>
         </v-list-item>
 
-        <div v-if="user.email" class="py-2">
+        <div v-if="user.email && userWorkspaces.length" class="py-2">
           <v-divider></v-divider>
         </div>
 
@@ -234,10 +234,16 @@ export default {
       this.currentBackground = {}
       this.isShowThemeDialog = false
     },
-    changeWorkspace(workspace) {
-      this.$store.dispatch('profile/updateProfile', {
+    /**
+     * change workspace of user
+     * @param {object} workspace - workspace information which is selected
+     * @return {void}
+     */
+    async changeWorkspace(workspace) {
+      await this.$store.dispatch('profile/updateProfile', {
         data: { ...this.user, activeWorkspaceId: workspace.id }
       })
+      await this.$store.dispatch('tasks/setTasksRef')
     }
   }
 }

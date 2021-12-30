@@ -3,8 +3,8 @@
     <!-- add new comment field -->
     <v-timeline-item color="primary" small>
       <template #icon>
-        <v-avatar size="28" :color="currentUser.color">
-          <span class="white--text" style="font-size: 14px">{{ currentUser.shortName }}</span>
+        <v-avatar size="28" :color="user.color">
+          <span class="white--text" style="font-size: 14px">{{ user.shortName }}</span>
         </v-avatar>
       </template>
       <v-card>
@@ -438,8 +438,8 @@ export default {
     ACTIVITY_TYPE() {
       return TASK.ACTIVITY_TYPE
     },
-    currentUser() {
-      return this.$store.getters['users/getCurrentUser']
+    user() {
+      return this.$store.getters['profile/getUser']
     }
   },
   methods: {
@@ -500,7 +500,7 @@ export default {
     addEmoji(activity, emoji) {
       const emojiData = {
         ...emoji,
-        userId: this.currentUser.id
+        userId: this.user.id
       }
       let emojis = []
       if (!activity.data.emojis?.length) {
@@ -508,7 +508,7 @@ export default {
       } else {
         // if user select the emoji twice times, it will be removed
         emojis = [...activity.data.emojis]
-        const index = emojis.findIndex((item) => item.userId === this.currentUser.id && item.icon === emoji.icon)
+        const index = emojis.findIndex((item) => item.userId === this.user.id && item.icon === emoji.icon)
         if (index !== -1) {
           emojis.splice(index, 1)
         } else {
