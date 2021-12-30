@@ -1,20 +1,34 @@
 <template>
-  <div v-if="!isLoading" class="pa-4">
+  <!--  wondering card -->
+  <div v-if="!isLoading && !tasks.length" class="task__wondering">
+    <div class="task__wondering-card">
+      <v-img src="/images/calendar.png" alt="calendar" aspect-ratio="1" width="100" class="mx-auto my-6"></v-img>
+      <h2 class="text-center mb-4">Wondering where your tasks are?</h2>
+      <span class="text-center">Any tasks you didn't complete in My Day last time show up in suggestions pane.</span>
+    </div>
+
+    <!-- create task button -->
+    <v-btn class="mt-4" min-width="300" height="40" depressed color="primary" @click="isShowAddNewTaskDialog = true">
+      <v-icon small left>mdi-square-edit-outline</v-icon>
+      New task
+    </v-btn>
+
+    <!-- show dialog to add new task -->
+    <new-task :is-show="isShowAddNewTaskDialog" @close="isShowAddNewTaskDialog = false"></new-task>
+  </div>
+
+  <!-- task list -->
+  <div v-else-if="!isLoading" class="pa-4">
     <!-- add new task -->
-    <v-toolbar class="toolbar" light elevation="0">
-      <v-spacer></v-spacer>
-      <v-btn depressed color="primary" @click="isShowAddNewTaskDialog = true">
+    <div class="toolbar">
+      <v-btn elevation="0" color="primary" @click="isShowAddNewTaskDialog = true">
         <v-icon small left>mdi-square-edit-outline</v-icon>
         New task
       </v-btn>
-    </v-toolbar>
-
-    <!-- show wondering card if tasks length is 0 -->
-    <wondering-card v-if="!tasks.length" class="task__wondering-card"></wondering-card>
+    </div>
 
     <!-- task list -->
     <v-data-table
-      v-else
       class="task__list"
       light
       dense
@@ -264,7 +278,6 @@
 
 <script>
 import { TASK } from '~/constants/task.js'
-import WonderingCard from '~/components/myTasks/list/WonderingCard.vue'
 import ContextMenu from '~/components/myTasks/list/ContextMenu.vue'
 import PriorityIcon from '~/components/common/PriorityIcon.vue'
 import StatusIcon from '~/components/common/StatusIcon.vue'
@@ -279,7 +292,6 @@ import NewTask from '~/components/myTasks/list/NewTask.vue'
 export default {
   name: 'TaskList',
   components: {
-    WonderingCard,
     ContextMenu,
     PriorityIcon,
     StatusIcon,
@@ -395,8 +407,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.task__wondering-card {
-  margin: 60px auto 160px auto;
+.task__wondering {
+  width: 100%;
+  height: calc(100% - var(--height-page-title));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .task__wondering-card {
+    width: 300px;
+    height: 340px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    color: white;
+    text-align: center;
+  }
 }
 
 .task__list ::v-deep {
@@ -453,6 +481,9 @@ export default {
 }
 
 .toolbar {
+  display: flex;
+  justify-content: flex-end;
   background-color: transparent !important;
+  margin-bottom: 16px;
 }
 </style>
