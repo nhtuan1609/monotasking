@@ -1,26 +1,18 @@
 <template>
   <v-layout fill-height>
     <v-flex>
-      <page-title title="Projects">
-        <template #rightArea>
-          <v-btn text height="100%" @click="$router.back()">
-            <v-icon left>mdi-arrow-left-circle</v-icon>
-            <span>Go back</span>
-          </v-btn>
-        </template>
-      </page-title>
-
-      <coming-soon></coming-soon>
+      <page-title title="Projects"></page-title>
+      <project-list class="pa-4"></project-list>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
 import PageTitle from '~/components/common/PageTitle.vue'
-import ComingSoon from '~/components/common/ComingSoon.vue'
+import ProjectList from '~/components/projects/ProjectList.vue'
 
 export default {
-  components: { PageTitle, ComingSoon },
+  components: { PageTitle, ProjectList },
   head: {
     title: 'My Task - Projects'
   }
