@@ -9,7 +9,13 @@
     </div>
 
     <!-- project list -->
-    <v-card v-for="(project, index) in projects" :key="index" class="project" light @click="$router.push('#')">
+    <v-card
+      v-for="(project, index) in projects"
+      :key="index"
+      class="project"
+      light
+      @click="$router.push('/projects/1')"
+    >
       <v-card-text>
         <div class="project__overall">
           <div class="project__title">
