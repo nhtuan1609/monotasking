@@ -48,13 +48,13 @@ export default {
      * @param {object} project - project information which is selected
      * @return {void}
      */
-    changeProject(project = {}) {
+    changeProject(project = { id: '', name: '' }) {
       if (project.id === this.task.project.id) return
 
       if (this.task.id) {
         this.$store.dispatch('tasks/updateTask', {
           id: this.task.id,
-          data: { project },
+          data: { project: { id: project.id, name: project.name } },
           activityType: TASK.ACTIVITY_TYPE.CHANGE_PROJECT
         })
       }

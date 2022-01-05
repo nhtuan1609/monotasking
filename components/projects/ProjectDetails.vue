@@ -65,10 +65,10 @@
                 :rotate="-90"
                 :size="80"
                 :width="20"
-                :value="project.progress ? project.progress : 0"
+                :value="projectDetails.details.progressPercentage"
                 color="primary"
               >
-                <span class="font-weight-bold">{{ project.progress ? project.progress : 0 }}%</span>
+                <span class="font-weight-bold">{{ projectDetails.details.progressPercentage }}%</span>
               </v-progress-circular>
             </v-col>
             <v-col cols="12" class="project__details">
@@ -80,9 +80,7 @@
                 <status-icon :status="{ code: status.code }"></status-icon>
                 <span class="font-weight-bold">
                   {{ status.name }}
-                  {{ project[`${status.key}`] ? project[`${status.key}`] : '-' }}
-                  /
-                  {{ project.total ? project.total : '-' }}
+                  {{ projectDetails.details[`${status.key}`] }}/{{ projectDetails.details.total }}
                 </span>
               </div>
             </v-col>
@@ -112,18 +110,24 @@ export default {
     project() {
       return this.$store.getters['projects/getCurrentProject']
     },
+    tasks() {
+      return this.$store.getters['tasks/getTasks']
+    },
     projectDetails() {
       const defaultDetails = {}
       for (const status of Object.values(TASK.STATUS)) {
         defaultDetails[`${status.key}`] = 0
       }
       const tasks = this.tasks.filter((tasks) => tasks.project.id === this.project.id)
-      const details = { ...defaultDetails, total: 0, progress: 0 }
+      const details = { ...defaultDetails, total: 0, progressPercentage: 0 }
       for (const task of tasks) {
         details.total = details.total + 1
-        details[`${task.status.name}`] = details[`${task.status.name}`] + 1
+        const status = Object.values(TASK.STATUS).find((status) => status.code === task.status.code)
+        details[`${status.key}`] = details[`${status.key}`] + 1
       }
-      details.progress = details.total > 0 ? Math.floor((100 * (details.done + details.canceled)) / details.total) : 0
+      if (details.total > 0) {
+        details.progressPercentage = Math.floor((100 * (details.done + details.canceled)) / details.total)
+      }
       return {
         ...this.project,
         details
@@ -137,6 +141,7 @@ export default {
   },
   created() {
     this.$store.dispatch('projects/setCurrentProjectRef', { id: this.$route.params.id })
+    this.$store.dispatch('tasks/setTasksRef')
   },
   methods: {
     editProject() {},

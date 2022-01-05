@@ -64,10 +64,10 @@
               :rotate="-90"
               :size="80"
               :width="20"
-              :value="project.progress ? project.progress : 0"
+              :value="project.details.progressPercentage"
               color="primary"
             >
-              <span class="font-weight-bold">{{ project.progress ? project.progress : 0 }}%</span>
+              <span class="font-weight-bold">{{ project.details.progressPercentage }}%</span>
             </v-progress-circular>
           </v-col>
           <v-col cols="12" md="9" class="project__details">
@@ -79,9 +79,7 @@
               <status-icon :status="{ code: status.code }"></status-icon>
               <span class="font-weight-bold">
                 {{ status.name }}
-                {{ project[`${status.key}`] ? project[`${status.key}`] : '-' }}
-                /
-                {{ project.total ? project.total : '-' }}
+                {{ project.details[`${status.key}`] }}/{{ project.details.total }}
               </span>
             </div>
           </v-col>
@@ -124,12 +122,15 @@ export default {
       }
       return this.projects.map((project) => {
         const tasks = this.tasks.filter((tasks) => tasks.project.id === project.id)
-        const details = { ...defaultDetails, total: 0, progress: 0 }
+        const details = { ...defaultDetails, total: 0, progressPercentage: 0 }
         for (const task of tasks) {
           details.total = details.total + 1
-          details[`${task.status.name}`] = details[`${task.status.name}`] + 1
+          const status = Object.values(TASK.STATUS).find((status) => status.code === task.status.code)
+          details[`${status.key}`] = details[`${status.key}`] + 1
         }
-        details.progress = details.total > 0 ? Math.floor((100 * (details.done + details.canceled)) / details.total) : 0
+        if (details.total > 0) {
+          details.progressPercentage = Math.floor((100 * (details.done + details.canceled)) / details.total)
+        }
         return {
           ...project,
           details
