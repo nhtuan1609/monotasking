@@ -109,7 +109,7 @@ export const actions = {
       .collection('tasks')
       .doc(params.id)
 
-    // delete all activies before delete task to hard delete
+    // delete all activities before delete task to hard delete
     const activityRef = await ref.collection('activities').get()
     for (const doc of activityRef.docs) {
       doc.ref.delete()
