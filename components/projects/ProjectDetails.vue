@@ -1,5 +1,5 @@
 <template>
-  <v-row class="pa-4">
+  <v-row v-if="!isLoading" class="pa-4">
     <v-col cols="12" md="6">
       <v-card light>
         <!-- workspace and header button -->
@@ -40,17 +40,17 @@
 
           <div class="project__information">
             <h3>Start date</h3>
-            <span>{{ project.startDate }}</span>
+            <span>{{ project.startDate ? $formatDate(new Date(project.startDate)) : '' }}</span>
           </div>
 
           <div class="project__information">
             <h3>Status</h3>
-            <span>{{ project.status }}</span>
+            <span>{{ project.status ? project.status.name : '' }}</span>
           </div>
 
           <div class="project__information">
             <h3>Leader</h3>
-            <span>{{ project.leader }}</span>
+            <span>{{ project.assignee ? project.assignee.name : '' }}</span>
           </div>
         </v-card-text>
       </v-card>
@@ -65,41 +65,25 @@
                 :rotate="-90"
                 :size="80"
                 :width="20"
-                :value="Math.floor((100 * project.done) / project.total)"
+                :value="project.progress ? project.progress : 0"
                 color="primary"
               >
-                <span class="font-weight-bold">{{ Math.floor((100 * project.done) / project.total) }}%</span>
+                <span class="font-weight-bold">{{ project.progress ? project.progress : 0 }}%</span>
               </v-progress-circular>
             </v-col>
             <v-col cols="12" class="project__details">
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.BACKLOG.code }"></status-icon>
-                <span class="font-weight-bold">Backlog {{ project.backlog }}/500</span>
-              </div>
-
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.TODO.code }"></status-icon>
-                <span class="font-weight-bold">Todo {{ project.todo }}/500</span>
-              </div>
-
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.IN_PROGRESS.code }"></status-icon>
-                <span class="font-weight-bold">In progress {{ project.inProgress }}/500</span>
-              </div>
-
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.IN_REVIEW.code }"></status-icon>
-                <span class="font-weight-bold">In review {{ project.inReview }}/500</span>
-              </div>
-
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.DONE.code }"></status-icon>
-                <span class="font-weight-bold">Done {{ project.done }}/500</span>
-              </div>
-
-              <div class="project__details-item">
-                <status-icon :status="{ code: TASK.STATUS.CANCELED.code }"></status-icon>
-                <span class="font-weight-bold">Canceled {{ project.canceled }}/500</span>
+              <div
+                v-for="(status, statusIndex) in Object.values(TASK.STATUS)"
+                :key="statusIndex"
+                class="project__details-item"
+              >
+                <status-icon :status="{ code: status.code }"></status-icon>
+                <span class="font-weight-bold">
+                  {{ status.name }}
+                  {{ project[`${status.key}`] ? project[`${status.key}`] : '-' }}
+                  /
+                  {{ project.total ? project.total : '-' }}
+                </span>
               </div>
             </v-col>
           </v-row>
@@ -118,30 +102,50 @@ export default {
   components: { StatusIcon },
   data() {
     return {
-      project: {
-        name: 'Monotasking',
-        description: 'Manage your task with the best performance.',
-        startDate: '2021-07-29',
-        leader: 'Mono Man',
-        status: 'In progress',
-        total: 418,
-        backlog: 15,
-        todo: 45,
-        inProgress: 12,
-        inReview: 20,
-        done: 321,
-        canceled: 5
-      }
+      isLoading: true
     }
   },
   computed: {
     TASK() {
       return TASK
+    },
+    project() {
+      return this.$store.getters['projects/getCurrentProject']
+    },
+    projectDetails() {
+      const defaultDetails = {}
+      for (const status of Object.values(TASK.STATUS)) {
+        defaultDetails[`${status.key}`] = 0
+      }
+      const tasks = this.tasks.filter((tasks) => tasks.project.id === this.project.id)
+      const details = { ...defaultDetails, total: 0, progress: 0 }
+      for (const task of tasks) {
+        details.total = details.total + 1
+        details[`${task.status.name}`] = details[`${task.status.name}`] + 1
+      }
+      details.progress = details.total > 0 ? Math.floor((100 * (details.done + details.canceled)) / details.total) : 0
+      return {
+        ...this.project,
+        details
+      }
     }
+  },
+  watch: {
+    project() {
+      this.isLoading = false
+    }
+  },
+  created() {
+    this.$store.dispatch('projects/setCurrentProjectRef', { id: this.$route.params.id })
   },
   methods: {
     editProject() {},
-    deleteProject() {}
+    deleteProject() {
+      this.$router.push('/projects')
+      this.$store.dispatch('projects/deleteProject', { id: this.project.id }).then(() => {
+        this.$showSuccessNotification('Delete project successfully')
+      })
+    }
   }
 }
 </script>

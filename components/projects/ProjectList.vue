@@ -129,7 +129,7 @@ export default {
           details.total = details.total + 1
           details[`${task.status.name}`] = details[`${task.status.name}`] + 1
         }
-        details.progress = details.total > 0 ? (100 * (details.done + details.canceled)) / details.total : 0
+        details.progress = details.total > 0 ? Math.floor((100 * (details.done + details.canceled)) / details.total) : 0
         return {
           ...project,
           details
