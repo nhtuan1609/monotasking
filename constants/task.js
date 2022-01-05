@@ -24,27 +24,33 @@ const PRIORITY = {
 const STATUS = {
   BACKLOG: {
     code: '0',
-    name: 'Backlog'
+    name: 'Backlog',
+    key: 'backlog'
   },
   TODO: {
     code: '1',
-    name: 'Todo'
+    name: 'Todo',
+    key: 'todo'
   },
   IN_PROGRESS: {
     code: '2',
-    name: 'In Progress'
+    name: 'In Progress',
+    key: 'inProgress'
   },
   IN_REVIEW: {
     code: '3',
-    name: 'In Review'
+    name: 'In Review',
+    key: 'inReview'
   },
   DONE: {
     code: '4',
-    name: 'Done'
+    name: 'Done',
+    key: 'done'
   },
   CANCELED: {
     code: '5',
-    name: 'Canceled'
+    name: 'Canceled',
+    key: 'canceled'
   }
 }
 
