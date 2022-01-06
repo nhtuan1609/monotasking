@@ -1,7 +1,8 @@
 <template>
   <v-row v-if="!isLoading" class="pa-4">
     <v-col cols="12" md="6">
-      <v-card light>
+      <!-- view mode -->
+      <v-card v-if="!isEditing" light>
         <!-- workspace and header button -->
         <v-card-title class="card__title">
           Monotasking
@@ -31,7 +32,7 @@
         <!-- project name -->
         <v-card-title class="project__name">{{ project.name }}</v-card-title>
 
-        <!-- project description -->
+        <!-- project description view mode -->
         <v-card-text>
           <div class="project__information">
             <h3>Description</h3>
@@ -52,6 +53,165 @@
             <h3>Leader</h3>
             <span>{{ project.assignee ? project.assignee.name : '' }}</span>
           </div>
+        </v-card-text>
+      </v-card>
+
+      <!-- edit mode -->
+      <v-card v-else light>
+        <!-- workspace and header button -->
+        <v-card-title class="card__title">
+          Monotasking
+          <v-spacer></v-spacer>
+          <v-btn text outlined @click="isEditing = false">Cancel</v-btn>
+          <v-btn class="ml-3" elevation="0" color="primary" @click="updateProject">Save</v-btn>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <!-- project description edit mode -->
+        <v-card-text>
+          <v-form ref="form">
+            <!-- name -->
+            <v-textarea
+              v-model="editedProject.name"
+              class="textarea__default project__name"
+              rows="1"
+              placeholder="Task name..."
+              auto-grow
+              outlined
+              :rules="[$rules.required]"
+            ></v-textarea>
+
+            <!-- description -->
+            <div class="project__information">
+              <h3>Description</h3>
+              <v-textarea
+                v-model="editedProject.description"
+                class="textarea__default"
+                placeholder="Task description..."
+                rows="1"
+                auto-grow
+                outlined
+                hide-details
+              ></v-textarea>
+            </div>
+
+            <!-- start date -->
+            <div class="project__information">
+              <h3>Start date</h3>
+              <v-dialog v-model="datePickerStartDate" max-width="290px">
+                <template #activator="{ on: menu, attrs }">
+                  <v-tooltip bottom>
+                    <template #activator="{ on: tooltip }">
+                      <v-btn
+                        class="project__information-button"
+                        text
+                        small
+                        v-bind="attrs"
+                        v-on="{ ...tooltip, ...menu }"
+                      >
+                        <v-icon v-if="editedProject.startDate" small left>mdi-calendar</v-icon>
+                        <v-icon v-else small left>mdi-plus</v-icon>
+                        <span>{{
+                          editedProject.startDate ? $formatDate(new Date(editedProject.startDate)) : 'Set due date'
+                        }}</span>
+                      </v-btn>
+                    </template>
+                    <span v-if="editedProject.startDate"
+                      >Start date on {{ $formatDate(new Date(editedProject.startDate)) }}</span
+                    >
+                    <span v-else>No due date</span>
+                  </v-tooltip>
+                </template>
+                <v-date-picker
+                  v-model="editedProject.startDate"
+                  color="primary"
+                  light
+                  no-title
+                  @input="datePickerStartDate = false"
+                  @change="changeStartDate"
+                >
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="changeStartDate()">Clear</v-btn>
+                </v-date-picker>
+              </v-dialog>
+            </div>
+
+            <!-- status -->
+            <div class="project__information">
+              <h3>Status</h3>
+              <v-menu transition="scale-transition" offset-y>
+                <template #activator="{ on: menu, attrs }">
+                  <v-tooltip bottom>
+                    <template #activator="{ on: tooltip }">
+                      <v-btn
+                        class="project__information-button"
+                        text
+                        small
+                        v-bind="attrs"
+                        v-on="{ ...tooltip, ...menu }"
+                      >
+                        <project-status-icon small left :status="editedProject.status"></project-status-icon>
+                        {{ editedProject.status.name }}
+                      </v-btn>
+                    </template>
+                    <span>{{ editedProject.status.name }} status</span>
+                  </v-tooltip>
+                </template>
+                <project-status-select-menu
+                  :statuses="statuses"
+                  :project="editedProject"
+                  @selected="(data) => changeDetails(data, 'status')"
+                ></project-status-select-menu>
+              </v-menu>
+            </div>
+
+            <!-- leader -->
+            <div class="project__information">
+              <h3>Leader</h3>
+              <v-menu transition="scale-transition" offset-y>
+                <template #activator="{ on: menu, attrs }">
+                  <v-tooltip bottom>
+                    <template #activator="{ on: tooltip }">
+                      <v-btn
+                        class="project__information-button"
+                        text
+                        small
+                        v-bind="attrs"
+                        v-on="{ ...tooltip, ...menu }"
+                      >
+                        <v-avatar
+                          v-if="editedProject.assignee && editedProject.assignee.id"
+                          style="margin-left: -2px; margin-right: 10px"
+                          size="14"
+                          :color="editedProject.assignee.color"
+                          v-bind="attrs"
+                          v-on="{ ...tooltip, ...menu }"
+                        >
+                          <span class="white--text" style="font-size: 8px">{{ editedProject.assignee.shortName }}</span>
+                        </v-avatar>
+                        <v-icon v-else small left v-bind="attrs" v-on="{ ...tooltip, ...menu }"
+                          >mdi-account-circle</v-icon
+                        >
+                        <span v-if="editedProject.assignee && editedProject.assignee.id">{{
+                          editedProject.assignee.name
+                        }}</span>
+                        <span v-else>Unassigned</span>
+                      </v-btn>
+                    </template>
+                    <span v-if="editedProject.assignee && editedProject.assignee.id"
+                      >Assigned to {{ editedProject.assignee.name }}</span
+                    >
+                    <span v-else>Unassigned</span>
+                  </v-tooltip>
+                </template>
+                <assignee-select-menu
+                  :members="members"
+                  :task="editedProject"
+                  @selected="(data) => changeDetails(data, 'assignee')"
+                ></assignee-select-menu>
+              </v-menu>
+            </div>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-col>
@@ -93,19 +253,32 @@
 
 <script>
 import { TASK } from '~/constants/task'
+import { PROJECT } from '~/constants/project'
 import StatusIcon from '~/components/common/StatusIcon.vue'
+import ProjectStatusIcon from '~/components/common/ProjectStatusIcon.vue'
+import ProjectStatusSelectMenu from '~/components/common/ProjectStatusSelectMenu.vue'
+import AssigneeSelectMenu from '~/components/common/AssigneeSelectMenu.vue'
 
 export default {
   name: 'ProjectDetails',
-  components: { StatusIcon },
+  components: { StatusIcon, ProjectStatusIcon, ProjectStatusSelectMenu, AssigneeSelectMenu },
   data() {
     return {
-      isLoading: true
+      isLoading: true,
+      isEditing: false,
+      editedProject: {},
+      datePickerStartDate: false
     }
   },
   computed: {
     TASK() {
       return TASK
+    },
+    members() {
+      return this.$store.getters['members/getMembers']
+    },
+    statuses() {
+      return Object.values(PROJECT.STATUS)
     },
     project() {
       return this.$store.getters['projects/getCurrentProject']
@@ -136,6 +309,13 @@ export default {
   },
   watch: {
     project() {
+      this.editedProject = {
+        name: this.project.name,
+        description: this.project.description,
+        startDate: this.project.startDate,
+        status: { ...this.project.status },
+        assignee: { ...this.project.assignee }
+      }
       this.isLoading = false
     }
   },
@@ -144,12 +324,62 @@ export default {
     this.$store.dispatch('tasks/setTasksRef')
   },
   methods: {
-    editProject() {},
+    /**
+     * change to edit mode to edit project information
+     * @return {void}
+     */
+    editProject() {
+      this.isEditing = true
+    },
+    /**
+     * delete project based on id
+     * @return {void}
+     */
     deleteProject() {
       this.$router.push('/projects')
       this.$store.dispatch('projects/deleteProject', { id: this.project.id }).then(() => {
         this.$showSuccessNotification('Delete project successfully')
       })
+    },
+    /**
+     * change start date of project
+     * @param {string} startDate - start date information
+     * @return {void}
+     */
+    changeStartDate(startDate = '') {
+      this.editedProject.startDate = startDate
+      this.datePickerStartDate = false
+    },
+    /**
+     * change details of project
+     * @param {object} data - data information
+     * @param {string} key - object key which is updated
+     * @return {void}
+     */
+    changeDetails(data, key) {
+      Object.assign(this.editedProject[key], { ...data })
+    },
+    /**
+     * update project information to firestore
+     * @return {void}
+     */
+    updateProject() {
+      if (!this.$refs.form.validate()) return
+      if (
+        this.editedProject.name === this.project.name &&
+        this.editedProject.description === this.project.description &&
+        this.editedProject.startDate === this.project.startDate &&
+        this.editedProject.status?.code === this.project.status?.code &&
+        this.editedProject.assignee?.id === this.project.assignee?.id
+      )
+        return
+
+      this.$store.dispatch('projects/updateProject', {
+        id: this.project.id,
+        data: this.editedProject,
+        activityType: PROJECT.ACTIVITY_TYPE.CHANGE_NAME
+      })
+      this.isEditing = false
     }
   }
 }
@@ -188,5 +418,29 @@ export default {
   &-item {
     min-width: 180px;
   }
+}
+
+.textarea__default::v-deep {
+  & fieldset {
+    border: none;
+    padding: 0;
+  }
+  .v-input__slot {
+    min-height: unset;
+    padding: 0 !important;
+  }
+  & textarea {
+    margin: 0 !important;
+  }
+  .v-text-field__details {
+    padding: 0;
+  }
+}
+
+.project__information-button {
+  min-width: 160px;
+  justify-content: start;
+  text-transform: unset;
+  font-size: 14px;
 }
 </style>

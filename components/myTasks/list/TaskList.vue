@@ -352,6 +352,7 @@ export default {
     }
   },
   created() {
+    this.$store.dispatch('projects/setProjectsRef')
     this.$store.dispatch('tasks/setTasksRef')
   },
   methods: {
