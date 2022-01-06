@@ -1,14 +1,5 @@
 <template>
   <div>
-    <!-- add new project -->
-    <div class="toolbar">
-      <v-btn elevation="0" color="primary" @click="isShowAddNewProjectDialog = true">
-        <v-icon small left>mdi-square-edit-outline</v-icon>
-        New project
-      </v-btn>
-    </div>
-
-    <!-- project list -->
     <v-card
       v-for="(project, index) in projectDetails"
       :key="index"
@@ -92,9 +83,6 @@
         </v-row>
       </v-card-text>
     </v-card>
-
-    <!-- show dialog to add new project -->
-    <new-project :is-show="isShowAddNewProjectDialog" @close="isShowAddNewProjectDialog = false"></new-project>
   </div>
 </template>
 
@@ -102,11 +90,10 @@
 import { TASK } from '~/constants/task'
 import StatusIcon from '~/components/common/StatusIcon.vue'
 import ProjectStatusIcon from '~/components/common/ProjectStatusIcon.vue'
-import NewProject from '~/components/projects/NewProject.vue'
 
 export default {
   name: 'ProjectList',
-  components: { StatusIcon, ProjectStatusIcon, NewProject },
+  components: { StatusIcon, ProjectStatusIcon },
   data() {
     return {
       isShowAddNewProjectDialog: false
@@ -154,9 +141,9 @@ export default {
 
 <style lang="scss" scoped>
 .project {
-  margin-bottom: 16px;
-  &:last-child {
-    margin-bottom: 0;
+  margin-top: 16px;
+  &:first-child {
+    margin-top: 0;
   }
 
   .project__overall {

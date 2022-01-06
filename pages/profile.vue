@@ -100,59 +100,7 @@
             <v-card-title>Projects</v-card-title>
 
             <v-card-text>
-              <v-card v-for="(project, index) in projects" :key="index" class="project" @click="$router.push('#')">
-                <v-card-text>
-                  <div class="project__overall">
-                    <div class="project__name">{{ project.name }}</div>
-                    <div class="project__description">{{ project.description }}</div>
-                  </div>
-
-                  <v-row class="mt-2">
-                    <v-col cols="12" md="3" class="project__percentage">
-                      <v-progress-circular
-                        :rotate="-90"
-                        :size="80"
-                        :width="20"
-                        :value="Math.floor((100 * project.done) / project.total)"
-                        color="primary"
-                      >
-                        <span class="font-weight-bold">{{ Math.floor((100 * project.done) / project.total) }}%</span>
-                      </v-progress-circular>
-                    </v-col>
-                    <v-col cols="12" md="9" class="project__details">
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.BACKLOG.code }"></status-icon>
-                        <span class="font-weight-bold">Backlog {{ project.backlog }}/500</span>
-                      </div>
-
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.TODO.code }"></status-icon>
-                        <span class="font-weight-bold">Todo {{ project.todo }}/500</span>
-                      </div>
-
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.IN_PROGRESS.code }"></status-icon>
-                        <span class="font-weight-bold">In progress {{ project.inProgress }}/500</span>
-                      </div>
-
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.IN_REVIEW.code }"></status-icon>
-                        <span class="font-weight-bold">In review {{ project.inReview }}/500</span>
-                      </div>
-
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.DONE.code }"></status-icon>
-                        <span class="font-weight-bold">Done {{ project.done }}/500</span>
-                      </div>
-
-                      <div class="project__details-item">
-                        <status-icon :status="{ code: TASK.STATUS.CANCELED.code }"></status-icon>
-                        <span class="font-weight-bold">Canceled {{ project.canceled }}/500</span>
-                      </div>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
+              <project-list></project-list>
             </v-card-text>
           </v-card>
         </v-col>
@@ -164,58 +112,12 @@
 <script>
 import { TASK } from '~/constants/task'
 import PageTitle from '~/components/common/PageTitle.vue'
-import StatusIcon from '~/components/common/StatusIcon.vue'
+import ProjectList from '~/components/projects/ProjectList.vue'
 
 export default {
-  components: { PageTitle, StatusIcon },
+  components: { PageTitle, ProjectList },
   data() {
     return {
-      projects: [
-        {
-          name: 'Monotasking',
-          description: 'Manage your task with the best performance.',
-          total: 418,
-          backlog: 15,
-          todo: 45,
-          inProgress: 12,
-          inReview: 20,
-          done: 321,
-          canceled: 5
-        },
-        {
-          name: 'Ditasking',
-          description: 'Manage your task with the best performance.',
-          total: 264,
-          backlog: 21,
-          todo: 37,
-          inProgress: 8,
-          inReview: 15,
-          done: 180,
-          canceled: 3
-        },
-        {
-          name: 'Tritasking',
-          description: 'Manage your task with the best performance.',
-          total: 324,
-          backlog: 22,
-          todo: 15,
-          inProgress: 32,
-          inReview: 4,
-          done: 251,
-          canceled: 0
-        },
-        {
-          name: 'Tetratasking',
-          description: 'Manage your task with the best performance.',
-          total: 198,
-          backlog: 34,
-          todo: 21,
-          inProgress: 3,
-          inReview: 11,
-          done: 127,
-          canceled: 2
-        }
-      ],
       isEditing: false,
       editedUser: {}
     }
