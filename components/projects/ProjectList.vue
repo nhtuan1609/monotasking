@@ -20,7 +20,10 @@
         <div class="project__overall">
           <div class="project__title">
             <!-- status -->
-            <v-chip label>{{ project.status.name }}</v-chip>
+            <v-chip label>
+              <project-status-icon left :status="project.status"></project-status-icon>
+              {{ project.status.name }}
+            </v-chip>
 
             <!-- name -->
             <div class="project__name text-truncate">{{ project.name }}</div>
@@ -48,8 +51,11 @@
             <!-- leader -->
             <v-tooltip bottom>
               <template #activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon>mdi-account-circle</v-icon>
+                <v-btn icon light small v-bind="attrs" v-on="on">
+                  <v-avatar v-if="project.assignee && project.assignee.id" size="20" :color="project.assignee.color">
+                    <span class="white--text" style="font-size: 10px">{{ project.assignee.shortName }}</span>
+                  </v-avatar>
+                  <v-icon v-else size="22">mdi-account-circle</v-icon>
                 </v-btn>
               </template>
               <span>Project lead is {{ project.assignee.name }}</span>
@@ -95,11 +101,12 @@
 <script>
 import { TASK } from '~/constants/task'
 import StatusIcon from '~/components/common/StatusIcon.vue'
+import ProjectStatusIcon from '~/components/common/ProjectStatusIcon.vue'
 import NewProject from '~/components/projects/NewProject.vue'
 
 export default {
   name: 'ProjectList',
-  components: { StatusIcon, NewProject },
+  components: { StatusIcon, ProjectStatusIcon, NewProject },
   data() {
     return {
       isShowAddNewProjectDialog: false
