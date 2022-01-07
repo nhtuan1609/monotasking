@@ -1,46 +1,22 @@
+import { firestoreAction } from 'vuexfire'
+import firebase from '~/plugins/firebase'
+const db = firebase.firestore()
+
 export const state = () => ({
-  members: [
-    {
-      id: '0',
-      name: 'Hoang Tuan',
-      color: '#FFC312',
-      shortName: 'T'
-    },
-    {
-      id: '1',
-      name: 'Tu Nguyen',
-      color: '#b53be3',
-      shortName: 'T'
-    },
-    {
-      id: '2',
-      name: 'Thanh Hien',
-      color: '#adee93',
-      shortName: 'H'
-    },
-    {
-      id: '3',
-      name: 'Hot Truong',
-      color: '#20b5f4',
-      shortName: 'H'
-    },
-    {
-      id: '4',
-      name: 'Hoang Tu',
-      color: '#895727',
-      shortName: 'T'
-    },
-    {
-      id: '5',
-      name: 'Thien Vu',
-      color: '#19f3ef',
-      shortName: 'T'
-    }
-  ]
+  memberDetails: []
 })
 
 export const getters = {
-  getMembers(state) {
-    return state.members
+  getMemberDetails(state) {
+    return state.memberDetails
   }
+}
+
+export const actions = {
+  // binding members of current workspace
+  setMemberDetailsRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
+    bindFirestoreRef('memberDetails', db.collection('users').where('email', 'in', params.members), {
+      wait: true
+    })
+  })
 }

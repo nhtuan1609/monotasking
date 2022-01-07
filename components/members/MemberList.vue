@@ -15,20 +15,24 @@
       <v-card-title>
         <h3>Members</h3>
         <v-spacer></v-spacer>
-        <v-btn icon small>
+        <v-btn icon small @click="isShowAddNewMemberDialog = true">
           <v-icon>mdi-plus-circle-outline</v-icon>
         </v-btn>
       </v-card-title>
       <v-card-text>
         <div
-          v-for="(member, index) in members"
+          v-for="(member, index) in memberDetails"
           :key="index"
-          class="members__item"
+          :class="[
+            'members__item',
+            { 'is-selecting': member.email === selectedMember.email && isShowContextMenu },
+            { 'is-not-selecting': member.email !== selectedMember.email && isShowContextMenu }
+          ]"
           @contextmenu="showContextMenu($event, member)"
         >
           <div class="d-flex">
             <h3 style="flex: 1" class="text-truncate">{{ member.name }}</h3>
-            <v-chip small light>
+            <v-chip v-if="member.role" small light :color="member.role === WORKSPACE.ROLES.ADMIN.code ? 'primary' : ''">
               <span class="font-weight-bold">{{ getRoleName(member.role) }}</span>
             </v-chip>
           </div>
@@ -58,6 +62,29 @@
         </v-list-item>
       </v-list>
     </v-menu>
+
+    <!-- add new member dialog -->
+    <v-dialog :value="isShowAddNewMemberDialog" persistent width="400">
+      <v-card light class="pa-0">
+        <v-card-title class="primary white--text py-2 px-4">Add new member to workspace</v-card-title>
+        <v-card-text class="pa-4">
+          <v-form ref="form">
+            <h4>Email</h4>
+            <v-text-field
+              v-model="newMember.email"
+              outlined
+              dense
+              :rules="[$rules.required, $rules.email, memberExists]"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-4">
+          <v-spacer></v-spacer>
+          <v-btn text outlined plain @click="closeDialog">Cancel</v-btn>
+          <v-btn elevation="0" color="primary" @click="addNewMember">Confirm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -68,53 +95,39 @@ export default {
   name: 'MemberList',
   data() {
     return {
-      members: [
-        {
-          email: 'admin@gmail.com',
-          name: 'Greed',
-          shortName: 'A',
-          color: '#FFC312',
-          position: 'Front-end Developer',
-          role: '0'
-        },
-        {
-          email: 'member1@gmail.com',
-          name: 'Member1',
-          shortName: 'M',
-          color: '#FA0312',
-          position: 'Front-end Developer',
-          role: '1'
-        },
-        {
-          email: 'member2@gmail.com',
-          name: 'Member2',
-          shortName: 'M',
-          color: '#99AA12',
-          position: 'Front-end Developer',
-          role: '1'
-        },
-        {
-          email: 'member3@gmail.com',
-          name: 'Member3',
-          shortName: 'M',
-          color: '#99AABB',
-          position: 'Front-end Developer',
-          role: '1'
-        },
-        {
-          email: 'member4@gmail.com',
-          name: 'Member4',
-          shortName: 'M',
-          color: '#996612',
-          position: 'Front-end Developer',
-          role: '1'
-        }
-      ],
       isShowContextMenu: false,
       menuX: 0,
       menuY: 0,
-      selectedMember: {}
+      selectedMember: {},
+      isShowAddNewMemberDialog: false,
+      newMember: {}
     }
+  },
+  computed: {
+    WORKSPACE() {
+      return WORKSPACE
+    },
+    members() {
+      return this.$store.getters['workspaces/getCurrentWorkspace']?.members ?? []
+    },
+    memberExists() {
+      return (value) => {
+        return !this.members.includes(value) || 'That user has been in workspace.'
+      }
+    },
+    memberDetails() {
+      return this.$store.getters['members/getMemberDetails']
+    }
+  },
+  watch: {
+    members() {
+      if (this.members?.length > 0) {
+        this.$store.dispatch('members/setMemberDetailsRef', { members: this.members })
+      }
+    }
+  },
+  created() {
+    this.$store.dispatch('workspaces/setCurrentWorkspaceRef')
   },
   methods: {
     /**
@@ -137,6 +150,25 @@ export default {
       this.menuX = event.clientX
       this.menuY = event.clientY
       this.isShowContextMenu = true
+    },
+    /**
+     * emit event to close dialog
+     * @return {void}
+     */
+    closeDialog() {
+      this.newMember = {}
+      this.$refs.form.resetValidation()
+      this.isShowAddNewMemberDialog = false
+    },
+    /**
+     * add new project
+     * @return {void}
+     */
+    addNewMember() {
+      if (!this.$refs.form.validate()) return
+
+      this.$store.dispatch('workspaces/addNewMember', { email: this.newMember.email })
+      this.closeDialog()
     }
   }
 }
@@ -171,6 +203,12 @@ export default {
       &:hover {
         background-color: rgba(0, 0, 0, 0.2);
         cursor: pointer;
+      }
+      &.is-selecting {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+      &.is-not-selecting {
+        background-color: transparent;
       }
     }
   }
