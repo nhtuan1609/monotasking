@@ -10,17 +10,17 @@
         </template>
       </page-title>
 
-      <coming-soon></coming-soon>
+      <member-list></member-list>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
 import PageTitle from '~/components/common/PageTitle.vue'
-import ComingSoon from '~/components/common/ComingSoon.vue'
+import MemberList from '~/components/members/MemberList.vue'
 
 export default {
-  components: { PageTitle, ComingSoon },
+  components: { PageTitle, MemberList },
   head: {
     title: 'My Task - Members'
   }
