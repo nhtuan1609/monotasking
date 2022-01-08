@@ -243,7 +243,7 @@
               <template #activator="{ on: tooltip }">
                 <v-btn icon light small v-bind="attrs" v-on="{ ...tooltip, ...menu }">
                   <v-avatar
-                    v-if="item.assignee && item.assignee.id"
+                    v-if="item.assignee && item.assignee.email"
                     size="20"
                     :color="item.assignee.color"
                     v-bind="attrs"
@@ -254,7 +254,7 @@
                   <v-icon v-else size="22" v-bind="attrs" v-on="{ ...tooltip, ...menu }">mdi-account-circle</v-icon>
                 </v-btn>
               </template>
-              <span v-if="item.assignee && item.assignee.id">Assigned to {{ item.assignee.name }}</span>
+              <span v-if="item.assignee && item.assignee.email">Assigned to {{ item.assignee.name }}</span>
               <span v-else>Unassigned</span>
             </v-tooltip>
           </template>
@@ -327,9 +327,6 @@ export default {
     projects() {
       return this.$store.getters['projects/getProjects']
     },
-    members() {
-      return this.$store.getters['members/getMembers']
-    },
     labels() {
       return this.$store.getters['labels/getLabels']
     },
@@ -344,16 +341,38 @@ export default {
         { text: 'Created', value: '_created' },
         { text: 'Assignee', value: 'assignee.name' }
       ]
+    },
+    memberEmails() {
+      return this.$store.getters['workspaces/getCurrentWorkspace']?.memberEmails ?? []
+    },
+    memberDetails() {
+      return this.$store.getters['members/getMemberDetails']
+    },
+    memberRoles() {
+      return this.$store.getters['members/getMemberRoles']
+    },
+    members() {
+      return this.memberDetails.map((member) => {
+        const memberRole = this.memberRoles.find((item) => item.email === member.email) ?? {}
+        return { ...member, ...memberRole }
+      })
     }
   },
   watch: {
     tasks() {
       this.isLoading = false
+    },
+    memberEmails() {
+      if (this.memberEmails?.length > 0) {
+        this.$store.dispatch('members/setMemberDetailsRef', { memberEmails: this.memberEmails })
+      }
     }
   },
   created() {
-    this.$store.dispatch('projects/setProjectsRef')
     this.$store.dispatch('tasks/setTasksRef')
+    this.$store.dispatch('projects/setProjectsRef')
+    this.$store.dispatch('workspaces/setCurrentWorkspaceRef')
+    this.$store.dispatch('members/setMemberRolesRef')
   },
   methods: {
     /**

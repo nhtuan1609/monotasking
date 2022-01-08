@@ -40,8 +40,8 @@ export default {
   computed: {
     // using to display current selected assignee in menu
     assigneeIndex() {
-      if (!this.task?.assignee?.id) return 0
-      return this.members.findIndex((member) => member.id === this.task.assignee.id) + 1
+      if (!this.task?.assignee?.email) return 0
+      return this.members.findIndex((member) => member.email === this.task.assignee.email) + 1
     }
   },
   methods: {
@@ -51,7 +51,7 @@ export default {
      * @return {void}
      */
     changeAssignee(assignee = {}) {
-      if (assignee.id === this.task.assignee.id) return
+      if (assignee.email === this.task.assignee.email) return
 
       if (this.task.id) {
         this.$store.dispatch('tasks/updateTask', {
