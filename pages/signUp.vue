@@ -133,7 +133,7 @@ export default {
       this.$store.dispatch('profile/register', { user }).then((isSuccess) => {
         if (isSuccess) {
           this.$showSuccessNotification('Register successfully')
-          this.$router.push('/myTasks/list')
+          this.$router.push('/')
         } else {
           this.$showErrorNotification('Register failed')
           this.isShowErrorMessage = true

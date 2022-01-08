@@ -11,8 +11,16 @@
           </div>
         </div>
         <div class="use-button">
-          <v-btn v-if="activeWorkspaceId" color="primary" large min-width="300" @click="$router.push('/myTasks/list')"
+          <v-btn
+            v-if="email && activeWorkspaceId"
+            color="primary"
+            large
+            min-width="300"
+            @click="$router.push('/myTasks/list')"
             >Go to task list</v-btn
+          >
+          <v-btn v-else-if="email" color="primary" large min-width="300" @click="$router.push('/workspaces/create')"
+            >Create a new workspace</v-btn
           >
           <v-btn v-else color="primary" large min-width="300" @click="$router.push('/signIn')">Use for free</v-btn>
         </div>
@@ -73,6 +81,9 @@ export default {
   computed: {
     activeWorkspaceId() {
       return this.$store.getters['profile/getActiveWorkspaceId']
+    },
+    email() {
+      return this.$store.getters['profile/getEmail']
     }
   }
 }
