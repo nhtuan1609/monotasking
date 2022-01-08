@@ -21,7 +21,7 @@
       </v-card-title>
       <v-card-text>
         <div
-          v-for="(member, index) in memberDetails"
+          v-for="(member, index) in members"
           :key="index"
           :class="[
             'members__item',
@@ -54,7 +54,7 @@
       z-index="9"
     >
       <v-list light>
-        <v-list-item dense @click="isShowContextMenu = false">
+        <v-list-item dense @click="deleteMember">
           <v-list-item-icon class="mr-0">
             <v-icon small>mdi-trash-can</v-icon>
           </v-list-item-icon>
@@ -107,27 +107,37 @@ export default {
     WORKSPACE() {
       return WORKSPACE
     },
-    members() {
-      return this.$store.getters['workspaces/getCurrentWorkspace']?.members ?? []
+    memberEmails() {
+      return this.$store.getters['workspaces/getCurrentWorkspace']?.memberEmails ?? []
     },
     memberExists() {
       return (value) => {
-        return !this.members.includes(value) || 'That user has been in workspace.'
+        return !this.memberEmails.includes(value) || 'That user has been in workspace.'
       }
     },
     memberDetails() {
       return this.$store.getters['members/getMemberDetails']
+    },
+    memberRoles() {
+      return this.$store.getters['members/getMemberRoles']
+    },
+    members() {
+      return this.memberDetails.map((member) => {
+        const memberRole = this.memberRoles.find((item) => item.email === member.email) ?? {}
+        return { ...member, ...memberRole }
+      })
     }
   },
   watch: {
-    members() {
-      if (this.members?.length > 0) {
-        this.$store.dispatch('members/setMemberDetailsRef', { members: this.members })
+    memberEmails() {
+      if (this.memberEmails?.length > 0) {
+        this.$store.dispatch('members/setMemberDetailsRef', { memberEmails: this.memberEmails })
       }
     }
   },
   created() {
     this.$store.dispatch('workspaces/setCurrentWorkspaceRef')
+    this.$store.dispatch('members/setMemberRolesRef')
   },
   methods: {
     /**
@@ -167,8 +177,16 @@ export default {
     addNewMember() {
       if (!this.$refs.form.validate()) return
 
-      this.$store.dispatch('workspaces/addNewMember', { email: this.newMember.email })
+      this.$store.dispatch('members/addNewMember', { email: this.newMember.email })
       this.closeDialog()
+    },
+    /**
+     * delete project
+     * @return {void}
+     */
+    deleteMember() {
+      this.$store.dispatch('members/deleteMember', { email: this.selectedMember.email })
+      this.isShowContextMenu = false
     }
   }
 }

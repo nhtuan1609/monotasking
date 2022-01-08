@@ -1,5 +1,6 @@
 import { firestoreAction } from 'vuexfire'
 import { USER } from '~/constants/user'
+import { WORKSPACE } from '~/constants/workspace'
 import firebase from '~/plugins/firebase'
 const db = firebase.firestore()
 
@@ -30,7 +31,7 @@ export const actions = {
   setUserWorkspacesRef: firestoreAction(({ bindFirestoreRef, rootGetters }, params) => {
     bindFirestoreRef(
       'userWorkspaces',
-      db.collection('workspaces').where('members', 'array-contains', params.email).orderBy('_created', 'desc'),
+      db.collection('workspaces').where('memberEmails', 'array-contains', params.email).orderBy('_created', 'desc'),
       { wait: true }
     )
   }),
@@ -60,56 +61,29 @@ export const actions = {
       name: params.name,
       shortName: params.shortName,
       color: USER.DEFAULT_COLOR[Math.floor(Math.random() * USER.DEFAULT_COLOR.length)].color,
-      members: [params.user.email]
+      memberEmails: [params.user.email]
     }
 
-    await workspaceRef.set(data).then(() => {
+    await workspaceRef.set(data).then(async () => {
       const userData = {
         ...params.user,
         _updated: firebase.firestore.FieldValue.serverTimestamp(),
         activeWorkspaceId: workspaceRef.id
       }
       dispatch('profile/updateProfile', { data: userData }, { root: true })
+
+      const memberRef = workspaceRef.collection('members').doc(params.user.email)
+      const memberData = {
+        _created: firebase.firestore.FieldValue.serverTimestamp(),
+        _updated: firebase.firestore.FieldValue.serverTimestamp(),
+        email: params.user.email,
+        role: WORKSPACE.ROLES.ADMIN.code
+      }
+      await memberRef.set(memberData)
+
       isSuccess = true
     })
 
     return isSuccess
-  },
-  /**
-   * add new member to workspace
-   * @param {object} state - local state
-   * @param {object} rootGetters - getter function of store
-   * @param {object} params.email
-   * @return {void}
-   */
-  async addNewMember({ state, rootGetters }, params) {
-    // check user has been in workspace
-    const workspaceRef = db.collection('workspaces').doc(rootGetters['profile/getActiveWorkspaceId'])
-    const workspaceSnapshot = await workspaceRef.get()
-    const workspaceData = workspaceSnapshot.data()
-    if (workspaceData.members.includes(params.email)) {
-      this.$showErrorNotification('User has been in workspace')
-      return false
-    }
-
-    // check user do not exist
-    const usersRef = await db.collection('users').get()
-    const user = usersRef.docs.find((user) => {
-      const userData = user.data()
-      return userData.email === params.email
-    })
-    if (!user) {
-      this.$showErrorNotification('User does not exist')
-      return false
-    }
-
-    // update members of workspace to firestore
-    const _updated = firebase.firestore.FieldValue.serverTimestamp()
-    const members = [...workspaceData.members, params.email]
-    workspaceRef.update({ _updated, members }).then(() => {
-      this.$showSuccessNotification('Add user to workspace successfully')
-      return true
-    })
-    return false
   }
 }
