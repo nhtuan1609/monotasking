@@ -3,6 +3,7 @@
     <!-- current workspace -->
     <v-card class="workspace__card">
       <v-card-title>
+        <v-icon left>mdi-dresser</v-icon>
         <h3>Workspace</h3>
       </v-card-title>
       <v-card-text>
@@ -13,6 +14,7 @@
     <!-- members of workspace -->
     <v-card class="members__card">
       <v-card-title>
+        <v-icon left>mdi-account-group</v-icon>
         <h3>Members</h3>
         <v-spacer></v-spacer>
         <v-btn icon small @click="isShowAddNewMemberDialog = true">
@@ -30,13 +32,26 @@
           ]"
           @contextmenu="showContextMenu($event, member)"
         >
-          <div class="d-flex">
-            <h3 style="flex: 1" class="text-truncate">{{ member.name }}</h3>
-            <v-chip v-if="member.role" small light :color="member.role === WORKSPACE.ROLES.ADMIN.code ? 'primary' : ''">
-              <span class="font-weight-bold">{{ getRoleName(member.role) }}</span>
-            </v-chip>
+          <div class="d-flex align-center">
+            <v-avatar class="mr-2" size="40" :color="member.color">
+              <span class="white--text" style="font-size: 20px">{{ member.shortName }}</span>
+            </v-avatar>
+            <div style="flex: 1">
+              <div class="d-flex">
+                <h3 style="flex: 1" class="text-truncate">{{ member.name }}</h3>
+                <v-chip
+                  v-if="member.role"
+                  small
+                  light
+                  :color="member.role === WORKSPACE.ROLES.ADMIN.code ? 'primary' : ''"
+                >
+                  <span class="font-weight-bold">{{ getRoleName(member.role) }}</span>
+                </v-chip>
+              </div>
+              <div>{{ member.email }}</div>
+            </div>
           </div>
-          <div>{{ member.email }}</div>
+
           <v-divider></v-divider>
         </div>
       </v-card-text>
