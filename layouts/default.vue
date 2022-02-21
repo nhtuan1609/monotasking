@@ -168,7 +168,7 @@ body {
   font-family: Roboto, Arial, sans-serif;
   font-style: normal;
   font-size: 16px;
-  color: var(--v-_text-base);
-  background: transparent;
+  color: var(--v-_text-base) !important;
+  background: transparent !important;
 }
 </style>
