@@ -83,14 +83,14 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
 
-  // env information using to connect width realtime database
+  // env information using to connect with google firebase
   env: {
-    API_KEY: 'AIzaSyBqbOBPePEyTvabTrKDZe8b1ZNPq56TS48',
-    AUTH_DOMAIN: 'monotasking-380c8.firebaseapp.com',
-    PROJECT_ID: 'monotasking-380c8',
-    STORAGE_BUCKET: 'monotasking-380c8.appspot.com',
-    MESSAGING_SENDER_ID: '242889508859',
-    APP_ID: '1:242889508859:web:11156011714f21ef8e2d5e',
-    MEASUREMENT_ID: 'G-8JHERJPLWR'
+    API_KEY: process.env.API_KEY,
+    AUTH_DOMAIN: process.env.AUTH_DOMAIN,
+    PROJECT_ID: process.env.PROJECT_ID,
+    STORAGE_BUCKET: process.env.STORAGE_BUCKET,
+    MESSAGING_SENDER_ID: process.env.MESSAGING_SENDER_ID,
+    APP_ID: process.env.APP_ID,
+    MEASUREMENT_ID: process.env.MEASUREMENT_ID
   }
 }
